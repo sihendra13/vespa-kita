@@ -1130,8 +1130,19 @@
   loadReelMetrics('reel-stats-6', '18110032822969213');
 
   // ---------- HERO PANEL STATS (30-day aggregate, via backend function) ----------
-  // No rAF/animation dependency here on purpose: this must render correctly even if
-  // the tab is backgrounded or requestAnimationFrame is throttled.
+  function animateElementCount(el, target) {
+    const duration = 1400;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now-start)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      const val = Math.floor(eased*target);
+      el.textContent = val.toLocaleString('id-ID');
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
   async function loadHeroStats(){
     const viewsEl = document.getElementById('hero-views');
     const reachEl = document.getElementById('hero-reach');
@@ -1140,8 +1151,8 @@
       const res = await fetch('/api/account-stats');
       if(!res.ok) return;
       const s = await res.json();
-      if(typeof s.views_30d === 'number') viewsEl.textContent = s.views_30d.toLocaleString('id-ID');
-      if(typeof s.reach_30d === 'number') reachEl.textContent = s.reach_30d.toLocaleString('id-ID');
+      if(typeof s.views_30d === 'number') animateElementCount(viewsEl, s.views_30d);
+      if(typeof s.reach_30d === 'number') animateElementCount(reachEl, s.reach_30d);
     }catch(err){
       console.error('Hero stats error:', err);
     }
