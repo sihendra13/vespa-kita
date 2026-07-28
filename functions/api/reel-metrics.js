@@ -6,7 +6,9 @@ const SOCIAL_ACCOUNT_ID = "spc_adDd2jBSSm5jGwhBO4jYM"; // ves_pakita (Instagram)
 const PLATFORM_POST_ID = "17878485828504906"; // reel: SEMUA ANAKNYA DINAMAI NAMA VESPA
 
 export async function onRequestGet(context) {
-  const { env } = context;
+  const { env, request } = context;
+  const { searchParams } = new URL(request.url);
+  const postId = searchParams.get("postId") || PLATFORM_POST_ID;
 
   if (!env.POSTFORME_API_KEY) {
     return new Response(JSON.stringify({ error: "POSTFORME_API_KEY not configured" }), {
@@ -15,7 +17,7 @@ export async function onRequestGet(context) {
     });
   }
 
-  const url = `https://api.postforme.dev/v1/social-account-feeds/${SOCIAL_ACCOUNT_ID}?expand=metrics&platform_post_id=${PLATFORM_POST_ID}`;
+  const url = `https://api.postforme.dev/v1/social-account-feeds/${SOCIAL_ACCOUNT_ID}?expand=metrics&platform_post_id=${postId}`;
 
   const upstream = await fetch(url, {
     headers: { Authorization: `Bearer ${env.POSTFORME_API_KEY}` },
