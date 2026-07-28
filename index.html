@@ -205,6 +205,7 @@
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:18px;
+    align-items:start;
   }
   @media (max-width:900px){ .event-scroll{grid-template-columns:1fr 1fr;} }
   @media (max-width:600px){ .event-scroll{grid-template-columns:1fr;} }
@@ -229,6 +230,19 @@
     margin-top:18px; display:flex; align-items:baseline; gap:6px;
   }
   .event-card .views small{font-size:11px; color:var(--chrome); font-weight:400; text-transform:uppercase; letter-spacing:0.06em;}
+  .event-card-reel{display:block;}
+  .ig-embed-wrap{margin-top:16px; border-radius:4px; overflow:hidden;}
+  .ig-embed-wrap blockquote.instagram-media{margin:0 !important;}
+  .reel-stats{
+    display:flex; gap:14px; flex-wrap:wrap;
+    font-family:var(--mono); font-size:12px; color:var(--chrome);
+    margin-top:10px;
+  }
+  .reel-stats span::before{margin-right:4px;}
+  .reel-stats span[data-metric="likes"]::before{content:"♥";}
+  .reel-stats span[data-metric="comments"]::before{content:"💬";}
+  .reel-stats span[data-metric="shares"]::before{content:"↗";}
+  .reel-stats span[data-metric="views"]::before{content:"▶";}
 
   /* ---------- SPLIT (event & kolaborasi) ---------- */
   .split{display:grid; grid-template-columns:1fr 1fr; gap:2px; background:rgba(241,232,214,0.15);}
@@ -411,10 +425,21 @@
       <p>Sebagian konten yang paling banyak ditonton komunitas — bukti bahwa VespaKita hadir langsung di titik keramaian skena Vespa.</p>
     </div>
     <div class="event-scroll">
-      <div class="event-card reveal">
+      <div class="event-card event-card-reel reveal">
         <div class="tag">Konten Reels</div>
         <h3>Semua Anaknya Dinamai Nama Vespa</h3>
         <div class="views">61,9K <small>views</small></div>
+        <div class="reel-stats" id="reel-stats-1">
+          <span data-metric="likes">–</span>
+          <span data-metric="comments">–</span>
+          <span data-metric="shares">–</span>
+          <span data-metric="views">–</span>
+        </div>
+        <div class="ig-embed-wrap">
+          <blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/reel/DbPVuh-Pn4v/" data-instgrm-version="14" style="background:#FFF; border:0; margin:0; max-width:100%; width:100%;">
+            <a href="https://www.instagram.com/reel/DbPVuh-Pn4v/" target="_blank" rel="noopener"></a>
+          </blockquote>
+        </div>
       </div>
       <div class="event-card reveal">
         <div class="tag">Liputan Event</div>
@@ -694,6 +719,25 @@
     });
   });
 
+  // ---------- REEL METRICS (via backend function, keeps API key server-side) ----------
+  async function loadReelMetrics(){
+    const el = document.getElementById('reel-stats-1');
+    if(!el) return;
+    try{
+      const res = await fetch('/api/reel-metrics');
+      if(!res.ok) return;
+      const m = await res.json();
+      const fmt = (n) => n === null || n === undefined ? '–' : n.toLocaleString('id-ID');
+      el.querySelector('[data-metric="likes"]').textContent = fmt(m.likes);
+      el.querySelector('[data-metric="comments"]').textContent = fmt(m.comments);
+      el.querySelector('[data-metric="shares"]').textContent = fmt(m.shares);
+      el.querySelector('[data-metric="views"]').textContent = fmt(m.views);
+    }catch(err){
+      console.error('Reel metrics error:', err);
+    }
+  }
+  loadReelMetrics();
+
   // ---------- YOUTUBE REALTIME STATS ----------
   // GANTI dengan API key kamu dari Google Cloud Console (YouTube Data API v3)
   const YT_API_KEY = "AIzaSyDG0k3WQFwBwxFRXTRG1vIAoLzhuqr1X54";
@@ -753,6 +797,8 @@
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
 </script>
+
+<script async src="https://www.instagram.com/embed.js"></script>
 
 </body>
 </html>
