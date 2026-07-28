@@ -117,13 +117,56 @@
   .navlinks{display:flex; gap:28px; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; font-family:var(--mono);}
   .navlinks a{opacity:0.75; transition:opacity .2s;}
   .navlinks a:hover{opacity:1; color:var(--mint);}
+  .nav-mobile-cta { display: none; }
   .navcta{
     background:var(--merah); color:var(--krem);
     padding:10px 18px;
     font-family:var(--mono); font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
     border-radius:2px;
   }
-  @media (max-width:760px){ .navlinks{display:none;} }
+  .nav-toggle{
+    display:none;
+    background:none;
+    border:none;
+    color:var(--krem);
+    cursor:pointer;
+    padding:8px;
+    z-index:60;
+  }
+  @media (max-width:760px){
+    .nav-toggle{display:block;}
+    .navcta{display:none;}
+    .nav-mobile-cta {
+      display:inline-block;
+      background:var(--merah);
+      color:var(--krem);
+      padding:10px 20px;
+      font-size:12px;
+      border-radius:2px;
+      margin-top:10px;
+      width:100%;
+      text-align:center;
+    }
+    .navlinks{
+      display:none;
+      flex-direction:column;
+      position:absolute;
+      top:84px;
+      left:0;
+      right:0;
+      background:rgba(21,23,26,0.96);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(241,232,214,0.1);
+      padding:24px;
+      gap:20px;
+      align-items:center;
+      box-shadow:0 15px 30px rgba(0,0,0,0.5);
+      z-index:45;
+    }
+    .navlinks.active{
+      display:flex;
+    }
+  }
 
   /* ---------- HERO ---------- */
   .hero{
@@ -528,8 +571,13 @@
       <a href="#podcast">Podcast</a>
       <a href="#audiens">Audiens</a>
       <a href="#mediakit">Media Kit</a>
+      <a href="#kolaborasi" class="nav-mobile-cta">Ajukan Kolaborasi</a>
     </div>
     <a href="#kolaborasi" class="navcta">Ajukan Kolaborasi</a>
+    <button class="nav-toggle" aria-label="Buka Menu">
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-close" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
   </div>
 </nav>
 
@@ -1228,7 +1276,13 @@
 
   // Toggle sticky navbar style on scroll
   const navEl = document.querySelector('nav');
+  const toggleBtn = document.querySelector('.nav-toggle');
+  const navLinks = document.querySelector('.navlinks');
+  const iconMenu = document.querySelector('.icon-menu');
+  const iconClose = document.querySelector('.icon-close');
+
   function checkScroll() {
+    if (navLinks && navLinks.classList.contains('active')) return;
     if (window.scrollY > 50) {
       navEl.classList.add('scrolled');
     } else {
@@ -1238,6 +1292,43 @@
   window.addEventListener('scroll', checkScroll);
   // Run on load in case the page is already scrolled
   checkScroll();
+
+  // Mobile Hamburger Toggle
+  if (toggleBtn && navLinks) {
+    toggleBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isActive = navLinks.classList.toggle('active');
+      if (isActive) {
+        iconMenu.style.display = 'none';
+        iconClose.style.display = 'block';
+        navEl.classList.add('scrolled');
+      } else {
+        iconMenu.style.display = 'block';
+        iconClose.style.display = 'none';
+        checkScroll();
+      }
+    });
+
+    // Close menu when clicking navigation links
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        iconMenu.style.display = 'block';
+        iconClose.style.display = 'none';
+        checkScroll();
+      });
+    });
+
+    // Close menu when clicking anywhere outside
+    document.addEventListener('click', (e) => {
+      if (navLinks.classList.contains('active') && !navEl.contains(e.target)) {
+        navLinks.classList.remove('active');
+        iconMenu.style.display = 'block';
+        iconClose.style.display = 'none';
+        checkScroll();
+      }
+    });
+  }
 </script>
 
 </body>
