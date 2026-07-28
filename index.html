@@ -403,11 +403,11 @@
 
     <div class="gauge-card reveal">
       <div class="cap"><span>Panel Reach</span><span>30 Hari Terakhir</span></div>
-      <div class="odo-row"><span class="js-count" data-target="211" data-suffix=",0K">0</span><small>views</small></div>
+      <div class="odo-row"><span id="hero-views">0</span><small>views</small></div>
       <div class="odo-label">Total tayangan seluruh konten Instagram</div>
       <div class="stat-mini-grid">
         <div class="stat-mini">
-          <div class="num"><span class="js-count" data-target="81632">0</span></div>
+          <div class="num"><span id="hero-reach">0</span></div>
           <div class="lbl">Akun dijangkau</div>
         </div>
         <div class="stat-mini">
@@ -725,6 +725,8 @@
   });
 
   // ---------- REEL METRICS (via backend function, keeps API key server-side) ----------
+  const fmtID = (n) => n === null || n === undefined ? '–' : n.toLocaleString('id-ID');
+
   async function loadReelMetrics(){
     const el = document.getElementById('reel-stats-1');
     if(!el) return;
@@ -732,16 +734,48 @@
       const res = await fetch('/api/reel-metrics');
       if(!res.ok) return;
       const m = await res.json();
-      const fmt = (n) => n === null || n === undefined ? '–' : n.toLocaleString('id-ID');
-      el.querySelector('[data-metric="likes"]').textContent = fmt(m.likes);
-      el.querySelector('[data-metric="comments"]').textContent = fmt(m.comments);
-      el.querySelector('[data-metric="shares"]').textContent = fmt(m.shares);
-      el.querySelector('[data-metric="views"]').textContent = fmt(m.views);
+      el.querySelector('[data-metric="likes"]').textContent = fmtID(m.likes);
+      el.querySelector('[data-metric="comments"]').textContent = fmtID(m.comments);
+      el.querySelector('[data-metric="shares"]').textContent = fmtID(m.shares);
+      el.querySelector('[data-metric="views"]').textContent = fmtID(m.views);
+
+      const viewsCaption = el.closest('.event-card-reel')?.querySelector('.views');
+      if(viewsCaption && m.views !== null && m.views !== undefined){
+        viewsCaption.childNodes[0].textContent = fmtID(m.views) + ' ';
+      }
     }catch(err){
       console.error('Reel metrics error:', err);
     }
   }
   loadReelMetrics();
+
+  // ---------- HERO PANEL STATS (30-day aggregate, via backend function) ----------
+  function animateCountTo(el, target, duration=1200){
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now-start)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      el.textContent = Math.floor(eased*target).toLocaleString('id-ID');
+      if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  async function loadHeroStats(){
+    const viewsEl = document.getElementById('hero-views');
+    const reachEl = document.getElementById('hero-reach');
+    if(!viewsEl || !reachEl) return;
+    try{
+      const res = await fetch('/api/account-stats');
+      if(!res.ok) return;
+      const s = await res.json();
+      if(typeof s.views_30d === 'number') animateCountTo(viewsEl, s.views_30d);
+      if(typeof s.reach_30d === 'number') animateCountTo(reachEl, s.reach_30d);
+    }catch(err){
+      console.error('Hero stats error:', err);
+    }
+  }
+  loadHeroStats();
 
   // ---------- YOUTUBE REALTIME STATS ----------
   // GANTI dengan API key kamu dari Google Cloud Console (YouTube Data API v3)
