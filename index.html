@@ -88,6 +88,11 @@
   /* ---------- NAV ---------- */
   nav{
     position:fixed; top:0; left:0; right:0; z-index:50;
+    background:transparent;
+    border-bottom:1px solid transparent;
+    transition:background-color 0.3s ease, border-color 0.3s ease, backdrop-filter 0.3s ease;
+  }
+  nav.scrolled{
     background:rgba(21,23,26,0.78);
     backdrop-filter:blur(6px);
     border-bottom:1px solid rgba(241,232,214,0.1);
@@ -183,9 +188,10 @@
 
   /* speedometer graphic */
   .gauge-card{
-    background:var(--aspal-2);
+    background:rgba(30, 33, 36, 0.55);
+    backdrop-filter:blur(10px);
     border:1px solid rgba(241,232,214,0.12);
-    border-radius:4px;
+    border-radius:12px;
     padding:28px;
   }
   .gauge-card .cap{
@@ -527,7 +533,7 @@
   <div class="wrap hero-grid">
     <div>
       <div class="eyebrow">Media Kit &amp; Kolaborasi 2026</div>
-      <h1>VESPA<br><span class="accent">KITA</span></h1>
+      <h1>VESPA <span class="accent">KITA</span></h1>
       <p class="lede">Vespa enthusiast &amp; storyteller. Podcast, liputan event, dan cerita jalanan skena Vespa Indonesia — dari Jogja untuk seluruh scooterist tanah air.</p>
       <div class="hero-ctas">
         <a href="#kolaborasi" class="btn btn-primary">Ajukan Kolaborasi</a>
@@ -1200,6 +1206,19 @@
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
+
+  // Toggle sticky navbar style on scroll
+  const navEl = document.querySelector('nav');
+  function checkScroll() {
+    if (window.scrollY > 50) {
+      navEl.classList.add('scrolled');
+    } else {
+      navEl.classList.remove('scrolled');
+    }
+  }
+  window.addEventListener('scroll', checkScroll);
+  // Run on load in case the page is already scrolled
+  checkScroll();
 </script>
 
 </body>
