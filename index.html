@@ -1212,23 +1212,15 @@
   revealEls.forEach(el=>io.observe(el));
 
   // odometer count-up
+  // IMPORTANT: do not replace this with rAF- or GSAP-driven animation. Both have
+  // been tried and both broke this stat in production (rAF stalls on backgrounded
+  // tabs; GSAP throws "gsap is not defined" here since the library isn't loaded on
+  // this page at all, which silently kills every script that runs after it too).
+  // Set the value directly — reliability over a nice-to-have flourish.
   document.querySelectorAll('.js-count').forEach(el => {
     const target = parseInt(el.dataset.target, 10);
     const suffix = el.dataset.suffix || '';
-    const obj = { value: 0 };
-    gsap.to(obj, {
-      value: target,
-      duration: 1.4,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: el,
-        start: "top 95%",
-        toggleActions: "play none none none"
-      },
-      onUpdate: () => {
-        el.textContent = Math.floor(obj.value).toLocaleString('id-ID') + suffix;
-      }
-    });
+    el.textContent = target.toLocaleString('id-ID') + suffix;
   });
 
   // audience bar fill
@@ -1296,41 +1288,13 @@
       if(!res.ok) return;
       const s = await res.json();
       
-      // GSAP animate count-up for views
-      if(typeof s.views_30d === 'number') {
-        const obj = { value: 0 };
-        gsap.to(obj, {
-          value: s.views_30d,
-          duration: 1.5,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: viewsEl,
-            start: "top 95%",
-            toggleActions: "play none none none"
-          },
-          onUpdate: () => {
-            viewsEl.textContent = Math.floor(obj.value).toLocaleString('id-ID');
-          }
-        });
-      }
-
-      // GSAP animate count-up for reach
-      if(typeof s.reach_30d === 'number') {
-        const obj = { value: 0 };
-        gsap.to(obj, {
-          value: s.reach_30d,
-          duration: 1.5,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: reachEl,
-            start: "top 95%",
-            toggleActions: "play none none none"
-          },
-          onUpdate: () => {
-            reachEl.textContent = Math.floor(obj.value).toLocaleString('id-ID');
-          }
-        });
-      }
+      // Set values directly — do not swap this for rAF- or GSAP-driven animation.
+      // Both have broken this exact stat before (rAF stalls on backgrounded tabs;
+      // GSAP isn't loaded on this page, so calling it throws and kills every
+      // script that runs after it, including the reel-metrics and engagement
+      // rate code just below).
+      if(typeof s.views_30d === 'number') viewsEl.textContent = s.views_30d.toLocaleString('id-ID');
+      if(typeof s.reach_30d === 'number') reachEl.textContent = s.reach_30d.toLocaleString('id-ID');
 
       if(engagementEl && typeof s.engagement_rate_30d === 'number'){
         engagementEl.textContent = s.engagement_rate_30d.toLocaleString('id-ID', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
