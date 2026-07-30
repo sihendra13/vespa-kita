@@ -1209,19 +1209,8 @@
   loadReelMetrics('reel-stats-6', '18110032822969213');
 
   // ---------- HERO PANEL STATS (30-day aggregate, via backend function) ----------
-  function animateElementCount(el, target) {
-    const duration = 1400;
-    const start = performance.now();
-    function tick(now){
-      const p = Math.min((now-start)/duration, 1);
-      const eased = 1 - Math.pow(1-p, 3);
-      const val = Math.floor(eased*target);
-      el.textContent = val.toLocaleString('id-ID');
-      if(p<1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-
+  // Set text directly instead of animating: an rAF-driven count-up can get stuck
+  // on a backgrounded/throttled tab, which has broken this stat on real devices before.
   async function loadHeroStats(){
     const viewsEl = document.getElementById('hero-views');
     const reachEl = document.getElementById('hero-reach');
@@ -1231,8 +1220,8 @@
       const res = await fetch('/api/account-stats');
       if(!res.ok) return;
       const s = await res.json();
-      if(typeof s.views_30d === 'number') animateElementCount(viewsEl, s.views_30d);
-      if(typeof s.reach_30d === 'number') animateElementCount(reachEl, s.reach_30d);
+      if(typeof s.views_30d === 'number') viewsEl.textContent = s.views_30d.toLocaleString('id-ID');
+      if(typeof s.reach_30d === 'number') reachEl.textContent = s.reach_30d.toLocaleString('id-ID');
       if(engagementEl && typeof s.engagement_rate_30d === 'number'){
         engagementEl.textContent = s.engagement_rate_30d.toLocaleString('id-ID', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
 
