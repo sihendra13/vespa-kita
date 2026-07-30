@@ -176,42 +176,6 @@
     }
   }
 
-  /* ---------- HERO SCROLLYTELLING ANIMATION ---------- */
-  .hero-vespa-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 480px;
-    max-width: 90vw;
-    z-index: 5;
-    pointer-events: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  .hero-vespa {
-    width: 100%;
-    height: auto;
-    display: block;
-    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.65));
-  }
-  .vespa-shadow {
-    position: absolute;
-    bottom: -15px;
-    width: 75%;
-    height: 25px;
-    background: radial-gradient(ellipse at center, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 70%);
-    z-index: -1;
-  }
-  
-  @media (max-width: 900px) {
-    .hero-vespa-wrapper {
-      width: 280px;
-      top: 60%;
-    }
-  }
-
   /* ---------- HERO ---------- */
   .hero{
     padding-top:200px;
@@ -219,14 +183,6 @@
     position:relative;
     overflow:hidden;
     background:var(--aspal);
-  }
-  @media (min-width: 901px) {
-    .hero {
-      height: 100vh;
-      padding: 0;
-      display: flex;
-      align-items: center;
-    }
   }
   .hero-video-bg {
     position:absolute;
@@ -667,10 +623,6 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="hero-vespa-wrapper">
-    <img src="vespa_ss90.png" alt="Vespa Super Sprint 90" class="hero-vespa">
-    <div class="vespa-shadow"></div>
   </div>
 </section>
 
@@ -1335,13 +1287,7 @@
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
-</script>
 
-<!-- Load GSAP CDN -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-
-<script>
   // Toggle sticky navbar style on scroll
   const navEl = document.querySelector('nav');
   const toggleBtn = document.querySelector('.nav-toggle');
@@ -1398,72 +1344,6 @@
     });
   }
 
-  // ---------- GSAP HERO SCROLLYTELLING ----------
-  gsap.registerPlugin(ScrollTrigger);
-
-  const isMobile = window.innerWidth <= 900;
-
-  // Set initial states for scrollytelling
-  gsap.set(".hero-grid > div:first-child", { opacity: 0, y: 50 });
-  gsap.set(".gauge-card", { opacity: 0, y: 50 });
-  gsap.set(".hero-vespa-wrapper", {
-    xPercent: 150,
-    scale: isMobile ? 1.0 : 1.35,
-    left: "50%",
-    x: "-50%",
-    y: isMobile ? "-10%" : "-20%"
-  });
-
-  // Create Timeline with ScrollTrigger
-  const heroTl = gsap.timeline({
-    scrollTrigger: {
-      trigger: ".hero",
-      start: "top top",
-      end: "+=2000",
-      pin: true,
-      scrub: 1.2,
-      invalidateOnRefresh: true
-    }
-  });
-
-  // Phase 1: Vespa rides in from right to center of the screen
-  heroTl.to(".hero-vespa-wrapper", {
-    xPercent: 0,
-    duration: 1.5,
-    ease: "power2.out"
-  })
-  // Engine/suspension bouncing simulation while riding in
-  .to(".hero-vespa", {
-    y: -8,
-    duration: 0.15,
-    repeat: 8,
-    yoyo: true,
-    ease: "sine.inOut"
-  }, 0)
-
-  // Phase 2: Vespa glides from center to its final grid position on the right
-  .to(".hero-vespa-wrapper", {
-    left: isMobile ? "50%" : "70%",
-    x: isMobile ? "-50%" : "0%",
-    y: isMobile ? "20%" : "0%",
-    scale: isMobile ? 0.75 : 0.85,
-    duration: 1.5,
-    ease: "power2.inOut"
-  })
-
-  // Phase 3: Reveal left hero text and right gauge card
-  .to(".hero-grid > div:first-child", {
-    opacity: 1,
-    y: 0,
-    duration: 1.0,
-    ease: "power2.out"
-  }, "-=0.8")
-  .to(".gauge-card", {
-    opacity: 1,
-    y: 0,
-    duration: 1.0,
-    ease: "power2.out"
-  }, "-=0.8");
 </script>
 
 </body>
