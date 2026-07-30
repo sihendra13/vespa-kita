@@ -1177,28 +1177,24 @@
   revealEls.forEach(el=>io.observe(el));
 
   // odometer count-up
-  const counters = document.querySelectorAll('.js-count');
-  const countIO = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        const el = entry.target;
-        const target = parseInt(el.dataset.target, 10);
-        const suffix = el.dataset.suffix || '';
-        const duration = 1400;
-        const start = performance.now();
-        function tick(now){
-          const p = Math.min((now-start)/duration, 1);
-          const eased = 1 - Math.pow(1-p, 3);
-          const val = Math.floor(eased*target);
-          el.textContent = val.toLocaleString('id-ID') + (p===1 ? suffix : '');
-          if(p<1) requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-        countIO.unobserve(el);
+  document.querySelectorAll('.js-count').forEach(el => {
+    const target = parseInt(el.dataset.target, 10);
+    const suffix = el.dataset.suffix || '';
+    const obj = { value: 0 };
+    gsap.to(obj, {
+      value: target,
+      duration: 1.4,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: el,
+        start: "top 95%",
+        toggleActions: "play none none none"
+      },
+      onUpdate: () => {
+        el.textContent = Math.floor(obj.value).toLocaleString('id-ID') + suffix;
       }
     });
-  }, {threshold:0.4});
-  counters.forEach(el=>countIO.observe(el));
+  });
 
   // audience bar fill
   const bars = document.querySelectorAll('.bar-fill');
@@ -1253,8 +1249,6 @@
   loadReelMetrics('reel-stats-6', '18110032822969213');
 
   // ---------- HERO PANEL STATS (30-day aggregate, via backend function) ----------
-  // Set text directly instead of animating: an rAF-driven count-up can get stuck
-  // on a backgrounded/throttled tab, which has broken this stat on real devices before.
   async function loadHeroStats(){
     const viewsEl = document.getElementById('hero-views');
     const reachEl = document.getElementById('hero-reach');
@@ -1264,8 +1258,43 @@
       const res = await fetch('/api/account-stats');
       if(!res.ok) return;
       const s = await res.json();
-      if(typeof s.views_30d === 'number') viewsEl.textContent = s.views_30d.toLocaleString('id-ID');
-      if(typeof s.reach_30d === 'number') reachEl.textContent = s.reach_30d.toLocaleString('id-ID');
+      
+      // GSAP animate count-up for views
+      if(typeof s.views_30d === 'number') {
+        const obj = { value: 0 };
+        gsap.to(obj, {
+          value: s.views_30d,
+          duration: 1.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: viewsEl,
+            start: "top 95%",
+            toggleActions: "play none none none"
+          },
+          onUpdate: () => {
+            viewsEl.textContent = Math.floor(obj.value).toLocaleString('id-ID');
+          }
+        });
+      }
+
+      // GSAP animate count-up for reach
+      if(typeof s.reach_30d === 'number') {
+        const obj = { value: 0 };
+        gsap.to(obj, {
+          value: s.reach_30d,
+          duration: 1.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: reachEl,
+            start: "top 95%",
+            toggleActions: "play none none none"
+          },
+          onUpdate: () => {
+            reachEl.textContent = Math.floor(obj.value).toLocaleString('id-ID');
+          }
+        });
+      }
+
       if(engagementEl && typeof s.engagement_rate_30d === 'number'){
         engagementEl.textContent = s.engagement_rate_30d.toLocaleString('id-ID', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
 
