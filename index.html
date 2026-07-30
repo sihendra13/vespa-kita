@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<script>
+  (function() {
+    // If user previously chose Indonesian manually, do not redirect
+    if (localStorage.getItem('lang_pref') === 'id') return;
+
+    // Check browser language
+    const userLang = navigator.language || navigator.userLanguage;
+    if (userLang && !userLang.toLowerCase().startsWith('id')) {
+      window.location.replace('/en/');
+    }
+  })();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VespaKita - Vespa Untuk Kita Semua</title>
@@ -623,9 +635,9 @@
       <a href="#kolaborasi" class="nav-mobile-cta">Mari Berkolaborasi</a>
     </div>
     <div class="lang-selector">
-      <a href="/" class="active">ID</a>
+      <a href="/" class="active" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
       <span>|</span>
-      <a href="/en/">EN</a>
+      <a href="/en/" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
     </div>
     <a href="#kolaborasi" class="navcta">Mari Berkolaborasi</a>
     <button class="nav-toggle" aria-label="Buka Menu">
