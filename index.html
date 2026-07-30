@@ -1263,8 +1263,7 @@
   loadYouTubeStats();
 
   // WhatsApp submit
-  // GANTI nomor di bawah ini dengan nomor WhatsApp VespaKita (format: 62 diikuti nomor tanpa 0 di depan)
-  const WA_NUMBER = "6281234567890";
+  const WA_NUMBER = "628112651405";
 
   document.getElementById('f-submit').addEventListener('click', ()=>{
     const nama = document.getElementById('f-nama').value.trim();
@@ -1276,11 +1275,15 @@
       return;
     }
 
-    const text = `Halo VespaKita! Saya ingin mengajukan kolaborasi.%0A%0A`
-      + `Jenis: ${encodeURIComponent(jenisKolaborasi)}%0A`
-      + `Nama: ${encodeURIComponent(nama)}%0A`
-      + `Brand/Organisasi: ${encodeURIComponent(brand)}%0A`
-      + `Pesan: ${encodeURIComponent(pesan || '-')}`;
+    const text = jenisKolaborasi === 'Brand'
+      ? `Halo VespaKita! Kami dari ${encodeURIComponent(brand)} tertarik mengajukan kolaborasi brand.%0A%0A`
+        + `Nama: ${encodeURIComponent(nama)}%0A`
+        + `Brand: ${encodeURIComponent(brand)}%0A`
+        + `Pesan: ${encodeURIComponent(pesan || '-')}`
+      : `Halo VespaKita! Kami dari ${encodeURIComponent(brand)} ingin mengajukan VespaKita jadi media partner.%0A%0A`
+        + `Nama: ${encodeURIComponent(nama)}%0A`
+        + `Organisasi/Event: ${encodeURIComponent(brand)}%0A`
+        + `Pesan: ${encodeURIComponent(pesan || '-')}`;
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
