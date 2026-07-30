@@ -6,6 +6,8 @@
 // reach_30d: sum of per-post reach — an approximation of "accounts reached," since a person
 // who saw multiple posts is counted once per post here, not once at the account level.
 // Instagram's own account-level unique reach isn't available through Post For Me's API.
+// engagement_rate_30d: sum(total_interactions) / sum(views) * 100 across the same window —
+// a view-weighted average, more stable than averaging each post's individual rate.
 
 const SOCIAL_ACCOUNT_ID = "spc_adDd2jBSSm5jGwhBO4jYM"; // ves_pakita (Instagram)
 const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
@@ -25,6 +27,7 @@ export async function onRequestGet(context) {
   const cutoff = Date.now() - THIRTY_DAYS_MS;
   let viewsTotal = 0;
   let reachTotal = 0;
+  let interactionsTotal = 0;
   let postCount = 0;
   let cursor = "";
   let reachedCutoff = false;
@@ -53,6 +56,7 @@ export async function onRequestGet(context) {
         const m = item.metrics || {};
         viewsTotal += typeof m.views === "number" ? m.views : 0;
         reachTotal += typeof m.reach === "number" ? m.reach : 0;
+        interactionsTotal += typeof m.total_interactions === "number" ? m.total_interactions : 0;
         postCount++;
       }
 
@@ -66,10 +70,15 @@ export async function onRequestGet(context) {
     });
   }
 
+  const engagementRate30d = viewsTotal > 0
+    ? Math.round((interactionsTotal / viewsTotal) * 1000) / 10
+    : null;
+
   return new Response(
     JSON.stringify({
       views_30d: viewsTotal,
       reach_30d: reachTotal,
+      engagement_rate_30d: engagementRate30d,
       post_count_30d: postCount,
     }),
     {

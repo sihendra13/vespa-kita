@@ -1014,7 +1014,7 @@
           </div>
           <p style="color:var(--chrome); font-size:13px; margin-top:6px;">Sisanya tersebar di Malaysia, Singapura, dan AS.</p>
 
-          <div class="audience-foot" style="border-top:none; margin-top:30px; padding-top:0;">
+          <div class="audience-foot" style="border-top:none; margin-top:30px; padding-top:0; grid-template-columns:repeat(3,1fr);">
             <div>
               <div class="num">72,6%</div>
               <div class="lbl">Audiens usia produktif 25–44 tahun</div>
@@ -1022,6 +1022,10 @@
             <div>
               <div class="num">Sabtu</div>
               <div class="lbl">Paling aktif 15.00–23.00 WIB</div>
+            </div>
+            <div>
+              <div class="num" id="hero-engagement">–</div>
+              <div class="lbl">Engagement rate rata-rata (30 hari)</div>
             </div>
           </div>
         </div>
@@ -1213,6 +1217,7 @@
   async function loadHeroStats(){
     const viewsEl = document.getElementById('hero-views');
     const reachEl = document.getElementById('hero-reach');
+    const engagementEl = document.getElementById('hero-engagement');
     if(!viewsEl || !reachEl) return;
     try{
       const res = await fetch('/api/account-stats');
@@ -1220,6 +1225,9 @@
       const s = await res.json();
       if(typeof s.views_30d === 'number') animateElementCount(viewsEl, s.views_30d);
       if(typeof s.reach_30d === 'number') animateElementCount(reachEl, s.reach_30d);
+      if(engagementEl && typeof s.engagement_rate_30d === 'number'){
+        engagementEl.textContent = s.engagement_rate_30d.toLocaleString('id-ID', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
+      }
     }catch(err){
       console.error('Hero stats error:', err);
     }
