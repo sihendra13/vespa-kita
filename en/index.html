@@ -142,8 +142,8 @@
     font-family: var(--mono);
     font-size: 13px;
     letter-spacing: 0.05em;
-    margin-left: 24px;
-    margin-right: 24px;
+    margin-left: 20px;
+    margin-right: 16px;
     z-index: 55;
   }
   .lang-selector a {
@@ -646,6 +646,15 @@
   .dropdown.active .dropdown-menu,
   .dropdown:hover .dropdown-menu {
     display: block;
+  }
+  .dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 0;
+    right: 0;
+    height: 20px;
+    background: transparent;
   }
 </style>
 </head>
