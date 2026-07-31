@@ -1282,7 +1282,7 @@
   // form type toggle
   let jenisKolaborasi = 'Brand';
   document.querySelectorAll('.type-toggle button').forEach(btn=>{
-    btn.addEventsListener('click', ()=>{
+    btn.addEventListener('click', ()=>{
       document.querySelectorAll('.type-toggle button').forEach(b=>b.classList.remove('active'));
       btn.classList.add('active');
       jenisKolaborasi = btn.dataset.type;
@@ -1393,7 +1393,7 @@
   // WhatsApp submit
   const WA_NUMBER = "628112651405";
 
-  document.getElementById('f-submit').addEventsListener('click', ()=>{
+  document.getElementById('f-submit').addEventListener('click', ()=>{
     const nama = document.getElementById('f-nama').value.trim();
     const brand = document.getElementById('f-brand').value.trim();
     const pesan = document.getElementById('f-pesan').value.trim();
@@ -1431,13 +1431,13 @@
       navEl.classList.remove('scrolled');
     }
   }
-  window.addEventsListener('scroll', checkScroll);
+  window.addEventListener('scroll', checkScroll);
   // Run on load in case the page is already scrolled
   checkScroll();
 
   // Mobile Hamburger Toggle
   if (toggleBtn && navLinks) {
-    toggleBtn.addEventsListener('click', (e) => {
+    toggleBtn.addEventListener('click', (e) => {
       e.stopPropagation();
       const isActive = navLinks.classList.toggle('active');
       if (isActive) {
@@ -1453,7 +1453,7 @@
 
     // Close menu when clicking navigation links
     navLinks.querySelectorAll('a').forEach(link => {
-      link.addEventsListener('click', () => {
+      link.addEventListener('click', () => {
         navLinks.classList.remove('active');
         iconMenu.style.display = 'block';
         iconClose.style.display = 'none';
@@ -1462,7 +1462,7 @@
     });
 
     // Close menu when clicking anywhere outside
-    document.addEventsListener('click', (e) => {
+    document.addEventListener('click', (e) => {
       if (navLinks.classList.contains('active') && !navEl.contains(e.target)) {
         navLinks.classList.remove('active');
         iconMenu.style.display = 'block';
@@ -1476,12 +1476,12 @@
   const dropdownToggle = document.querySelector('.dropdown-toggle');
   const dropdown = document.querySelector('.dropdown');
   if (dropdownToggle && dropdown) {
-    dropdownToggle.addEventsListener('click', (e) => {
+    dropdownToggle.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
       dropdown.classList.toggle('active');
     });
-    document.addEventsListener('click', (e) => {
+    document.addEventListener('click', (e) => {
       if (!dropdown.contains(e.target)) {
         dropdown.classList.remove('active');
       }
