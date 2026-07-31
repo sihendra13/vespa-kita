@@ -1,11 +1,9 @@
 {
   "_comment": "Ordered id -> en text pairs used by build-en.js to generate en/index.html from index.html. Longer/more specific strings are listed first on purpose where they could otherwise collide with a shorter substring.",
 
-  "VespaKita - Vespa Untuk Kita Semua": "VespaKita - Vespa For Us All",
+  "_note_title_and_meta_description": "Title/meta/og tags are handled separately by metaSwaps in build-en.js, not this dictionary — that's why those exact strings aren't listed here.",
 
   "Media independen yang mendokumentasikan perjalanan, budaya, dan komunitas di Indonesia melalui konten, podcast, dan liputan event. Menghubungkan brand untuk menjangkau berbagai komunitas melalui cerita yang autentik dan dipercaya.": "An independent media documenting the journey, culture, and communities in Indonesia through content, podcasts, and event coverage. Connecting brands to reach various communities through authentic and trusted stories.",
-
-  "Media independen yang mendokumentasikan perjalanan, budaya, dan komunitas di Indonesia melalui konten, podcast, dan liputan event. Menghubungkan brand untuk menjangkau berbagai komunitas.": "An independent media documenting the journey, culture, and communities in Indonesia through content, podcasts, and event coverage. Connecting brands to reach various communities.",
 
   "Event": "Events",
   "Audiens": "Audience",

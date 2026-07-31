@@ -88,18 +88,35 @@ html = html.replace(
 
 const dict = JSON.parse(fs.readFileSync(DICT_PATH, "utf8"));
 const entries = Object.entries(dict)
-  .filter(([k]) => k !== "_comment")
+  .filter(([k]) => !k.startsWith("_"))
   // Longest keys first so a short string can't accidentally consume part of a
   // longer one that contains it (e.g. "Nama" vs "Nama Brand / Organisasi").
   .sort((a, b) => b[0].length - a[0].length);
 
+function escapeRegExp(s) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 let missing = [];
 for (const [id, en] of entries) {
-  if (!html.includes(id)) {
-    missing.push(id);
-    continue;
+  // Single "word" keys (letters/digits only, no spaces/punctuation) are the
+  // dangerous case: a plain substring replace can corrupt unrelated code that
+  // happens to contain that word, e.g. "Event" inside "addEventListener".
+  // Require word boundaries for those. Multi-word phrases are specific enough
+  // that a plain replace is safe and simpler.
+  const isSingleWord = /^[A-Za-z0-9]+$/.test(id);
+  let matched = false;
+  if (isSingleWord) {
+    const re = new RegExp(`\\b${escapeRegExp(id)}\\b`, "g");
+    html = html.replace(re, () => {
+      matched = true;
+      return en;
+    });
+  } else {
+    matched = html.includes(id);
+    if (matched) html = html.split(id).join(en);
   }
-  html = html.split(id).join(en);
+  if (!matched) missing.push(id);
 }
 
 fs.writeFileSync(OUT, html);
