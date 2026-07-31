@@ -12,6 +12,22 @@
       window.location.replace('/en/');
     }
   })();
+  // Dropdown toggle
+  const dropdownToggle = document.querySelector('.dropdown-toggle');
+  const dropdown = document.querySelector('.dropdown');
+  if (dropdownToggle && dropdown) {
+    dropdownToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+  }
+
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -137,7 +153,7 @@
     width: auto;
     display: block;
   }
-  .navlinks{display:flex; gap:28px; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; font-family:var(--mono);}
+  .navlinks{display:flex; gap:28px; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; font-family:var(--mono); margin-left:auto;}
   .navlinks a{opacity:0.75; transition:opacity .2s;}
   .navlinks a:hover{opacity:1; color:var(--mint);}
   .nav-mobile-cta { display: none; }
@@ -154,7 +170,7 @@
     font-family: var(--mono);
     font-size: 13px;
     letter-spacing: 0.05em;
-    margin-left: auto;
+    margin-left: 24px;
     margin-right: 24px;
     z-index: 55;
   }
@@ -620,6 +636,45 @@
   @media (prefers-reduced-motion: reduce){
     *{transition-duration:0.001ms !important; animation-duration:0.001ms !important;}
   }
+  /* ---------- DROPDOWN ---------- */
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--aspal-2);
+    min-width: 170px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    z-index: 100;
+    border-radius: 4px;
+    border: 1px solid rgba(241,232,214,0.1);
+    margin-top: 10px;
+    padding: 8px 0;
+  }
+  .dropdown-menu a {
+    color: var(--krem);
+    padding: 10px 16px;
+    text-decoration: none;
+    display: block;
+    font-size: 13px;
+    text-transform: none;
+    opacity: 0.85;
+    transition: background-color 0.2s, opacity 0.2s;
+  }
+  .dropdown-menu a:hover {
+    background-color: rgba(241,232,214,0.08);
+    opacity: 1;
+    color: var(--mint);
+  }
+  .dropdown.active .dropdown-menu,
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -632,6 +687,12 @@
       <a href="#podcast">Podcast</a>
       <a href="#audiens">Audiens</a>
       <a href="#mediakit">Media Kit</a>
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle" style="cursor: pointer;">Community</a>
+        <div class="dropdown-menu">
+          <a href="/60s-yogyakarta/">60's Yogyakarta</a>
+        </div>
+      </div>
       <a href="#kolaborasi" class="nav-mobile-cta">Mari Berkolaborasi</a>
     </div>
     <div class="lang-selector">
@@ -1426,6 +1487,22 @@
         iconMenu.style.display = 'block';
         iconClose.style.display = 'none';
         checkScroll();
+      }
+    });
+  }
+
+  // Dropdown toggle
+  const dropdownToggle = document.querySelector('.dropdown-toggle');
+  const dropdown = document.querySelector('.dropdown');
+  if (dropdownToggle && dropdown) {
+    dropdownToggle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', (e) => {
+      if (!dropdown.contains(e.target)) {
+        dropdown.classList.remove('active');
       }
     });
   }
