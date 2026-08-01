@@ -36,24 +36,28 @@ const metaSwaps = [
     '<title>VespaKita - Vespa For Us All</title>',
   ],
   [
-    '<meta name="description" content="Media independen yang mendokumentasikan perjalanan, budaya, dan komunitas di Indonesia melalui konten, podcast, dan liputan event. Menghubungkan brand untuk menjangkau berbagai komunitas.">',
-    '<meta name="description" content="An independent media documenting the journey, culture, and communities in Indonesia through content, podcasts, and event coverage. Connecting brands to reach various communities.">',
+    '<link rel="canonical" href="https://www.vespakita.com/" />',
+    '<link rel="canonical" href="https://www.vespakita.com/en/" />',
   ],
   [
     '<meta property="og:url" content="https://www.vespakita.com/">',
     '<meta property="og:url" content="https://www.vespakita.com/en/">',
   ],
   [
+    '<meta property="og:locale" content="id_ID">',
+    '<meta property="og:locale" content="en_US">',
+  ],
+  [
+    '<meta property="og:locale:alternate" content="en_US">',
+    '<meta property="og:locale:alternate" content="id_ID">',
+  ],
+  [
     '<meta property="og:title" content="VespaKita - Vespa Untuk Kita Semua">',
     '<meta property="og:title" content="VespaKita - Vespa For Us All">',
   ],
   [
-    '<meta property="og:description" content="Media independen yang mendokumentasikan perjalanan, budaya, dan komunitas di Indonesia melalui konten, podcast, dan liputan event. Menghubungkan brand untuk menjangkau berbagai komunitas.">',
-    '<meta property="og:description" content="An independent media documenting the journey, culture, and communities in Indonesia through content, podcasts, and event coverage. Connecting brands to reach various communities.">',
-  ],
-  [
-    '<meta property="og:image" content="https://vespa-kita.pages.dev/logo.png">',
-    '<meta property="og:image" content="https://www.vespakita.com/logo.png">',
+    '<meta name="twitter:title" content="VespaKita - Vespa Untuk Kita Semua">',
+    '<meta name="twitter:title" content="VespaKita - Vespa For Us All">',
   ],
 ];
 for (const [from, to] of metaSwaps) {

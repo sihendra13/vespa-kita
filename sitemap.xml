@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://www.vespakita.com/</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://www.vespakita.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.vespakita.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.vespakita.com/" />
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.vespakita.com/en/</loc>
+    <xhtml:link rel="alternate" hreflang="id" href="https://www.vespakita.com/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://www.vespakita.com/en/" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.vespakita.com/" />
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.vespakita.com/60s-yogyakarta/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+</urlset>
