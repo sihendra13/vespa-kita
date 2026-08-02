@@ -560,14 +560,37 @@
   .split-panel p{color:var(--chrome); font-size:15px; margin-bottom:26px; max-width:400px;}
 
   /* ---------- PODCAST ---------- */
-  .podcast-grid{display:grid; grid-template-columns:1fr 1fr; gap:44px; align-items:start;}
-  @media (max-width:900px){ .podcast-grid{grid-template-columns:1fr;} }
-  .video-frame{
-    position:relative; padding-top:56.25%;
+  .podcast-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:28px; align-items:start;}
+  @media (max-width:1000px){ .podcast-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:640px){ .podcast-grid{grid-template-columns:1fr;} }
+  .video-card{
+    position:relative; display:block; width:100%;
+    padding:0; padding-top:56.25%; margin:0; font:inherit;
     background:#000; border-radius:4px; overflow:hidden;
-    border:1px solid rgba(0,0,0,0.15);
+    border:1px solid rgba(0,0,0,0.15); cursor:pointer;
   }
-  .video-frame iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .video-card img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .3s ease;}
+  .video-card:hover img{transform:scale(1.05);}
+  .video-card .play-btn{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;}
+  .video-card .play-btn span{
+    width:52px; height:52px; border-radius:50%;
+    background:rgba(21,23,26,0.75); display:flex; align-items:center; justify-content:center;
+    transition:background .2s ease, transform .2s ease;
+  }
+  .video-card:hover .play-btn span{background:var(--merah); transform:scale(1.08);}
+  .video-card .play-btn svg{width:18px; height:18px; fill:#fff; margin-left:3px;}
+
+  .yt-modal{position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center; padding:24px;}
+  .yt-modal.active{display:flex;}
+  .yt-modal-backdrop{position:absolute; inset:0; background:rgba(10,10,10,0.9);}
+  .yt-modal-box{position:relative; width:100%; max-width:960px; aspect-ratio:16/9; background:#000; border-radius:4px; overflow:hidden; z-index:1;}
+  .yt-modal-box iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .yt-modal-close{
+    position:absolute; top:-44px; right:0; z-index:2;
+    background:none; border:0; color:#fff; font-size:32px; line-height:1; cursor:pointer; font-family:var(--body);
+  }
+  @media (max-width:640px){ .yt-modal-close{top:-40px; font-size:26px;} }
+
   .shownotes{}
   .yt-live-stats{
     background:var(--ink); color:var(--krem);
@@ -1179,12 +1202,18 @@
       <h2>Ngobrol soal jalanan, komunitas, dan skena Vespa</h2>
     </div>
     <div class="podcast-grid">
-      <div class="video-frame reveal">
-        <iframe src="https://www.youtube.com/embed/xRL-k6GscYA" title="VespaKita Podcast" allowfullscreen loading="lazy"></iframe>
-      </div>
-      <div class="video-frame reveal">
-        <iframe src="https://www.youtube.com/embed/Qnt9lnMtJQw" title="VespaKita Podcast" allowfullscreen loading="lazy"></iframe>
-      </div>
+      <button type="button" class="video-card reveal" data-yt="xRL-k6GscYA" aria-label="Putar video VespaKita Podcast">
+        <img src="https://img.youtube.com/vi/xRL-k6GscYA/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
+        <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
+      </button>
+      <button type="button" class="video-card reveal" data-yt="Qnt9lnMtJQw" aria-label="Putar video VespaKita Podcast">
+        <img src="https://img.youtube.com/vi/Qnt9lnMtJQw/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
+        <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
+      </button>
+      <button type="button" class="video-card reveal" data-yt="cJ5tFg6wJSk" aria-label="Putar video VespaKita Podcast">
+        <img src="https://img.youtube.com/vi/cJ5tFg6wJSk/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
+        <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
+      </button>
       <div class="shownotes reveal" style="grid-column:1/-1;">
         <div class="yt-live-stats">
           <span class="yt-dot"></span>
@@ -1205,6 +1234,13 @@
           <a href="https://youtu.be/xRL-k6GscYA" target="_blank" rel="noopener" class="btn btn-outline">Tonton Episode Lengkap &amp; Subscribe di YouTube →</a>
         </div>
       </div>
+    </div>
+  </div>
+  <div class="yt-modal" id="yt-modal">
+    <div class="yt-modal-backdrop" data-yt-close></div>
+    <div class="yt-modal-box">
+      <button type="button" class="yt-modal-close" data-yt-close aria-label="Tutup">&times;</button>
+      <div id="yt-modal-player"></div>
     </div>
   </div>
 </section>
@@ -1391,6 +1427,32 @@
     });
   }, {threshold:0.15});
   revealEls.forEach(el=>io.observe(el));
+
+  // podcast video modal
+  (function(){
+    const modal = document.getElementById('yt-modal');
+    const player = document.getElementById('yt-modal-player');
+    if(!modal || !player) return;
+    function openModal(id){
+      player.innerHTML = '<iframe src="https://www.youtube.com/embed/' + id + '?autoplay=1" title="VespaKita Podcast" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeModal(){
+      modal.classList.remove('active');
+      player.innerHTML = '';
+      document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.video-card[data-yt]').forEach(card=>{
+      card.addEventListener('click', ()=> openModal(card.dataset.yt));
+    });
+    modal.querySelectorAll('[data-yt-close]').forEach(el=>{
+      el.addEventListener('click', closeModal);
+    });
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'Escape') closeModal();
+    });
+  })();
 
   // odometer count-up
   // IMPORTANT: do not replace this with rAF- or GSAP-driven animation. Both have
