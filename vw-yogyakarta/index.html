@@ -439,9 +439,36 @@
           Kini jumlah anggota VCY telah menyentuh angka 227 orang dengan populasi mobil yang lebih banyak dari jumlah tersebut, serta terus aktif mengibarkan panji penggemar VW Indonesia ke tingkat nasional hingga internasional.
         </p>
       </div>
-      <div style="width: 100%; display: flex; align-items: center; justify-content: center;">
-        <img src="images/page_3.jpg" alt="Dokumentasi VCY" style="width: 100%; border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); border: 1px solid var(--line-l);">
+      <div class="video-carousel-container" style="width: 100%; display: flex; flex-direction: column;">
+        <div class="main-video-player" style="position:relative; padding-top:56.25%; background:#000; border-radius:8px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,0.18); border: 1px solid var(--line-d);">
+          <iframe id="main-carousel-player" src="https://www.youtube.com/embed/cmmBicDgYVw" style="position:absolute; inset:0; width:100%; height:100%; border:0;" allowfullscreen></iframe>
+        </div>
+        <div class="carousel-thumbs" style="display:flex; gap:12px; margin-top:16px; overflow-x:auto; padding-bottom:8px;">
+          <div class="thumb-card" onclick="switchVideo('cmmBicDgYVw', this)" style="flex:1; min-width:110px; cursor:pointer; opacity:1; transition: opacity 0.2s;">
+            <img src="https://img.youtube.com/vi/cmmBicDgYVw/mqdefault.jpg" style="border-radius:4px; border:2px solid var(--amber); width:100%; transition: border-color 0.2s;" alt="Video 1">
+            <div style="font-family:var(--ff-mono); font-size:10px; margin-top:6px; text-align:center; color:var(--paper); opacity: 0.8;">Dokumentasi 1</div>
+          </div>
+          <div class="thumb-card" onclick="switchVideo('ieGYyZoV6fY', this)" style="flex:1; min-width:110px; cursor:pointer; opacity:0.6; transition: opacity 0.2s;">
+            <img src="https://img.youtube.com/vi/ieGYyZoV6fY/mqdefault.jpg" style="border-radius:4px; border:2px solid transparent; width:100%; transition: border-color 0.2s;" alt="Video 2">
+            <div style="font-family:var(--ff-mono); font-size:10px; margin-top:6px; text-align:center; color:var(--paper); opacity: 0.8;">Dokumentasi 2</div>
+          </div>
+          <div class="thumb-card" onclick="switchVideo('LTkS8g3Y11M', this)" style="flex:1; min-width:110px; cursor:pointer; opacity:0.6; transition: opacity 0.2s;">
+            <img src="https://img.youtube.com/vi/LTkS8g3Y11M/mqdefault.jpg" style="border-radius:4px; border:2px solid transparent; width:100%; transition: border-color 0.2s;" alt="Video 3">
+            <div style="font-family:var(--ff-mono); font-size:10px; margin-top:6px; text-align:center; color:var(--paper); opacity: 0.8;">Dokumentasi 3</div>
+          </div>
+        </div>
       </div>
+      <script>
+        function switchVideo(videoId, el) {
+          document.getElementById('main-carousel-player').src = 'https://www.youtube.com/embed/' + videoId;
+          document.querySelectorAll('.thumb-card').forEach(card => {
+            card.style.opacity = '0.6';
+            card.querySelector('img').style.borderColor = 'transparent';
+          });
+          el.style.opacity = '1';
+          el.querySelector('img').style.borderColor = 'var(--amber)';
+        }
+      </script>
     </div>
   </div>
 </section>
