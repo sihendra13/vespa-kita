@@ -708,6 +708,22 @@
     height: 20px;
     background: transparent;
   }
+  
+  /* ── Next Event Card Hover Effects ──────────────── */
+  .next-event-card {
+    background: var(--aspal-2);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .next-event-card:hover {
+    transform: translateY(-6px);
+    border-color: #ff333d;
+    box-shadow: 0 0 20px rgba(255, 51, 61, 0.6), 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
 </style>
 </head>
 <body>
@@ -787,7 +803,7 @@
     
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; margin-top: 20px;">
       <!-- Card 1: 60s Yogyakarta -->
-      <div class="reveal" style="background: var(--aspal-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      <div class="reveal next-event-card">
         <div style="padding: 32px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
@@ -805,7 +821,7 @@
       </div>
 
       <!-- Card 2: VW Yogyakarta -->
-      <div class="reveal" style="background: var(--aspal-2); border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)'; this.style.boxShadow='0 12px 24px rgba(0,0,0,0.3)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+      <div class="reveal next-event-card">
         <div style="padding: 32px; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
           <div>
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
