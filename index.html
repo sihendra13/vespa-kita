@@ -339,10 +339,20 @@
   .btn:hover{transform:translateY(-2px);}
   .btn-primary{background:var(--merah); color:var(--krem);}
   .btn-primary:hover{background:#D6363C;}
-  .btn-outline{border:1.5px solid var(--krem); color:var(--krem);}
+  .btn-outline{border:1.5px solid var(--krem); color:var(--krem); background:transparent;}
   .btn-outline:hover{background:var(--krem); color:var(--aspal);}
-  .light .btn-outline{border-color:var(--ink); color:var(--ink);}
+  .light .btn-outline{border-color:var(--ink); color:var(--ink); background:transparent;}
   .light .btn-outline:hover{background:var(--ink); color:var(--krem);}
+  
+  .btn-paket-outline {
+    background: transparent !important;
+    border: 1.5px solid var(--krem) !important;
+    color: var(--krem) !important;
+  }
+  .btn-paket-outline:hover {
+    background: var(--krem) !important;
+    color: var(--aspal) !important;
+  }
 
   /* speedometer graphic */
   .gauge-card{
@@ -1372,15 +1382,12 @@
       <a href="vespakita-media-kit.pdf" download class="btn btn-primary">Unduh Media Kit (PDF)</a>
     </div>
 
-    <div class="reveal" style="display: flex; justify-content: center; margin-top: 64px; margin-bottom: 24px;">
-      <div class="eyebrow">Pilihan Paket</div>
-    </div>
-
     <!-- START PRICING GRID -->
-    <div class="pricing-grid reveal">
+    <div class="pricing-grid reveal" style="margin-top: 64px;">
       
       <!-- Starter Card -->
       <div class="next-event-card" style="padding: 34px; display: flex; flex-direction: column; background: var(--ink); height: 100%;">
+        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">PILIHAN PAKET</div>
         <h3 style="font-size: 28px; margin-bottom: 8px; color: var(--krem); font-family: var(--display); letter-spacing: 0.02em; text-transform: uppercase; line-height: 1;">Paket Starter</h3>
         <p style="color: var(--chrome); font-size: 14.5px; margin-bottom: 24px; line-height: 1.4;">Cocok untuk tes pasar & perkenalan produk awal dengan proses cepat.</p>
         <div class="num" style="font-family: var(--mono); color: var(--mint); font-size: 20px; font-weight: 700; margin-bottom: 24px; border-bottom: 1px dashed rgba(241,232,214,0.15); padding-bottom: 16px;">Mulai dari Rp150.000</div>
@@ -1395,11 +1402,12 @@
             Proses produksi sangat praktis & cepat
           </li>
         </ul>
-        <button class="btn btn-outline btn-book-paket" data-paket="Starter" data-msg="Halo tim VespaKita, kami tertarik berkolaborasi menggunakan Paket Starter. Boleh minta detail lebih lanjut?" style="width: 100%; font-size: 13.5px; padding: 15px 0;">Tanya &amp; Booking via WA</button>
+        <button class="btn btn-paket-outline btn-book-paket" data-paket="Starter" data-msg="Halo tim VespaKita, kami tertarik berkolaborasi menggunakan Paket Starter. Boleh minta detail lebih lanjut?" style="width: 100%; font-size: 13.5px; padding: 15px 0;">Tanya &amp; Booking via WA</button>
       </div>
 
       <!-- Enterprise Card -->
       <div class="next-event-card" style="padding: 34px; display: flex; flex-direction: column; background: var(--ink); height: 100%;">
+        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">PILIHAN PAKET</div>
         <h3 style="font-size: 28px; margin-bottom: 8px; color: var(--krem); font-family: var(--display); letter-spacing: 0.02em; text-transform: uppercase; line-height: 1;">Paket Enterprise</h3>
         <p style="color: var(--chrome); font-size: 14.5px; margin-bottom: 24px; line-height: 1.4;">Solusi kampanye komprehensif untuk penetrasi & peluncuran skala besar.</p>
         <div class="num" style="font-family: var(--mono); color: var(--merah); font-size: 20px; font-weight: 700; margin-bottom: 24px; border-bottom: 1px dashed rgba(241,232,214,0.15); padding-bottom: 16px;">Custom / Sesuai Kebutuhan</div>
@@ -1418,7 +1426,7 @@
             Konsultasi strategi & garansi reach maksimal
           </li>
         </ul>
-        <button class="btn btn-primary btn-book-paket" data-paket="Enterprise" data-msg="Halo tim VespaKita, kami mewakili brand/perusahaan ingin berkonsultasi mengenai kolaborasi Paket Enterprise." style="width: 100%; border: none; font-size: 13.5px; padding: 16px 0;">Ajukan Konsultasi via WA</button>
+        <button class="btn btn-paket-outline btn-book-paket" data-paket="Enterprise" data-msg="Halo tim VespaKita, kami mewakili brand/perusahaan ingin berkonsultasi mengenai kolaborasi Paket Enterprise." style="width: 100%; font-size: 13.5px; padding: 15px 0;">Ajukan Konsultasi via WA</button>
       </div>
       
     </div>
