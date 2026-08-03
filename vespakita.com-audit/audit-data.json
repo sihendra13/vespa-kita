@@ -1,0 +1,235 @@
+{
+  "summary": {
+    "health_score": 64,
+    "business_type": "Independent media / publisher (Vespa community content + sponsorship proposal pages)",
+    "top_findings": [
+      "Cloudflare edge robots.txt blocks GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, CCBot, Bytespider, meta-externalagent — defeats AI Overviews/ChatGPT/Perplexity visibility",
+      "Hero videos are oversized (19MB, 5.8MB, 1.2MB) — biggest Core Web Vitals / LCP risk",
+      "/vw-yogyakarta/ missing from sitemap.xml on both local and live site",
+      "Meta descriptions on / and /en/ exceed ~160 char snippet limit",
+      "Image lazy-loading inconsistent (3/13 on main pages, 0/8 and 0/7 on proposal pages)"
+    ],
+    "quick_wins": [
+      "Add /vw-yogyakarta/ to sitemap.xml",
+      "Trim meta descriptions to <=160 chars on / and /en/",
+      "Add loading=\"lazy\" to below-the-fold images",
+      "Decide intentionally on Cloudflare AI-crawler block (allow Google-Extended + GPTBot if GEO matters)",
+      "Compress/transcode the two large hero videos"
+    ]
+  },
+  "categories": [
+    {
+      "name": "Technical SEO",
+      "score": 78,
+      "what_works": [
+        "robots.txt + sitemap.xml present and cross-linked",
+        "Canonical URLs correct and self-referencing on all pages",
+        "hreflang (id/en/x-default) correctly reciprocal",
+        "HTTPS via Cloudflare, x-content-type-options and referrer-policy headers present"
+      ],
+      "findings": [
+        {
+          "title": "Cloudflare-managed robots.txt blocks AI crawlers",
+          "severity": "High",
+          "description": "Live robots.txt has a Cloudflare-injected block (Disallow: / for GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, CCBot, Bytespider, meta-externalagent) not present in the local repo file — injected at the Cloudflare edge.",
+          "recommendation": "Confirm intentional; if GEO/AI citations matter, allow Google-Extended and GPTBot at minimum."
+        },
+        {
+          "title": "/vw-yogyakarta/ missing from sitemap.xml",
+          "severity": "High",
+          "description": "Confirmed on both local file and live sitemap.xml; only /, /en/, /60s-yogyakarta/ listed.",
+          "recommendation": "Add a <url> entry matching the 60s-yogyakarta pattern."
+        },
+        {
+          "title": "No HSTS / CSP headers",
+          "severity": "Medium",
+          "description": "Live response missing Strict-Transport-Security and Content-Security-Policy headers.",
+          "recommendation": "Add via Cloudflare Transform Rules or origin config."
+        },
+        {
+          "title": "No llms.txt",
+          "severity": "Low",
+          "description": "Optional convention, low priority given the robots.txt AI-crawler block already limits AI bot access.",
+          "recommendation": "Address the robots.txt finding first."
+        }
+      ]
+    },
+    {
+      "name": "Content Quality",
+      "score": 65,
+      "what_works": [
+        "Distinct, purpose-specific content per page, no thin/duplicate boilerplate",
+        "Concrete, specific copy rather than generic filler"
+      ],
+      "findings": [
+        {
+          "title": "No visible author/byline or publish date",
+          "severity": "Medium",
+          "description": "No author bios or dated posts detected on the homepage, relevant for E-E-A-T.",
+          "recommendation": "Add author + date if a blog/article section is planned."
+        },
+        {
+          "title": "Full readability/word-count scan not performed",
+          "severity": "Info",
+          "description": "This pass analyzed static HTML directly rather than rendering pages; deep content-quality scoring wasn't run.",
+          "recommendation": "Follow up with a dedicated content-quality pass if deeper E-E-A-T scoring is wanted."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO",
+      "score": 72,
+      "what_works": [
+        "Exactly one H1 per page on all 4 pages",
+        "Unique titles and descriptions per page"
+      ],
+      "findings": [
+        {
+          "title": "Meta descriptions exceed ~160 char display limit on / and /en/",
+          "severity": "Medium",
+          "description": "Homepage descriptions run approximately 190-200 characters.",
+          "recommendation": "Trim to <=160 characters, front-load the value proposition."
+        },
+        {
+          "title": "Homepage titles are short and brand-only",
+          "severity": "Low",
+          "description": "Titles don't include a descriptive keyword phrase beyond the brand name.",
+          "recommendation": "Consider adding a keyword-rich phrase, balanced against brand-recognition needs."
+        }
+      ]
+    },
+    {
+      "name": "Schema / Structured Data",
+      "score": 70,
+      "what_works": [
+        "Organization schema present and valid on / and /en/",
+        "Event schema present on both proposal pages",
+        "All JSON-LD blocks parse as valid JSON"
+      ],
+      "findings": [
+        {
+          "title": "Event schema field completeness not fully validated",
+          "severity": "Medium",
+          "description": "Required fields for Event rich results (startDate, location, offers/organizer) weren't individually verified in this pass.",
+          "recommendation": "Run Google's Rich Results Test on both proposal pages."
+        },
+        {
+          "title": "No WebSite schema with SearchAction",
+          "severity": "Low",
+          "description": "Missing sitelinks search box eligibility markup.",
+          "recommendation": "Optional addition."
+        },
+        {
+          "title": "No BreadcrumbList schema",
+          "severity": "Low",
+          "description": "Site is shallow, so impact is minor.",
+          "recommendation": "Low priority."
+        }
+      ]
+    },
+    {
+      "name": "Performance (CWV)",
+      "score": 45,
+      "what_works": [],
+      "findings": [
+        {
+          "title": "Oversized hero videos",
+          "severity": "Critical",
+          "description": "vespa_kegiatanok.mp4 (19MB), jsp_landscape.mp4 (5.8MB), hero-bg.mp4 (1.2MB) used as autoplaying backgrounds; likely the single biggest LCP/load-time problem.",
+          "recommendation": "Re-encode to <3MB, add poster image, preload=\"none\" or \"metadata\", consider static image fallback on mobile."
+        },
+        {
+          "title": "Several large unoptimized JPG/PNG images",
+          "severity": "Medium",
+          "description": "vespa_ss90.png (624KB), jamnas_poster.jpg (600KB), multiple vw-yogyakarta page images (240-370KB each), no WebP/AVIF found.",
+          "recommendation": "Convert to WebP/AVIF with fallback, target <150KB for hero-adjacent images."
+        },
+        {
+          "title": "Static asset caching not verified",
+          "severity": "Low",
+          "description": "HTML cache-control looks correct; static asset (image/video/font) caching wasn't checked in this pass.",
+          "recommendation": "Verify long max-age + immutable caching via Cloudflare Page Rules."
+        }
+      ]
+    },
+    {
+      "name": "AI Search Readiness (GEO)",
+      "score": 25,
+      "what_works": [],
+      "findings": [
+        {
+          "title": "AI crawlers blocked at the Cloudflare edge",
+          "severity": "Critical",
+          "description": "Content-Signal ai-train=no plus explicit Disallow for GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, meta-externalagent, CCBot, Bytespider makes the site structurally invisible to ChatGPT search, Perplexity, Google AI Overviews, Meta AI, and Claude web tools.",
+          "recommendation": "This is a deliberate tradeoff to make consciously: allow Google-Extended and GPTBot if AI-driven discovery/lead-gen matters; keep blocking pure training bots (CCBot, Bytespider) if content protection is the priority."
+        }
+      ]
+    },
+    {
+      "name": "Images",
+      "score": 60,
+      "what_works": [
+        "100% alt-text coverage across all 4 pages (13, 13, 8, 7 images respectively)"
+      ],
+      "findings": [
+        {
+          "title": "Inconsistent lazy-loading",
+          "severity": "Medium",
+          "description": "Only 3/13 images lazy-loaded on main pages; 0/8 and 0/7 on proposal pages.",
+          "recommendation": "Add loading=\"lazy\" to all below-the-fold images."
+        },
+        {
+          "title": "No modern image formats detected",
+          "severity": "Medium",
+          "description": "All images checked are .jpg/.png; no .webp/.avif variants found.",
+          "recommendation": "Convert to WebP with fallback or use <picture> with AVIF/WebP sources."
+        }
+      ]
+    }
+  ],
+  "action_plan": {
+    "phases": [
+      {
+        "name": "Phase 1: Critical Fixes",
+        "timeframe": "Week 1",
+        "items": [
+          "Decide on the Cloudflare AI-crawler block (allow Google-Extended + GPTBot if GEO matters)",
+          "Compress hero videos (19MB and 5.8MB files) to <3MB with poster images",
+          "Add /vw-yogyakarta/ to sitemap.xml"
+        ]
+      },
+      {
+        "name": "Phase 2: High-Impact Improvements",
+        "timeframe": "Weeks 2-3",
+        "items": [
+          "Trim meta descriptions on / and /en/ to <=160 chars",
+          "Add loading=\"lazy\" to all below-the-fold images across all 4 pages",
+          "Convert large JPG/PNG assets to WebP/AVIF",
+          "Validate Event schema fields via Google Rich Results Test"
+        ]
+      },
+      {
+        "name": "Phase 3: Content & Authority",
+        "timeframe": "Month 2",
+        "items": [
+          "Add author attribution + publish dates for planned content/blog",
+          "Add WebSite schema with SearchAction",
+          "Revisit homepage title for keyword coverage"
+        ]
+      },
+      {
+        "name": "Phase 4: Monitoring & Iteration",
+        "timeframe": "Ongoing",
+        "items": [
+          "Connect Google Search Console + GA4 (G-6LLXWQ6MMM already installed) for real field data",
+          "Re-run this audit after Phase 1-2 fixes to confirm score improvement",
+          "Add HSTS/CSP headers via Cloudflare Transform Rules"
+        ]
+      }
+    ]
+  },
+  "artifacts": {
+    "findings_dir": "findings/",
+    "screenshots_dir": "screenshots/"
+  }
+}
