@@ -6,6 +6,7 @@
 <title>VespaKita — Rate Card (Draft Internal)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <style>
   :root{
     --bg:#FDFBF6;
@@ -133,7 +134,7 @@
       <div class="eyebrow">VespaKita · Rate Card</div>
       <h1>Rate Card <span class="accent">Kolaborasi Brand</span></h1>
     </div>
-    <a href="#" class="btn-download">Download PDF</a>
+    <a href="#" id="downloadPdfBtn" class="btn-download">Download PDF</a>
   </div>
 </header>
 
@@ -268,6 +269,46 @@
 <footer>
   &copy; 2026 VespaKita. All rights reserved.
 </footer>
+
+<script>
+  document.getElementById('downloadPdfBtn').addEventListener('click', function(e) {
+    e.preventDefault();
+    
+    // Sembunyikan tombol saat di-PDF-kan
+    const originalDisplay = this.style.display;
+    this.style.display = 'none';
+    
+    // Tambahkan page break sesuai permintaan
+    const sections = document.querySelectorAll('section');
+    const podcastSection = sections[0];
+    const youtubeSection = sections[1];
+    
+    const break1 = document.createElement('div');
+    break1.className = 'html2pdf__page-break';
+    podcastSection.parentNode.insertBefore(break1, podcastSection.nextSibling);
+    
+    const break2 = document.createElement('div');
+    break2.className = 'html2pdf__page-break';
+    youtubeSection.parentNode.insertBefore(break2, youtubeSection.nextSibling);
+    
+    // Atur opsi PDF
+    const opt = {
+      margin:       [0, 0, 0, 0], // Margin 0 agar background warna meluas penuh
+      filename:     'Rate_Card_VespaKita.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, windowWidth: 1200 }, // windowWidth desktop agar tampilan tidak miring/mobile
+      jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    
+    // Generate PDF
+    html2pdf().set(opt).from(document.body).save().then(() => {
+      // Kembalikan ke normal setelah selesai
+      this.style.display = originalDisplay;
+      break1.remove();
+      break2.remove();
+    });
+  });
+</script>
 
 </body>
 </html>
