@@ -41,6 +41,21 @@
   .eyebrow::before{content:""; width:22px; height:2px; background:var(--merah); display:inline-block;}
 
   header.top{padding:48px 0 28px; border-bottom:1px solid var(--ink);}
+  .header-flex { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+  .btn-download {
+    background: var(--ink);
+    color: var(--merah);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 13px;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 12px 24px;
+    border-radius: 4px;
+    transition: transform 0.2s;
+  }
+  .btn-download:hover { transform: translateY(-2px); color: #ff333d; }
   .draft-badge{
     display:inline-flex; align-items:center; gap:8px;
     background:#FDEEEE; border:1px solid #F0B9BA;
@@ -113,9 +128,12 @@
 <body>
 
 <header class="top">
-  <div class="wrap">
-    <div class="eyebrow">VespaKita · Rate Card</div>
-    <h1>Rate Card <span class="accent">Kolaborasi Brand</span></h1>
+  <div class="wrap header-flex">
+    <div>
+      <div class="eyebrow">VespaKita · Rate Card</div>
+      <h1>Rate Card <span class="accent">Kolaborasi Brand</span></h1>
+    </div>
+    <a href="#" class="btn-download">Download PDF</a>
   </div>
 </header>
 
