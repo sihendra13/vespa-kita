@@ -29,11 +29,7 @@ export async function onRequestGet(context) {
   }
 
   const body = await res.json();
-  const items = (body?.data || []).map((item) => ({
-    platform_post_id: item.platform_post_id,
-    permalink: item.permalink || item.url || item.post_url || null,
-    posted_at: item.posted_at,
-  }));
+  const items = (body?.data || []).slice(0, 5);
 
   return new Response(JSON.stringify({ items }, null, 2), {
     status: 200,
