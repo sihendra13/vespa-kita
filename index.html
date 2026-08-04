@@ -501,14 +501,15 @@
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--krem);
-    background:var(--merah);
+    background:transparent;
+    border:1px solid rgba(241,232,214,0.4);
     padding:7px 14px;
     border-radius:3px;
-    transition:background .2s, transform .15s;
+    transition:background .2s, border-color .2s;
   }
   .btn-view-profile:hover{
-    background:var(--merah-dark);
-    transform:translateY(-1px);
+    background:rgba(241,232,214,0.08);
+    border-color:rgba(241,232,214,0.6);
   }
 
   .btn-watch-episode{
@@ -522,12 +523,17 @@
     letter-spacing:0.06em;
     text-transform:uppercase;
     color:var(--krem);
-    background:transparent;
-    border:1px solid rgba(241,232,214,0.2);
+    background:var(--merah);
+    border:1px solid var(--merah);
     padding:8px 14px;
     border-radius:3px;
     margin-top:10px;
-    transition:background .2s, border-color .2s;
+    transition:background .2s, border-color .2s, transform .15s;
+  }
+  .btn-watch-episode:hover{
+    background:var(--merah-dark);
+    border-color:var(--merah-dark);
+    transform:translateY(-1px);
   }
   .btn-watch-episode:hover{
     background:rgba(241,232,214,0.08);
@@ -983,7 +989,7 @@
             <iframe src="https://www.instagram.com/reel/DbhO3cqK-Ls/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
           </div>
         </div>
-        <a href="https://www.youtube.com/@VespaKitaSemua" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'reel_card'});}">
+        <a href="https://www.youtube.com/watch?v=Qnt9lnMtJQw" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'momen_spesial'});}">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"></path></svg>
           Tonton Episode Lengkap di YouTube
         </a>
