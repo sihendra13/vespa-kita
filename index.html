@@ -1722,6 +1722,13 @@
         + `Organisasi/Event: ${encodeURIComponent(brand)}%0A`
         + `Pesan: ${encodeURIComponent(pesan || '-')}`;
 
+    if (typeof gtag === 'function') {
+      gtag('event', 'generate_lead', {
+        content_type: 'general_collaboration',
+        item_id: jenisKolaborasi
+      });
+    }
+
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
 

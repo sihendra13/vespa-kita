@@ -14,7 +14,7 @@
 <title>VespaKita - Vespa For Us All</title>
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="apple-touch-icon" href="/favicon.png">
-<meta name="description" content="Independent media covering the world of Vespa and Indonesian communities — podcasts, event coverage, and authentic stories connecting brands with communities.">
+<meta name="description" content="Media independen dunia Vespa &amp; komunitas Indonesia — podcast, liputan event, dan cerita autentik yang menghubungkan Brand dengan komunitas secara terpercaya.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://www.vespakita.com/en/" />
 <link rel="alternate" hreflang="id" href="https://www.vespakita.com/" />
@@ -28,7 +28,7 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="id_ID">
 <meta property="og:title" content="VespaKita - Vespa For Us All">
-<meta property="og:description" content="Independent media covering the world of Vespa and Indonesian communities — podcasts, event coverage, and authentic stories connecting brands with communities.">
+<meta property="og:description" content="Media independen dunia Vespa &amp; komunitas Indonesia — podcast, liputan event, dan cerita autentik yang menghubungkan Brand dengan komunitas secara terpercaya.">
 <meta property="og:image" content="https://www.vespakita.com/logo-share.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -37,7 +37,7 @@
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="VespaKita - Vespa For Us All">
-<meta name="twitter:description" content="Independent media covering the world of Vespa and Indonesian communities — podcasts, event coverage, and authentic stories connecting brands with communities.">
+<meta name="twitter:description" content="Media independen dunia Vespa &amp; komunitas Indonesia — podcast, liputan event, dan cerita autentik yang menghubungkan Brand dengan komunitas secara terpercaya.">
 <meta name="twitter:image" content="https://www.vespakita.com/logo-share.png">
 
 <!-- Structured Data -->
@@ -49,7 +49,7 @@
   "alternateName": "Vespa Kita",
   "url": "https://www.vespakita.com/",
   "logo": "https://www.vespakita.com/logo.png",
-  "description": "Independent media covering the world of Vespa and Indonesian communities — podcasts, event coverage, and authentic stories connecting brands with communities.",
+  "description": "Media independen dunia Vespa & komunitas Indonesia — podcast, liputan event, dan cerita autentik yang menghubungkan Brand dengan komunitas secara terpercaya.",
   "knowsAbout": [
     "Vespa",
     "Vespa Community Indonesia",
@@ -804,7 +804,7 @@
 
 <!-- HERO -->
 <section class="dark hero">
-  <video class="hero-video-bg" autoplay loop muted playsinline preload="metadata" poster="../jsp_landscape_poster.jpg">
+  <video class="hero-video-bg" autoplay loop muted playsinline preload="metadata" poster="jsp_landscape_poster.jpg">
     <source src="../jsp_landscape.mp4" type="video/mp4">
   </video>
   <div class="wrap hero-grid">
@@ -1709,6 +1709,13 @@
         + `Name: ${encodeURIComponent(nama)}%0A`
         + `Organization/Event: ${encodeURIComponent(brand)}%0A`
         + `Message: ${encodeURIComponent(pesan || '-')}`;
+
+    if (typeof gtag === 'function') {
+      gtag('event', 'generate_lead', {
+        content_type: 'general_collaboration',
+        item_id: jenisKolaborasi
+      });
+    }
 
     window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, '_blank');
   });
