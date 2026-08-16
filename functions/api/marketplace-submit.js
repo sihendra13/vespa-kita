@@ -30,6 +30,20 @@ function badRequest(message) {
 }
 
 export async function onRequestPost(context) {
+  try {
+    return await handlePost(context);
+  } catch (err) {
+    // TEMPORARY diagnostic scaffolding — surfaces the real server error directly
+    // in the response so it can be read without needing Cloudflare's log viewer.
+    // Revert to a generic message once the 502 root cause is found.
+    return new Response(
+      JSON.stringify({ error: "Internal error", debugMessage: err && err.message, debugStack: err && err.stack }),
+      { status: 500, headers: { "content-type": "application/json" } }
+    );
+  }
+}
+
+async function handlePost(context) {
   const { request, env, waitUntil } = context;
 
   if (!env.DB) return new Response(JSON.stringify({ error: "DB not bound" }), { status: 500 });
@@ -61,7 +75,7 @@ export async function onRequestPost(context) {
   if (!isNonEmptyString(title, MAX_TITLE)) return badRequest("Model & tahun Vespa wajib diisi.");
   if (!isNonEmptyString(sellerName, 100)) return badRequest("Nama wajib diisi.");
   if (!isNonEmptyString(location, 100)) return badRequest("Lokasi wajib diisi.");
-  if (!["Original", "Modifikasi"].includes(condition)) return badRequest("Kondisi tidak valid.");
+  if (!["Original", "Restorasi"].includes(condition)) return badRequest("Kondisi tidak valid.");
 
   const price = Number(priceRaw);
   if (!Number.isFinite(price) || !(price > 0) || price > 1_000_000_000) return badRequest("Harga tidak valid.");
