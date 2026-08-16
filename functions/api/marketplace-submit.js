@@ -5,6 +5,7 @@
 // /marketplace/ page once an admin approves via /api/marketplace-admin.
 
 import { cloudinaryUpload } from "../_lib/cloudinary.js";
+import { sendAdminNotification } from "../_lib/formsubmit.js";
 
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6MB — safety net above the ~1600px/JPEG-80% client compression target
@@ -29,7 +30,7 @@ function badRequest(message) {
 }
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  const { request, env, waitUntil } = context;
 
   if (!env.DB) return new Response(JSON.stringify({ error: "DB not bound" }), { status: 500 });
   const cloudinaryEnv = {
@@ -140,6 +141,19 @@ export async function onRequestPost(context) {
       now
     )
     .run();
+
+  waitUntil(
+    sendAdminNotification({
+      title: title.trim(),
+      price,
+      year,
+      condition,
+      location: location.trim(),
+      sellerName: sellerName.trim(),
+      sellerPhone,
+      description: description.trim(),
+    }).catch(() => {})
+  );
 
   return new Response(JSON.stringify({ ok: true, id }), {
     headers: { "content-type": "application/json" },
