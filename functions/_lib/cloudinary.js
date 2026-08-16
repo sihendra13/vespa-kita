@@ -36,6 +36,10 @@ export async function cloudinaryUpload(file, { cloudName, apiKey, apiSecret, fol
     body: fd,
   });
   if (diagStage === "fetch-only") return { url: "https://example.com/diag-fetch-ok-status-" + res.status, publicId: "diag-fetch-ok" };
+  if (diagStage === "fetch-text") {
+    const bodyText = await res.text();
+    throw new Error(`DIAG fetch-text status=${res.status} body=${bodyText.slice(0, 800)}`);
+  }
   if (!res.ok) throw new Error(`Cloudinary upload failed (${res.status})`);
   const data = await res.json();
   return { url: data.secure_url, publicId: data.public_id };
