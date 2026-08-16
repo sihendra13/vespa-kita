@@ -26,8 +26,13 @@ export async function sendAdminNotification(listing) {
       Lokasi: listing.location,
       Penjual: listing.sellerName,
       "No. WhatsApp Penjual": listing.sellerPhone,
+      "Instagram Penjual": listing.sellerIg || "-",
+      Surat: listing.docSurat || "-",
+      Pajak: listing.docPajak || "-",
+      Kepemilikan: listing.docKepemilikan || "-",
       Deskripsi: listing.description || "-",
-      "Review & Approve": ADMIN_URL,
+      "Kekurangan/Minus": listing.minusDesc || "-",
+      "Review & Approve": listing.adminLink || ADMIN_URL,
     }),
   });
 }

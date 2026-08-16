@@ -18,9 +18,9 @@ const MAX_TOTAL_LISTINGS = 500; // abuse ceiling for the whole table
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
-const DOC_SURAT_OPTIONS = ["Lengkap (BPKB + STNK)", "STNK Saja"];
-const DOC_PAJAK_OPTIONS = ["Hidup", "Mati"];
-const DOC_KEPEMILIKAN_OPTIONS = ["Tangan Pertama", "Tangan Kedua", "Tangan Ketiga+"];
+const DOC_SURAT_OPTIONS = ["Lengkap (BPKB + STNK)", "BPKB Saja", "STNK Saja"];
+const DOC_PAJAK_OPTIONS = ["Pajak Hidup", "Pajak Mati"];
+const DOC_KEPEMILIKAN_OPTIONS = ["Tangan Pertama dari Baru", "Milik Pribadi (Tangan Ke-2 dst)", "Atas Nama Orang Lain"];
 const MAX_MINUS_DESC = 500;
 
 function isNonEmptyString(v, max) {
@@ -179,7 +179,13 @@ async function handlePost(context) {
       location: location.trim(),
       sellerName: sellerName.trim(),
       sellerPhone,
+      sellerIg,
+      docSurat,
+      docPajak,
+      docKepemilikan,
+      minusDesc: minusDesc.trim(),
       description: description.trim(),
+      adminLink: "https://vespakita.com/marketplace/admin/"
     }).catch(() => {})
   );
 

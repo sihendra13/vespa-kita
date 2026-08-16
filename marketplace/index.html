@@ -353,23 +353,24 @@
           <label>Status Surat</label>
           <select id="j-doc-surat">
             <option value="Lengkap (BPKB + STNK)">Lengkap (BPKB + STNK)</option>
+            <option value="BPKB Saja">BPKB Saja</option>
             <option value="STNK Saja">STNK Saja</option>
           </select>
         </div>
         <div class="field">
           <label>Status Pajak</label>
           <select id="j-doc-pajak">
-            <option value="Hidup">Hidup</option>
-            <option value="Mati">Mati</option>
+            <option value="Pajak Hidup">Pajak Hidup</option>
+            <option value="Pajak Mati">Pajak Mati</option>
           </select>
         </div>
       </div>
       <div class="field">
         <label>Status Kepemilikan</label>
         <select id="j-doc-kepemilikan">
-          <option value="Tangan Pertama">Tangan Pertama</option>
-          <option value="Tangan Kedua">Tangan Kedua</option>
-          <option value="Tangan Ketiga+">Tangan Ketiga+</option>
+          <option value="Tangan Pertama dari Baru">Tangan Pertama dari Baru</option>
+          <option value="Milik Pribadi (Tangan Ke-2 dst)">Milik Pribadi (Tangan Ke-2 dst)</option>
+          <option value="Atas Nama Orang Lain">Atas Nama Orang Lain</option>
         </select>
       </div>
       <div class="field">
@@ -491,7 +492,7 @@
     });
   }
 
-  const WA_NUMBER = "6281227341300"; // Marketplace curation admin WA — receives "jual vespa" submissions
+  const WA_NUMBER = "628112651405"; // Testing WA number for user, change back later
 
   const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
 
