@@ -5,7 +5,7 @@
 // /marketplace/ page once an admin approves via /api/marketplace-admin.
 
 import { cloudinaryUpload, parseCloudinaryUrl } from "../_lib/cloudinary.js";
-import { sendAdminNotification } from "../_lib/formsubmit.js";
+import { sendAdminNotification } from "../_lib/resend.js";
 
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6MB — safety net above the ~1600px/JPEG-80% client compression target
@@ -170,24 +170,28 @@ async function handlePost(context) {
     )
     .run();
 
-  waitUntil(
-    sendAdminNotification({
-      title: title.trim(),
-      price,
-      year,
-      condition,
-      location: location.trim(),
-      sellerName: sellerName.trim(),
-      sellerPhone,
-      sellerIg,
-      docSurat,
-      docPajak,
-      docKepemilikan,
-      minusDesc: minusDesc.trim(),
-      description: description.trim(),
-      adminLink: "https://vespakita.com/marketplace/admin/"
-    }).catch((err) => console.error("sendAdminNotification failed:", err))
-  );
+  if (env.RESEND_API_KEY) {
+    waitUntil(
+      sendAdminNotification(env.RESEND_API_KEY, {
+        title: title.trim(),
+        price,
+        year,
+        condition,
+        location: location.trim(),
+        sellerName: sellerName.trim(),
+        sellerPhone,
+        sellerIg,
+        docSurat,
+        docPajak,
+        docKepemilikan,
+        minusDesc: minusDesc.trim(),
+        description: description.trim(),
+        adminLink: "https://vespakita.com/marketplace/admin/",
+      }).catch((err) => console.error("sendAdminNotification failed:", err))
+    );
+  } else {
+    console.error("RESEND_API_KEY not configured — skipping admin email notification");
+  }
 
   return new Response(JSON.stringify({ ok: true, id }), {
     headers: { "content-type": "application/json" },
