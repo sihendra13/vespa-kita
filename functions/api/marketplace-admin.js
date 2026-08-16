@@ -5,7 +5,7 @@
 // .dev.vars for local wrangler preview). Delete also removes the Cloudinary
 // assets so approved-then-deleted listings don't leave orphaned media.
 
-import { cloudinaryDestroy } from "../_lib/cloudinary.js";
+import { cloudinaryDestroy, parseCloudinaryUrl } from "../_lib/cloudinary.js";
 
 function checkAuth(request, env) {
   const auth = request.headers.get("Authorization") || "";
@@ -77,12 +77,8 @@ export async function onRequestPost(context) {
   const now = new Date().toISOString();
 
   if (action === "delete") {
-    const cloudinaryEnv = {
-      cloudName: env.CLOUDINARY_CLOUD_NAME,
-      apiKey: env.CLOUDINARY_API_KEY,
-      apiSecret: env.CLOUDINARY_API_SECRET,
-    };
-    if (cloudinaryEnv.cloudName && cloudinaryEnv.apiKey && cloudinaryEnv.apiSecret) {
+    const cloudinaryEnv = parseCloudinaryUrl(env.CLOUDINARY_URL);
+    if (cloudinaryEnv) {
       const photos = JSON.parse(row.photos || "[]");
       await Promise.all(photos.map((p) => cloudinaryDestroy(p.publicId, "image", cloudinaryEnv).catch(() => {})));
       if (row.video) {
