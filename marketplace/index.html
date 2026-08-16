@@ -438,7 +438,7 @@
     });
   }
 
-  const WA_NUMBER = "628112651405"; // VespaKita team WA — receives "jual vespa" submissions
+  const WA_NUMBER = "6281227341300"; // Marketplace curation admin WA — receives "jual vespa" submissions
 
   const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
 
@@ -721,8 +721,8 @@
 
       showFormMsg('Listing kamu terkirim! Tim VespaKita akan review dan tayangkan setelah dicek.', false);
 
-      // instant heads-up to the team, since there's no email/push notification wired up yet
-      const notifyText = `Ada listing baru menunggu review di Marketplace: ${encodeURIComponent(model)} dari ${encodeURIComponent(nama)}.`;
+      // instant heads-up to the admin, alongside the email notification the backend sends
+      const notifyText = `Ada listing baru menunggu review di Marketplace: ${encodeURIComponent(model)} dari ${encodeURIComponent(nama)}.%0A%0AReview & approve: https://www.vespakita.com/marketplace/admin/`;
       window.open(`https://wa.me/${WA_NUMBER}?text=${notifyText}`, '_blank');
 
       document.getElementById('j-nama').value = '';
