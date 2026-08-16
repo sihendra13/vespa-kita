@@ -159,14 +159,14 @@
   }
   .listing-card:hover{transform:translateY(-4px); border-color:rgba(111,168,154,0.4);}
   .listing-photo{position:relative; width:100%; padding-top:75%; background:var(--ink) center/cover no-repeat;}
-  .listing-photo .badge-kondisi{
-    position:absolute; top:10px; left:10px; background:rgba(21,23,26,0.85); color:var(--mint);
-    font-family:var(--mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
-    padding:5px 10px; border-radius:2px;
+  .meta-kondisi{
+    background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.35);
+    font-size:10px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:3px 8px; border-radius:10px; margin-left:6px;
   }
   .listing-photo .badge-verified{
-    position:absolute; top:10px; right:10px; width:26px; height:26px; border-radius:50%;
-    background:rgba(21,23,26,0.85); color:var(--emas); display:flex; align-items:center; justify-content:center;
+    position:absolute; top:10px; right:10px; width:22px; height:22px; color:var(--emas);
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6));
   }
   .listing-photo .listing-ig{
     position:absolute; bottom:10px; right:10px; width:30px; height:30px; border-radius:50%;
@@ -182,7 +182,7 @@
   .listing-body{padding:18px 20px 20px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .listing-title{font-family:var(--body); font-weight:700; font-size:16px; color:var(--krem); line-height:1.3;}
   .listing-meta{font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--chrome); text-transform:uppercase;}
-  .listing-price{font-family:var(--mono); font-weight:700; font-size:20px; color:var(--mint); margin-top:6px;}
+  .listing-price{font-family:var(--mono); font-weight:700; font-size:20px; color:var(--krem); margin-top:6px;}
 
   .mp-empty{
     text-align:center; padding:64px 24px; background:var(--aspal-2); border:1px dashed rgba(241,232,214,0.2); border-radius:6px;
@@ -529,9 +529,8 @@
     grid.innerHTML = listings.map(l => `
       <div class="listing-card" data-id="${l.id}">
         <div class="listing-photo" style="background-image:url('${(l.photos && l.photos[0]) || ''}')">
-          <div class="badge-kondisi">${l.condition}</div>
           <div class="badge-verified" title="Terverifikasi">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
           </div>
           ${l.sellerIg ? `
           <a href="https://instagram.com/${l.sellerIg}" target="_blank" rel="noopener" class="listing-ig" title="Instagram @${l.sellerIg}">
@@ -540,7 +539,7 @@
         </div>
         <div class="listing-body">
           <div class="listing-title">${l.title}</div>
-          <div class="listing-meta">${l.location} &middot; ${l.year}</div>
+          <div class="listing-meta">${l.location} &middot; ${l.year} <span class="meta-kondisi">${l.condition}</span></div>
           <div class="listing-price">${fmtRupiah(l.price)}</div>
         </div>
       </div>
