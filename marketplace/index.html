@@ -390,7 +390,7 @@
         <input type="file" id="j-video" accept="video/mp4,video/quicktime,video/webm">
         <div id="j-video-preview" style="margin-top:10px;"></div>
       </div>
-      <div id="j-form-msg" style="font-size:13px; margin-bottom:12px; display:none;"></div>
+      <div id="j-form-msg" style="display:none; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:6px; margin-bottom:16px;"></div>
       <div class="submit-row">
         <button type="button" class="btn btn-primary" id="j-submit">Ajukan Listing</button>
       </div>
@@ -745,11 +745,23 @@
     renderVideoPreview();
   });
 
-  function showFormMsg(text, isError){
+  function showFormMsg(text, isError, subtext){
     const el = document.getElementById('j-form-msg');
-    el.textContent = text;
-    el.style.color = isError ? 'var(--merah)' : 'var(--mint)';
-    el.style.display = 'block';
+    const color = isError ? 'var(--merah)' : 'var(--mint)';
+    const icon = isError
+      ? '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>'
+      : '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><circle cx="12" cy="12" r="10"></circle><polyline points="8 12 11 15 16 9"></polyline></svg>';
+    el.style.background = isError ? 'rgba(194,39,45,0.1)' : 'rgba(111,168,154,0.1)';
+    el.style.border = `1px solid ${isError ? 'rgba(194,39,45,0.35)' : 'rgba(111,168,154,0.35)'}`;
+    el.innerHTML = `
+      <div style="color:${color};">${icon}</div>
+      <div>
+        <div style="font-weight:700; font-size:14.5px; color:var(--krem); margin-bottom:${subtext ? '4px' : '0'};">${text}</div>
+        ${subtext ? `<div style="font-size:13px; color:var(--chrome);">${subtext}</div>` : ''}
+      </div>
+    `;
+    el.style.display = 'flex';
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   document.getElementById('j-submit').addEventListener('click', async ()=>{
@@ -784,6 +796,15 @@
     const submitBtn = document.getElementById('j-submit');
     submitBtn.disabled = true;
     submitBtn.textContent = 'Mengirim...';
+    document.getElementById('j-form-msg').style.display = 'none';
+    showFormMsg('Mengirim foto & video, mohon tunggu...', false, 'Ini bisa makan waktu sampai 1 menit tergantung kecepatan internet kamu — jangan tutup halaman ini dulu ya.');
+
+    // Open the WA tab synchronously, inside the click handler, before any
+    // await — browsers silently block window.open() calls made after an
+    // async gap (e.g. once a fetch() resolves), since by then it's no longer
+    // considered a trusted user gesture. We navigate this pre-opened tab to
+    // the real wa.me URL once the upload succeeds, or close it on failure.
+    const waTab = window.open('', '_blank');
 
     try{
       const fd = new FormData();
@@ -811,11 +832,11 @@
         gtag('event', 'generate_lead', { content_type: 'marketplace_jual', item_id: model });
       }
 
-      showFormMsg('Listing kamu terkirim! Tim VespaKita akan review dan tayangkan setelah dicek.', false);
+      showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
 
       // instant heads-up to the admin, alongside the email notification the backend sends
       const notifyText = `Ada listing baru menunggu review di Marketplace: ${encodeURIComponent(model)} dari ${encodeURIComponent(nama)}.%0A%0AReview & approve: https://www.vespakita.com/marketplace/admin/`;
-      window.open(`https://wa.me/${WA_NUMBER}?text=${notifyText}`, '_blank');
+      if(waTab) waTab.location = `https://wa.me/${WA_NUMBER}?text=${notifyText}`;
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';
@@ -832,6 +853,7 @@
       jualVideo = null;
       renderVideoPreview();
     }catch(err){
+      if(waTab) waTab.close();
       showFormMsg(err.message || 'Gagal mengirim listing, coba lagi ya.', true);
     }finally{
       submitBtn.disabled = false;
