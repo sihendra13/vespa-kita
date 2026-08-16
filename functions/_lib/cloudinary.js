@@ -19,7 +19,10 @@ async function sign(params, apiSecret) {
     .map((k) => `${k}=${params[k]}`)
     .join("&");
   const data = new TextEncoder().encode(sorted + apiSecret);
-  const hash = await crypto.subtle.digest("SHA-1", data);
+  // Newer Cloudinary accounts default to SHA-256 signatures (SHA-1 was the
+  // older default) — using the wrong one fails with "Invalid Signature"
+  // even though the string-to-sign and secret are both correct.
+  const hash = await crypto.subtle.digest("SHA-256", data);
   return [...new Uint8Array(hash)].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
