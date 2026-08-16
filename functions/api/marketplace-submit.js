@@ -114,24 +114,35 @@ async function handlePost(context) {
   const id = crypto.randomUUID();
   const folder = `listings/${id}`;
 
+  // TEMPORARY: DIAG_SKIP_UPLOAD short-circuits real Cloudinary calls so we can
+  // isolate whether receiving multipart files or the outbound fetch is what's
+  // crashing. Remove this whole block once diagnosed.
   const photoResults = [];
   let i = 0;
   for (const f of photoFiles) {
     i += 1;
+    if (env.DIAG_SKIP_UPLOAD) {
+      photoResults.push({ url: "https://example.com/fake.jpg", publicId: `${folder}/photo-${i}` });
+      continue;
+    }
     try {
       const result = await cloudinaryUpload(f, { ...cloudinaryEnv, folder, publicId: `photo-${i}`, resourceType: "image" });
       photoResults.push(result);
-    } catch {
-      return new Response(JSON.stringify({ error: "Gagal upload foto, coba lagi." }), { status: 502, headers: { "content-type": "application/json" } });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: "Gagal upload foto, coba lagi.", debugMessage: err && err.message }), { status: 502, headers: { "content-type": "application/json" } });
     }
   }
 
   let videoResult = null;
   if (hasVideo) {
-    try {
-      videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
-    } catch {
-      return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi." }), { status: 502, headers: { "content-type": "application/json" } });
+    if (env.DIAG_SKIP_UPLOAD) {
+      videoResult = { url: "https://example.com/fake.mp4", publicId: `${folder}/video` };
+    } else {
+      try {
+        videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi.", debugMessage: err && err.message }), { status: 502, headers: { "content-type": "application/json" } });
+      }
     }
   }
 
