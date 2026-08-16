@@ -429,7 +429,7 @@
         </div>
         <div id="mp-modal-ig-row" style="display:flex; align-items:center; gap:7px; margin-top:8px;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-          <a id="mp-modal-ig" href="#" target="_blank" rel="noopener" style="color:var(--mint); text-decoration:underline;"></a>
+          IG Penjual: <a id="mp-modal-ig" href="#" target="_blank" rel="noopener" style="color:var(--mint); text-decoration:underline;"></a>
         </div>
       </div>
       <div class="mp-modal-desc" id="mp-modal-desc"></div>
@@ -560,6 +560,12 @@
     grid.querySelectorAll('.listing-ig').forEach(link=>{
       link.addEventListener('click', (e)=> e.stopPropagation());
     });
+
+    const wantedId = new URLSearchParams(location.search).get('listing');
+    if (wantedId) {
+      const wanted = listings.find(l => l.id === wantedId);
+      if (wanted) openModal(wanted);
+    }
   }
 
   function openModal(l){
@@ -614,8 +620,9 @@
       videoWrap.style.display = 'none';
     }
 
-    const msg = `Halo, saya lihat listing ${encodeURIComponent(l.title)} di Marketplace VespaKita. Apakah unit ini masih tersedia?`;
-    document.getElementById('mp-modal-cta').href = `https://wa.me/${l.sellerPhone}?text=${msg}`;
+    const listingUrl = `${location.origin}${location.pathname}?listing=${l.id}`;
+    const msg = `Halo, saya lihat listing ${l.title} di Marketplace VespaKita (${listingUrl}). Apakah unit ini masih tersedia?`;
+    document.getElementById('mp-modal-cta').href = `https://wa.me/${l.sellerPhone}?text=${encodeURIComponent(msg)}`;
 
     if (typeof gtag === 'function') {
       gtag('event', 'view_item', { item_id: l.id, item_name: l.title });
