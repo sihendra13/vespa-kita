@@ -18,6 +18,7 @@ async function sign(params, apiSecret) {
 // stops after building the outbound FormData, undefined/"fetch" does the
 // real network call. Remove once diagnosed.
 export async function cloudinaryUpload(file, { cloudName, apiKey, apiSecret, folder, publicId, resourceType, diagStage }) {
+  if (diagStage === "throw-test") throw new Error("DIAG plain throw test, unrelated to Cloudinary");
   const timestamp = Math.floor(Date.now() / 1000);
   const signature = await sign({ folder, public_id: publicId, timestamp }, apiSecret);
   if (diagStage === "sign") return { url: "https://example.com/diag-sign-ok.jpg", publicId: "diag-sign-ok" };
