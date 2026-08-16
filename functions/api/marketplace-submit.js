@@ -18,7 +18,7 @@ const MAX_TOTAL_LISTINGS = 500; // abuse ceiling for the whole table
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
-const DOC_SURAT_OPTIONS = ["Lengkap (BPKB + STNK)", "STNK Saja", "Tidak Ada"];
+const DOC_SURAT_OPTIONS = ["Lengkap (BPKB + STNK)", "STNK Saja"];
 const DOC_PAJAK_OPTIONS = ["Hidup", "Mati"];
 const DOC_KEPEMILIKAN_OPTIONS = ["Tangan Pertama", "Tangan Kedua", "Tangan Ketiga+"];
 const MAX_MINUS_DESC = 500;
