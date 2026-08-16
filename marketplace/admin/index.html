@@ -49,11 +49,12 @@
   .item-desc{font-size:12.5px; color:var(--krem); opacity:0.8; margin-top:8px; max-height:60px; overflow:auto;}
   .doc-badge{font-family:var(--mono); font-size:10px; letter-spacing:0.03em; background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.3); padding:3px 8px; border-radius:10px;}
   .item-actions{display:flex; flex-direction:column; gap:8px; flex-shrink:0; justify-content:center;}
-  .item-actions button{
+  .item-actions button, .item-actions a{
     font-family:var(--mono); font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
     padding:9px 14px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:transparent; color:var(--krem); cursor:pointer; white-space:nowrap;
   }
-  .btn-approve{background:var(--mint) !important; border-color:var(--mint) !important; color:var(--aspal) !important;}
+  .btn-approve{background:var(--merah) !important; border-color:var(--merah) !important; color:var(--krem) !important;}
+  .btn-contact{border-color:var(--merah) !important; color:var(--krem) !important;}
   .btn-reject{border-color:var(--merah) !important; color:var(--merah) !important;}
   .btn-delete{color:var(--chrome) !important;}
   .empty-note{color:var(--chrome); font-size:13px; padding:12px 0;}
@@ -177,7 +178,7 @@
       ? pending.map(l => {
           const waMsg = encodeURIComponent(`Halo ${l.sellerName}! Kami dari admin VespaKita, terkait pengajuan listing Vespa ${l.title} Anda...`);
           return renderItem(l, [
-            {label:'📲 Chat Penjual', action:'link', cls:'btn-approve', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
+            {label:'Chat Penjual', action:'link', cls:'btn-contact', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
             {label:'Approve', action:'approve', cls:'btn-approve'},
             {label:'Reject', action:'reject', cls:'btn-reject'},
           ]);
@@ -188,7 +189,7 @@
       ? published.map(l => {
           const waMsg = encodeURIComponent(`Halo ${l.sellerName}! Listing Vespa ${l.title} Anda sudah lolos kurasi dan resmi tayang di VespaKita. Silakan cek di https://www.vespakita.com/marketplace/`);
           return renderItem(l, [
-            {label:'📲 Kabari Penjual', action:'link', cls:'btn-approve', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
+            {label:'Kabari Penjual', action:'link', cls:'btn-contact', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
             {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
             {label:'Hapus', action:'delete', cls:'btn-delete'},
           ]);
