@@ -49,6 +49,16 @@ async function handlePost(context) {
   if (!cloudinaryEnv) {
     return new Response(JSON.stringify({ error: "Cloudinary not configured" }), { status: 500 });
   }
+  // TEMPORARY diagnostic — logs only lengths/prefixes, never the actual secret
+  console.error(
+    "DIAG cloudinaryEnv:",
+    "cloudName=" + cloudinaryEnv.cloudName,
+    "apiKey=" + cloudinaryEnv.apiKey,
+    "apiSecretLen=" + cloudinaryEnv.apiSecret.length,
+    "apiSecretPrefix=" + cloudinaryEnv.apiSecret.slice(0, 3),
+    "apiSecretSuffix=" + cloudinaryEnv.apiSecret.slice(-3),
+    "rawUrlLen=" + (env.CLOUDINARY_URL || "").length
+  );
 
   let form;
   try {
