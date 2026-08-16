@@ -162,7 +162,7 @@
   .meta-kondisi{
     background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.35);
     font-size:10px; letter-spacing:0.04em; text-transform:uppercase;
-    padding:3px 8px; border-radius:10px; margin-left:6px;
+    padding:3px 8px; border-radius:10px; margin-right:6px;
   }
   .listing-photo .badge-verified{
     position:absolute; top:10px; right:10px; width:22px; height:22px; color:var(--emas);
@@ -202,7 +202,7 @@
   .mp-modal-photo{width:100%; padding-top:60%; background:var(--ink) center/cover no-repeat; border-radius:8px 8px 0 0;}
   .mp-modal-body{padding:32px;}
   .mp-modal-body h3{font-size:clamp(24px,3.4vw,32px); color:var(--krem); margin-bottom:12px;}
-  .mp-modal-price{font-family:var(--mono); font-weight:700; font-size:26px; color:var(--mint); margin-bottom:20px;}
+  .mp-modal-price{font-family:var(--mono); font-weight:700; font-size:26px; color:var(--krem); margin-bottom:20px;}
   .mp-spec-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px dashed rgba(241,232,214,0.18);}
   .mp-spec-item .k{font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--chrome); margin-bottom:4px;}
   .mp-spec-item .v{font-size:14px; color:var(--krem);}
@@ -423,8 +423,14 @@
         <div class="mp-spec-item"><div class="k">Penjual</div><div class="v" id="mp-modal-penjual"></div></div>
       </div>
       <div style="background:rgba(111,168,154,0.08); border:1px solid rgba(111,168,154,0.25); border-radius:4px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:var(--krem);">
-        <span style="color:var(--mint);">&#10003; Dikurasi oleh Admin VespaKita</span> &middot;
-        <a id="mp-modal-ig" href="#" target="_blank" rel="noopener" style="color:var(--mint); text-decoration:underline;"></a>
+        <div style="display:flex; align-items:center; gap:7px; color:var(--mint);">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
+          Dikurasi oleh Admin VespaKita
+        </div>
+        <div id="mp-modal-ig-row" style="display:flex; align-items:center; gap:7px; margin-top:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+          <a id="mp-modal-ig" href="#" target="_blank" rel="noopener" style="color:var(--mint); text-decoration:underline;"></a>
+        </div>
       </div>
       <div class="mp-modal-desc" id="mp-modal-desc"></div>
       <div id="mp-modal-minus-wrap" style="display:none; background:rgba(194,39,45,0.08); border:1px solid rgba(194,39,45,0.3); border-radius:4px; padding:14px 16px; margin-bottom:24px;">
@@ -539,7 +545,7 @@
         </div>
         <div class="listing-body">
           <div class="listing-title">${l.title}</div>
-          <div class="listing-meta">${l.location} &middot; ${l.year} <span class="meta-kondisi">${l.condition}</span></div>
+          <div class="listing-meta"><span class="meta-kondisi">${l.condition}</span>${l.location} &middot; ${l.year}</div>
           <div class="listing-price">${fmtRupiah(l.price)}</div>
         </div>
       </div>
@@ -581,12 +587,13 @@
     document.getElementById('mp-modal-badges').innerHTML = badges.map(b => `<span class="mp-doc-badge">${b}</span>`).join('');
 
     const igLink = document.getElementById('mp-modal-ig');
+    const igRow = document.getElementById('mp-modal-ig-row');
     if (l.sellerIg) {
       igLink.href = `https://instagram.com/${l.sellerIg}`;
-      igLink.textContent = `IG Penjual: @${l.sellerIg}`;
-      igLink.style.display = 'inline';
+      igLink.textContent = `@${l.sellerIg}`;
+      igRow.style.display = 'flex';
     } else {
-      igLink.style.display = 'none';
+      igRow.style.display = 'none';
     }
 
     const minusWrap = document.getElementById('mp-modal-minus-wrap');
