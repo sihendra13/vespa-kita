@@ -57,6 +57,13 @@
   .btn-reject{border-color:var(--merah) !important; color:var(--merah) !important;}
   .btn-delete{color:var(--chrome) !important;}
   .empty-note{color:var(--chrome); font-size:13px; padding:12px 0;}
+
+  @media (max-width:640px){
+    .item{flex-direction:column;}
+    .item-photos{max-width:100%;}
+    .item-actions{flex-direction:row; flex-wrap:wrap;}
+    .item-actions button, .item-actions a{flex:1; min-width:120px;}
+  }
 </style>
 </head>
 <body>
