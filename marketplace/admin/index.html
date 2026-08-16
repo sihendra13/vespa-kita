@@ -20,7 +20,10 @@
   .sub{color:var(--chrome); font-size:13px; margin-bottom:28px;}
 
   #gate{max-width:360px; margin:80px auto; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.12); border-radius:6px; padding:32px;}
-  #gate input{width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:2px; padding:12px 14px; font-family:var(--body); font-size:14px; margin-bottom:14px;}
+  #gate input{width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:2px; padding:12px 40px 12px 14px; font-family:var(--body); font-size:14px;}
+  .gate-pass-wrap{position:relative; margin-bottom:14px;}
+  #gate .gate-pass-toggle{position:absolute; top:0; right:0; height:100%; width:40px; background:none; border:none; color:var(--chrome); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  #gate .gate-pass-toggle:hover{color:var(--krem);}
   #gate button{width:100%; padding:13px; background:var(--merah); color:var(--krem); border:none; border-radius:2px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
   #gate-error{color:var(--merah); font-size:12px; margin-top:10px; min-height:16px;}
 
@@ -28,8 +31,16 @@
   .count-badge{background:rgba(111,168,154,0.15); color:var(--mint); padding:2px 8px; border-radius:10px; font-size:11px;}
 
   .item{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; padding:18px 20px; margin-bottom:12px; display:flex; gap:16px;}
-  .item-photos{display:flex; gap:6px; flex-shrink:0;}
+  .item-photos{display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; max-width:220px;}
   .item-photos img{width:64px; height:64px; object-fit:cover; border-radius:4px; background:var(--aspal);}
+  .item-thumb{cursor:pointer; transition:opacity .15s;}
+  .item-thumb:hover{opacity:0.8;}
+
+  .lightbox{position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center; background:rgba(10,10,10,0.92); padding:24px;}
+  .lightbox.active{display:flex;}
+  .lightbox-content{max-width:min(90vw,700px); max-height:85vh;}
+  .lightbox-content img, .lightbox-content video{max-width:100%; max-height:85vh; border-radius:6px; display:block; margin:0 auto;}
+  .lightbox-close{position:absolute; top:20px; right:24px; background:none; border:none; color:var(--krem); font-size:36px; line-height:1; cursor:pointer; z-index:1;}
   .item-body{flex:1; min-width:0;}
   .item-title{font-weight:700; font-size:15px;}
   .item-meta{font-family:var(--mono); font-size:11px; color:var(--chrome); margin-top:4px; text-transform:uppercase;}
@@ -52,7 +63,12 @@
 
 <div id="gate">
   <h1 style="margin-bottom:18px;">Admin Marketplace</h1>
-  <input type="password" id="gate-pass" placeholder="Password admin">
+  <div class="gate-pass-wrap">
+    <input type="password" id="gate-pass" placeholder="Password admin">
+    <button type="button" class="gate-pass-toggle" id="gate-pass-toggle" aria-label="Tampilkan password">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    </button>
+  </div>
   <button id="gate-submit">Masuk</button>
   <div id="gate-error"></div>
 </div>
@@ -69,6 +85,11 @@
 
   <div class="section-title">Ditolak / Diturunkan <span class="count-badge" id="count-other">0</span></div>
   <div id="list-other"></div>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Tutup">&times;</button>
+  <div class="lightbox-content" id="lightbox-content"></div>
 </div>
 
 <script>
@@ -93,8 +114,8 @@
   }
 
   function renderItem(l, actions){
-    const photos = (l.photos || []).map(p => `<img src="${p}" alt="">`).join('') || `<img src="" alt="" style="opacity:0;">`;
-    const video = l.video ? `<video src="${l.video}" controls style="width:64px; height:64px; object-fit:cover; border-radius:4px; background:#000;"></video>` : '';
+    const photos = (l.photos || []).map(p => `<img src="${p}" alt="" class="item-thumb" data-lightbox-type="image" data-lightbox-src="${p}">`).join('') || `<img src="" alt="" style="opacity:0;">`;
+    const video = l.video ? `<video src="${l.video}" class="item-thumb" data-lightbox-type="video" data-lightbox-src="${l.video}" style="width:64px; height:64px; object-fit:cover; border-radius:4px; background:#000;" muted></video>` : '';
     const actionBtns = actions.map(a => {
       if (a.action === 'link') {
         return `<a href="${a.href}" target="_blank" class="${a.cls}" style="text-align:center; text-decoration:none; display:block;">${a.label}</a>`;
@@ -213,6 +234,34 @@
   document.getElementById('gate-pass').addEventListener('keydown', (e) => {
     if (e.key === 'Enter') document.getElementById('gate-submit').click();
   });
+  document.getElementById('gate-pass-toggle').addEventListener('click', () => {
+    const input = document.getElementById('gate-pass');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    document.getElementById('gate-pass-toggle').setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
+  });
+
+  // lightbox — event delegation since items are re-rendered on every loadAll()
+  function openLightbox(src, type){
+    const content = document.getElementById('lightbox-content');
+    content.innerHTML = type === 'video'
+      ? `<video src="${src}" controls autoplay playsinline></video>`
+      : `<img src="${src}" alt="">`;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightbox-content').innerHTML = '';
+  }
+  document.addEventListener('click', (e) => {
+    const thumb = e.target.closest('.item-thumb');
+    if (thumb) openLightbox(thumb.dataset.lightboxSrc, thumb.dataset.lightboxType);
+  });
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
 
   // auto-login if a token is already in this session
   if (getToken()){
