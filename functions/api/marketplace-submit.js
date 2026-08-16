@@ -126,7 +126,7 @@ async function handlePost(context) {
       continue;
     }
     try {
-      const result = await cloudinaryUpload(f, { ...cloudinaryEnv, folder, publicId: `photo-${i}`, resourceType: "image" });
+      const result = await cloudinaryUpload(f, { ...cloudinaryEnv, folder, publicId: `photo-${i}`, resourceType: "image", diagStage: env.DIAG_STAGE });
       photoResults.push(result);
     } catch (err) {
       return new Response(JSON.stringify({ error: "Gagal upload foto, coba lagi.", debugMessage: err && err.message }), { status: 502, headers: { "content-type": "application/json" } });

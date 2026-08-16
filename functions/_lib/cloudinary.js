@@ -13,9 +13,14 @@ async function sign(params, apiSecret) {
 }
 
 // resourceType: "image" | "video"
-export async function cloudinaryUpload(file, { cloudName, apiKey, apiSecret, folder, publicId, resourceType }) {
+// TEMPORARY diagStage param for binary-searching a platform-level 502 that
+// bypasses try/catch: "sign" stops after the SHA-1 signature, "formdata"
+// stops after building the outbound FormData, undefined/"fetch" does the
+// real network call. Remove once diagnosed.
+export async function cloudinaryUpload(file, { cloudName, apiKey, apiSecret, folder, publicId, resourceType, diagStage }) {
   const timestamp = Math.floor(Date.now() / 1000);
   const signature = await sign({ folder, public_id: publicId, timestamp }, apiSecret);
+  if (diagStage === "sign") return { url: "https://example.com/diag-sign-ok.jpg", publicId: "diag-sign-ok" };
 
   const fd = new FormData();
   fd.append("file", file);
@@ -24,11 +29,13 @@ export async function cloudinaryUpload(file, { cloudName, apiKey, apiSecret, fol
   fd.append("folder", folder);
   fd.append("public_id", publicId);
   fd.append("signature", signature);
+  if (diagStage === "formdata") return { url: "https://example.com/diag-formdata-ok.jpg", publicId: "diag-formdata-ok" };
 
   const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
     method: "POST",
     body: fd,
   });
+  if (diagStage === "fetch-only") return { url: "https://example.com/diag-fetch-ok-status-" + res.status, publicId: "diag-fetch-ok" };
   if (!res.ok) throw new Error(`Cloudinary upload failed (${res.status})`);
   const data = await res.json();
   return { url: data.secure_url, publicId: data.public_id };
