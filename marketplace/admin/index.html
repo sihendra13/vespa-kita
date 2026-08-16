@@ -95,7 +95,12 @@
   function renderItem(l, actions){
     const photos = (l.photos || []).map(p => `<img src="${p}" alt="">`).join('') || `<img src="" alt="" style="opacity:0;">`;
     const video = l.video ? `<video src="${l.video}" controls style="width:64px; height:64px; object-fit:cover; border-radius:4px; background:#000;"></video>` : '';
-    const actionBtns = actions.map(a => `<button class="${a.cls}" data-action="${a.action}" data-id="${l.id}">${a.label}</button>`).join('');
+    const actionBtns = actions.map(a => {
+      if (a.action === 'link') {
+        return `<a href="${a.href}" target="_blank" class="${a.cls}" style="text-align:center; text-decoration:none; display:block;">${a.label}</a>`;
+      }
+      return `<button class="${a.cls}" data-action="${a.action}" data-id="${l.id}">${a.label}</button>`;
+    }).join('');
     return `
       <div class="item">
         <div class="item-photos">${photos}${video}</div>
@@ -141,17 +146,25 @@
     document.getElementById('count-other').textContent = other.length;
 
     document.getElementById('list-pending').innerHTML = pending.length
-      ? pending.map(l => renderItem(l, [
-          {label:'Approve', action:'approve', cls:'btn-approve'},
-          {label:'Reject', action:'reject', cls:'btn-reject'},
-        ])).join('')
+      ? pending.map(l => {
+          const waMsg = encodeURIComponent(`Halo ${l.sellerName}! Kami dari admin VespaKita, terkait pengajuan listing Vespa ${l.title} Anda...`);
+          return renderItem(l, [
+            {label:'📲 Chat Penjual', action:'link', cls:'btn-approve', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
+            {label:'Approve', action:'approve', cls:'btn-approve'},
+            {label:'Reject', action:'reject', cls:'btn-reject'},
+          ]);
+        }).join('')
       : '<div class="empty-note">Tidak ada listing menunggu review.</div>';
 
     document.getElementById('list-published').innerHTML = published.length
-      ? published.map(l => renderItem(l, [
-          {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
-          {label:'Hapus', action:'delete', cls:'btn-delete'},
-        ])).join('')
+      ? published.map(l => {
+          const waMsg = encodeURIComponent(`Halo ${l.sellerName}! Listing Vespa ${l.title} Anda sudah lolos kurasi dan resmi tayang di VespaKita. Silakan cek di https://www.vespakita.com/marketplace/`);
+          return renderItem(l, [
+            {label:'📲 Kabari Penjual', action:'link', cls:'btn-approve', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
+            {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
+            {label:'Hapus', action:'delete', cls:'btn-delete'},
+          ]);
+        }).join('')
       : '<div class="empty-note">Belum ada listing yang tayang.</div>';
 
     document.getElementById('list-other').innerHTML = other.length
