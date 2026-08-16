@@ -10,7 +10,7 @@
     {
       "name": "wrangler-preview",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["wrangler", "pages", "dev", ".", "--port", "8918"],
+      "runtimeArgs": ["wrangler", "pages", "dev", ".", "--port", "8918", "--d1", "DB"],
       "port": 8918
     }
   ]

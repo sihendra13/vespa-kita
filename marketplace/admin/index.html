@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Marketplace | VespaKita</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --aspal:#15171A; --aspal-2:#1E2124; --krem:#F1E8D6; --krem-2:#E7DBC2;
+    --merah:#C2272D; --merah-dark:#8F1B20; --mint:#6FA89A; --chrome:#A9A49B;
+    --body: 'Work Sans', sans-serif; --mono: 'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); background:var(--aspal); color:var(--krem); line-height:1.5; padding:32px 20px 80px;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:920px; margin:0 auto;}
+  h1{font-size:22px; margin-bottom:4px;}
+  .sub{color:var(--chrome); font-size:13px; margin-bottom:28px;}
+
+  #gate{max-width:360px; margin:80px auto; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.12); border-radius:6px; padding:32px;}
+  #gate input{width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:2px; padding:12px 14px; font-family:var(--body); font-size:14px; margin-bottom:14px;}
+  #gate button{width:100%; padding:13px; background:var(--merah); color:var(--krem); border:none; border-radius:2px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  #gate-error{color:var(--merah); font-size:12px; margin-top:10px; min-height:16px;}
+
+  .section-title{font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--mint); margin:32px 0 14px; display:flex; align-items:center; gap:10px;}
+  .count-badge{background:rgba(111,168,154,0.15); color:var(--mint); padding:2px 8px; border-radius:10px; font-size:11px;}
+
+  .item{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; padding:18px 20px; margin-bottom:12px; display:flex; gap:16px;}
+  .item-photos{display:flex; gap:6px; flex-shrink:0;}
+  .item-photos img{width:64px; height:64px; object-fit:cover; border-radius:4px; background:var(--aspal);}
+  .item-body{flex:1; min-width:0;}
+  .item-title{font-weight:700; font-size:15px;}
+  .item-meta{font-family:var(--mono); font-size:11px; color:var(--chrome); margin-top:4px; text-transform:uppercase;}
+  .item-price{font-family:var(--mono); font-weight:700; color:var(--mint); font-size:15px; margin-top:6px;}
+  .item-seller{font-size:12px; color:var(--chrome); margin-top:6px;}
+  .item-desc{font-size:12.5px; color:var(--krem); opacity:0.8; margin-top:8px; max-height:60px; overflow:auto;}
+  .item-actions{display:flex; flex-direction:column; gap:8px; flex-shrink:0; justify-content:center;}
+  .item-actions button{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:9px 14px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:transparent; color:var(--krem); cursor:pointer; white-space:nowrap;
+  }
+  .btn-approve{background:var(--mint) !important; border-color:var(--mint) !important; color:var(--aspal) !important;}
+  .btn-reject{border-color:var(--merah) !important; color:var(--merah) !important;}
+  .btn-delete{color:var(--chrome) !important;}
+  .empty-note{color:var(--chrome); font-size:13px; padding:12px 0;}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1 style="margin-bottom:18px;">Admin Marketplace</h1>
+  <input type="password" id="gate-pass" placeholder="Password admin">
+  <button id="gate-submit">Masuk</button>
+  <div id="gate-error"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <h1>Admin Marketplace</h1>
+  <div class="sub">Review listing yang masuk, approve untuk ditayangkan di /marketplace/.</div>
+
+  <div class="section-title">Menunggu Review <span class="count-badge" id="count-pending">0</span></div>
+  <div id="list-pending"></div>
+
+  <div class="section-title">Tayang di Marketplace <span class="count-badge" id="count-published">0</span></div>
+  <div id="list-published"></div>
+
+  <div class="section-title">Ditolak / Diturunkan <span class="count-badge" id="count-other">0</span></div>
+  <div id="list-other"></div>
+</div>
+
+<script>
+  const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
+  const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('id-ID', {dateStyle:'medium', timeStyle:'short'}) : '-';
+
+  function getToken(){ return sessionStorage.getItem('mp_admin_token') || ''; }
+
+  async function api(path, opts = {}){
+    const res = await fetch(path, {
+      ...opts,
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Bearer ' + getToken(),
+        ...(opts.headers || {}),
+      },
+    });
+    if (res.status === 401) throw new Error('unauthorized');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'request failed');
+    return data;
+  }
+
+  function renderItem(l, actions){
+    const photos = (l.photos || []).map(p => `<img src="${p}" alt="">`).join('') || `<img src="" alt="" style="opacity:0;">`;
+    const video = l.video ? `<video src="${l.video}" controls style="width:64px; height:64px; object-fit:cover; border-radius:4px; background:#000;"></video>` : '';
+    const actionBtns = actions.map(a => `<button class="${a.cls}" data-action="${a.action}" data-id="${l.id}">${a.label}</button>`).join('');
+    return `
+      <div class="item">
+        <div class="item-photos">${photos}${video}</div>
+        <div class="item-body">
+          <div class="item-title">${l.title}</div>
+          <div class="item-meta">${l.location} &middot; ${l.year} &middot; ${l.condition}</div>
+          <div class="item-price">${fmtRupiah(l.price)}</div>
+          <div class="item-seller">${l.sellerName} &middot; wa.me/${l.sellerPhone} &middot; diajukan ${fmtDate(l.submittedAt)}</div>
+          ${l.description ? `<div class="item-desc">${l.description}</div>` : ''}
+        </div>
+        <div class="item-actions">${actionBtns}</div>
+      </div>
+    `;
+  }
+
+  async function loadAll(){
+    let listings;
+    try{
+      listings = await api('/api/marketplace-admin');
+    }catch(err){
+      if (err.message === 'unauthorized'){
+        showGateError('Password salah atau sesi habis.');
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('gate').style.display = 'block';
+      } else {
+        alert('Gagal memuat data: ' + err.message);
+      }
+      return;
+    }
+
+    const pending = listings.filter(l => l.status === 'pending');
+    const published = listings.filter(l => l.status === 'published');
+    const other = listings.filter(l => l.status === 'rejected' || l.status === 'unpublished');
+
+    document.getElementById('count-pending').textContent = pending.length;
+    document.getElementById('count-published').textContent = published.length;
+    document.getElementById('count-other').textContent = other.length;
+
+    document.getElementById('list-pending').innerHTML = pending.length
+      ? pending.map(l => renderItem(l, [
+          {label:'Approve', action:'approve', cls:'btn-approve'},
+          {label:'Reject', action:'reject', cls:'btn-reject'},
+        ])).join('')
+      : '<div class="empty-note">Tidak ada listing menunggu review.</div>';
+
+    document.getElementById('list-published').innerHTML = published.length
+      ? published.map(l => renderItem(l, [
+          {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
+          {label:'Hapus', action:'delete', cls:'btn-delete'},
+        ])).join('')
+      : '<div class="empty-note">Belum ada listing yang tayang.</div>';
+
+    document.getElementById('list-other').innerHTML = other.length
+      ? other.map(l => renderItem(l, [
+          {label:'Approve', action:'approve', cls:'btn-approve'},
+          {label:'Hapus', action:'delete', cls:'btn-delete'},
+        ])).join('')
+      : '<div class="empty-note">Tidak ada.</div>';
+
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (action === 'delete' && !confirm('Hapus listing ini permanen?')) return;
+        btn.disabled = true;
+        try{
+          await api('/api/marketplace-admin', { method: 'POST', body: JSON.stringify({ id, action }) });
+          loadAll();
+        }catch(err){
+          alert('Gagal memproses. Coba lagi.');
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function showGateError(msg){
+    document.getElementById('gate-error').textContent = msg;
+  }
+
+  document.getElementById('gate-submit').addEventListener('click', async () => {
+    const pass = document.getElementById('gate-pass').value;
+    if(!pass) return;
+    sessionStorage.setItem('mp_admin_token', pass);
+    showGateError('');
+    try{
+      await api('/api/marketplace-admin');
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadAll();
+    }catch(err){
+      showGateError('Password salah.');
+      sessionStorage.removeItem('mp_admin_token');
+    }
+  });
+  document.getElementById('gate-pass').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('gate-submit').click();
+  });
+
+  // auto-login if a token is already in this session
+  if (getToken()){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadAll();
+  }
+</script>
+
+</body>
+</html>
