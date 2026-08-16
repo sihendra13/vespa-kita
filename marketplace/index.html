@@ -836,8 +836,8 @@
       showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
 
       // instant heads-up to the admin, alongside the email notification the backend sends
-      const notifyText = `Ada listing baru menunggu review di Marketplace: ${encodeURIComponent(model)} dari ${encodeURIComponent(nama)}.%0A%0AReview & approve: https://www.vespakita.com/marketplace/admin/`;
-      if(waTab) waTab.location = `https://wa.me/${WA_NUMBER}?text=${notifyText}`;
+      const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${model} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
+      if(waTab) waTab.location = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';

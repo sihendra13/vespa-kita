@@ -10,7 +10,7 @@ const ADMIN_URL = "https://www.vespakita.com/marketplace/admin/";
 export async function sendAdminNotification(listing) {
   const fmtRupiah = (n) => "Rp " + Number(n).toLocaleString("id-ID");
 
-  await fetch(`https://formsubmit.co/ajax/${ADMIN_EMAIL}`, {
+  const res = await fetch(`https://formsubmit.co/ajax/${ADMIN_EMAIL}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
@@ -35,4 +35,6 @@ export async function sendAdminNotification(listing) {
       "Review & Approve": listing.adminLink || ADMIN_URL,
     }),
   });
+  const bodyText = await res.text();
+  console.log("formsubmit.co response:", res.status, bodyText.slice(0, 300));
 }

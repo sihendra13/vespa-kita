@@ -186,7 +186,7 @@ async function handlePost(context) {
       minusDesc: minusDesc.trim(),
       description: description.trim(),
       adminLink: "https://vespakita.com/marketplace/admin/"
-    }).catch(() => {})
+    }).catch((err) => console.error("sendAdminNotification failed:", err))
   );
 
   return new Response(JSON.stringify({ ok: true, id }), {
