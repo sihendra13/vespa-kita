@@ -12,9 +12,14 @@ CREATE TABLE IF NOT EXISTS listings (
   location TEXT NOT NULL,
   seller_name TEXT NOT NULL,
   seller_phone TEXT NOT NULL,
+  seller_ig TEXT NOT NULL DEFAULT '',
+  doc_surat TEXT NOT NULL DEFAULT '', -- 'Lengkap (BPKB + STNK)' | 'STNK Saja' | 'Tidak Ada'
+  doc_pajak TEXT NOT NULL DEFAULT '', -- 'Hidup' | 'Mati'
+  doc_kepemilikan TEXT NOT NULL DEFAULT '', -- 'Tangan Pertama' | 'Tangan Kedua' | 'Tangan Ketiga+'
+  minus_desc TEXT NOT NULL DEFAULT '', -- optional seller-disclosed defects
   description TEXT NOT NULL DEFAULT '',
   photos TEXT NOT NULL DEFAULT '[]', -- JSON array of Cloudinary {url, publicId} objects
-  video TEXT, -- JSON Cloudinary {url, publicId} object, or NULL
+  video TEXT NOT NULL, -- JSON Cloudinary {url, publicId} object — required as of the doc/IG update
   submitted_at TEXT NOT NULL,
   reviewed_at TEXT,
   published_at TEXT

@@ -18,6 +18,11 @@ const MAX_TOTAL_LISTINGS = 500; // abuse ceiling for the whole table
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
 
+const DOC_SURAT_OPTIONS = ["Lengkap (BPKB + STNK)", "STNK Saja", "Tidak Ada"];
+const DOC_PAJAK_OPTIONS = ["Hidup", "Mati"];
+const DOC_KEPEMILIKAN_OPTIONS = ["Tangan Pertama", "Tangan Kedua", "Tangan Ketiga+"];
+const MAX_MINUS_DESC = 500;
+
 function isNonEmptyString(v, max) {
   return typeof v === "string" && v.trim().length > 0 && v.length <= max;
 }
@@ -63,12 +68,24 @@ async function handlePost(context) {
   const priceRaw = form.get("price");
   const yearRaw = form.get("year");
   const sellerPhoneRaw = String(form.get("sellerPhone") || "");
+  const sellerIgRaw = String(form.get("sellerIg") || "");
+  const docSurat = String(form.get("docSurat") || "");
+  const docPajak = String(form.get("docPajak") || "");
+  const docKepemilikan = String(form.get("docKepemilikan") || "");
   const description = String(form.get("description") || "");
+  const minusDesc = String(form.get("minusDesc") || "");
 
   if (!isNonEmptyString(title, MAX_TITLE)) return badRequest("Model & tahun Vespa wajib diisi.");
   if (!isNonEmptyString(sellerName, 100)) return badRequest("Nama wajib diisi.");
   if (!isNonEmptyString(location, 100)) return badRequest("Lokasi wajib diisi.");
   if (!["Original", "Restorasi"].includes(condition)) return badRequest("Kondisi tidak valid.");
+  if (!isNonEmptyString(sellerIgRaw, 100)) return badRequest("Username/link Instagram wajib diisi.");
+  if (!DOC_SURAT_OPTIONS.includes(docSurat)) return badRequest("Status surat tidak valid.");
+  if (!DOC_PAJAK_OPTIONS.includes(docPajak)) return badRequest("Status pajak tidak valid.");
+  if (!DOC_KEPEMILIKAN_OPTIONS.includes(docKepemilikan)) return badRequest("Status kepemilikan tidak valid.");
+  if (minusDesc.length > MAX_MINUS_DESC) return badRequest("Deskripsi kekurangan terlalu panjang.");
+
+  const sellerIg = sellerIgRaw.trim().replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
 
   const price = Number(priceRaw);
   if (!Number.isFinite(price) || !(price > 0) || price > 1_000_000_000) return badRequest("Harga tidak valid.");
@@ -91,10 +108,9 @@ async function handlePost(context) {
 
   const videoFile = form.get("video");
   const hasVideo = videoFile instanceof File && videoFile.size > 0;
-  if (hasVideo) {
-    if (!VIDEO_TYPES.has(videoFile.type)) return badRequest("Format video harus MP4, MOV, atau WebM.");
-    if (videoFile.size > MAX_VIDEO_BYTES) return badRequest(`Ukuran video maksimal ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`);
-  }
+  if (!hasVideo) return badRequest("Video unit wajib diupload.");
+  if (!VIDEO_TYPES.has(videoFile.type)) return badRequest("Format video harus MP4, MOV, atau WebM.");
+  if (videoFile.size > MAX_VIDEO_BYTES) return badRequest(`Ukuran video maksimal ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`);
 
   const { count } = (await env.DB.prepare("SELECT COUNT(*) as count FROM listings").first()) || { count: 0 };
   if (count >= MAX_TOTAL_LISTINGS) {
@@ -120,20 +136,18 @@ async function handlePost(context) {
     }
   }
 
-  let videoResult = null;
-  if (hasVideo) {
-    try {
-      videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
-    } catch (err) {
-      console.error("Cloudinary video upload failed:", err);
-      return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi." }), { status: 500, headers: { "content-type": "application/json" } });
-    }
+  let videoResult;
+  try {
+    videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
+  } catch (err) {
+    console.error("Cloudinary video upload failed:", err);
+    return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi." }), { status: 500, headers: { "content-type": "application/json" } });
   }
 
   const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO listings (id, status, title, price, year, condition, location, seller_name, seller_phone, description, photos, video, submitted_at, reviewed_at, published_at)
-     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
+    `INSERT INTO listings (id, status, title, price, year, condition, location, seller_name, seller_phone, seller_ig, doc_surat, doc_pajak, doc_kepemilikan, minus_desc, description, photos, video, submitted_at, reviewed_at, published_at)
+     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
   )
     .bind(
       id,
@@ -144,9 +158,14 @@ async function handlePost(context) {
       location.trim(),
       sellerName.trim(),
       sellerPhone,
+      sellerIg,
+      docSurat,
+      docPajak,
+      docKepemilikan,
+      minusDesc.trim(),
       description.trim(),
       JSON.stringify(photoResults),
-      videoResult ? JSON.stringify(videoResult) : null,
+      JSON.stringify(videoResult),
       now
     )
     .run();

@@ -163,6 +163,11 @@
     font-family:var(--mono); font-size:10px; letter-spacing:0.06em; text-transform:uppercase;
     padding:5px 10px; border-radius:2px;
   }
+  .mp-doc-badge{
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.04em; text-transform:uppercase;
+    background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.35);
+    padding:5px 10px; border-radius:12px;
+  }
   .listing-body{padding:18px 20px 20px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .listing-title{font-family:var(--body); font-weight:700; font-size:16px; color:var(--krem); line-height:1.3;}
   .listing-meta{font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--chrome); text-transform:uppercase;}
@@ -311,6 +316,10 @@
         <label>No. WhatsApp Kamu</label>
         <input type="text" id="j-wa" placeholder="Contoh: 081234567890">
       </div>
+      <div class="field">
+        <label>Username / Link Instagram (Wajib)</label>
+        <input type="text" id="j-ig" placeholder="Contoh: @username atau instagram.com/username">
+      </div>
       <div class="field-row">
         <div class="field">
           <label>Model &amp; Tahun Vespa</label>
@@ -334,9 +343,38 @@
           <input type="text" id="j-lokasi" placeholder="Contoh: Yogyakarta">
         </div>
       </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Status Surat</label>
+          <select id="j-doc-surat">
+            <option value="Lengkap (BPKB + STNK)">Lengkap (BPKB + STNK)</option>
+            <option value="STNK Saja">STNK Saja</option>
+            <option value="Tidak Ada">Tidak Ada</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Status Pajak</label>
+          <select id="j-doc-pajak">
+            <option value="Hidup">Hidup</option>
+            <option value="Mati">Mati</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Status Kepemilikan</label>
+        <select id="j-doc-kepemilikan">
+          <option value="Tangan Pertama">Tangan Pertama</option>
+          <option value="Tangan Kedua">Tangan Kedua</option>
+          <option value="Tangan Ketiga+">Tangan Ketiga+</option>
+        </select>
+      </div>
       <div class="field">
         <label>Deskripsi Tambahan</label>
-        <textarea id="j-deskripsi" rows="3" placeholder="Kondisi mesin, surat-surat, kelengkapan, dll."></textarea>
+        <textarea id="j-deskripsi" rows="3" placeholder="Kondisi mesin, kelengkapan, dll."></textarea>
+      </div>
+      <div class="field">
+        <label>Kekurangan / PR Motor (Kejujuran Penjual)</label>
+        <textarea id="j-minus" rows="3" placeholder="Contoh: Ban belakang perlu diganti, ada baret di bodi kiri, dll. Jujur di sini bikin pembeli lebih percaya."></textarea>
       </div>
       <div class="field">
         <label>Foto Unit (maks. 5)</label>
@@ -344,7 +382,7 @@
         <div id="j-foto-preview" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;"></div>
       </div>
       <div class="field">
-        <label>Video Unit (opsional, maks. 60 detik &amp; 30MB)</label>
+        <label>Video Unit (Wajib, maks. 60 detik &amp; 30MB)</label>
         <input type="file" id="j-video" accept="video/mp4,video/quicktime,video/webm">
         <div id="j-video-preview" style="margin-top:10px;"></div>
       </div>
@@ -365,6 +403,7 @@
     <div id="mp-modal-thumbs" style="display:flex; gap:8px; padding:12px 32px 0;"></div>
     <div class="mp-modal-body">
       <h3 id="mp-modal-title"></h3>
+      <div id="mp-modal-badges" style="display:flex; gap:8px; flex-wrap:wrap; margin-top:12px;"></div>
       <div class="mp-modal-price" id="mp-modal-price"></div>
       <div class="mp-spec-grid">
         <div class="mp-spec-item"><div class="k">Tahun</div><div class="v" id="mp-modal-tahun"></div></div>
@@ -372,7 +411,15 @@
         <div class="mp-spec-item"><div class="k">Lokasi</div><div class="v" id="mp-modal-lokasi"></div></div>
         <div class="mp-spec-item"><div class="k">Penjual</div><div class="v" id="mp-modal-penjual"></div></div>
       </div>
+      <div style="background:rgba(111,168,154,0.08); border:1px solid rgba(111,168,154,0.25); border-radius:4px; padding:12px 16px; margin-bottom:24px; font-size:13px; color:var(--krem);">
+        <span style="color:var(--mint);">&#10003; Dikurasi oleh Admin VespaKita</span> &middot;
+        <a id="mp-modal-ig" href="#" target="_blank" rel="noopener" style="color:var(--mint); text-decoration:underline;"></a>
+      </div>
       <div class="mp-modal-desc" id="mp-modal-desc"></div>
+      <div id="mp-modal-minus-wrap" style="display:none; background:rgba(194,39,45,0.08); border:1px solid rgba(194,39,45,0.3); border-radius:4px; padding:14px 16px; margin-bottom:24px;">
+        <div style="font-family:var(--mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--merah); margin-bottom:6px;">Minus / Kekurangan (Info dari Penjual)</div>
+        <div id="mp-modal-minus" style="font-size:13.5px; color:var(--krem); white-space:pre-line;"></div>
+      </div>
       <div id="mp-modal-video-wrap" style="display:none; margin-bottom:24px;">
         <video id="mp-modal-video" controls playsinline style="width:100%; border-radius:6px; background:#000;"></video>
       </div>
@@ -509,6 +556,26 @@
     document.getElementById('mp-modal-lokasi').textContent = l.location;
     document.getElementById('mp-modal-penjual').textContent = l.sellerName;
     document.getElementById('mp-modal-desc').textContent = l.description || '';
+
+    const badges = [l.docSurat, l.docPajak ? `Pajak ${l.docPajak}` : '', l.docKepemilikan].filter(Boolean);
+    document.getElementById('mp-modal-badges').innerHTML = badges.map(b => `<span class="mp-doc-badge">${b}</span>`).join('');
+
+    const igLink = document.getElementById('mp-modal-ig');
+    if (l.sellerIg) {
+      igLink.href = `https://instagram.com/${l.sellerIg}`;
+      igLink.textContent = `IG Penjual: @${l.sellerIg}`;
+      igLink.style.display = 'inline';
+    } else {
+      igLink.style.display = 'none';
+    }
+
+    const minusWrap = document.getElementById('mp-modal-minus-wrap');
+    if (l.minusDesc) {
+      document.getElementById('mp-modal-minus').textContent = l.minusDesc;
+      minusWrap.style.display = 'block';
+    } else {
+      minusWrap.style.display = 'none';
+    }
 
     const videoWrap = document.getElementById('mp-modal-video-wrap');
     const videoEl = document.getElementById('mp-modal-video');
@@ -683,16 +750,29 @@
   document.getElementById('j-submit').addEventListener('click', async ()=>{
     const nama = document.getElementById('j-nama').value.trim();
     const wa = document.getElementById('j-wa').value.trim();
+    const ig = document.getElementById('j-ig').value.trim();
     const model = document.getElementById('j-model').value.trim();
     const hargaRaw = document.getElementById('j-harga').value.trim();
     const lokasi = document.getElementById('j-lokasi').value.trim();
+    const docSurat = document.getElementById('j-doc-surat').value;
+    const docPajak = document.getElementById('j-doc-pajak').value;
+    const docKepemilikan = document.getElementById('j-doc-kepemilikan').value;
     const deskripsi = document.getElementById('j-deskripsi').value.trim();
+    const minus = document.getElementById('j-minus').value.trim();
     const harga = Number(hargaRaw.replace(/[^0-9]/g, ''));
     const tahunMatch = model.match(/(19|20)\d{2}/);
     const tahun = tahunMatch ? Number(tahunMatch[0]) : new Date().getFullYear();
 
     if(!nama || !wa || !model || !harga){
       showFormMsg('Mohon isi nama, no. WhatsApp, model & tahun, dan harga dulu ya.', true);
+      return;
+    }
+    if(!ig){
+      showFormMsg('Mohon isi username/link Instagram kamu dulu ya.', true);
+      return;
+    }
+    if(!jualVideo){
+      showFormMsg('Video unit wajib diupload dulu ya.', true);
       return;
     }
 
@@ -709,9 +789,14 @@
       fd.append('location', lokasi || '-');
       fd.append('sellerName', nama);
       fd.append('sellerPhone', wa);
+      fd.append('sellerIg', ig);
+      fd.append('docSurat', docSurat);
+      fd.append('docPajak', docPajak);
+      fd.append('docKepemilikan', docKepemilikan);
       fd.append('description', deskripsi);
+      fd.append('minusDesc', minus);
       jualFotos.forEach((f, i) => fd.append('photos', f.blob, `photo-${i + 1}.jpg`));
-      if(jualVideo) fd.append('video', jualVideo.file, jualVideo.file.name);
+      fd.append('video', jualVideo.file, jualVideo.file.name);
 
       const res = await fetch('/api/marketplace-submit', { method: 'POST', body: fd });
       const data = await res.json();
@@ -729,10 +814,12 @@
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';
+      document.getElementById('j-ig').value = '';
       document.getElementById('j-model').value = '';
       document.getElementById('j-harga').value = '';
       document.getElementById('j-lokasi').value = '';
       document.getElementById('j-deskripsi').value = '';
+      document.getElementById('j-minus').value = '';
       jualFotos.forEach(f => URL.revokeObjectURL(f.previewUrl));
       jualFotos = [];
       renderFotoPreview();
