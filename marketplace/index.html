@@ -756,6 +756,10 @@
           }
         };
         xhr.onerror = () => reject(new Error('Koneksi internet terputus saat mengirim.'));
+        xhr.timeout = 90000; // 90s — if the connection stalls (e.g. mobile signal drop mid-upload),
+        // neither onload nor onerror fires on their own, so without this the button stays
+        // stuck on "Mengirim..." forever with no way to retry.
+        xhr.ontimeout = () => reject(new Error('Koneksi terlalu lama, coba lagi ya.'));
         xhr.send(fd);
       });
 
