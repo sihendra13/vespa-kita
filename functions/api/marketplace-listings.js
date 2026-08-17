@@ -9,7 +9,7 @@ export async function onRequestGet(context) {
   if (!env.DB) return new Response(JSON.stringify({ error: "DB not bound" }), { status: 500 });
 
   const { results } = await env.DB.prepare(
-    `SELECT id, title, price, year, condition, location, seller_name, seller_phone, seller_ig, doc_surat, doc_pajak, doc_kepemilikan, minus_desc, description, photos, video
+    `SELECT id, title, price, year, condition, location, seller_name, seller_phone, seller_ig, doc_surat, doc_pajak, doc_kepemilikan, minus_desc, description, photos, video, views, clicks
      FROM listings WHERE status = 'published' ORDER BY published_at DESC`
   ).all();
 
@@ -30,6 +30,8 @@ export async function onRequestGet(context) {
     description: row.description,
     photos: JSON.parse(row.photos || "[]").map((p) => p.url),
     video: row.video ? JSON.parse(row.video).url : null,
+    views: row.views,
+    clicks: row.clicks,
   }));
 
   return new Response(JSON.stringify(listings), {
