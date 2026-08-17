@@ -394,6 +394,10 @@
         <div id="j-video-preview" style="margin-top:10px;"></div>
       </div>
       <div id="j-form-msg" style="display:none; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:6px; margin-bottom:16px;"></div>
+      <a id="j-wa-notify" href="#" target="_blank" rel="noopener" class="btn btn-outline" style="display:none; text-align:center; margin-bottom:16px; align-items:center; justify-content:center; gap:8px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.84.5 3.56 1.35 5.04L2 22l5.13-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3.03.79.81-2.95-.19-.3A7.96 7.96 0 1 1 20 12a8 8 0 0 1-8 8Zm4.34-5.98c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.62-1.18-1.39-1.31-1.63-.14-.24-.02-.36.1-.48.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.75-1.79-.2-.47-.4-.41-.54-.42-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"></path></svg>
+        Kabari Admin via WhatsApp (Opsional, Biar Cepat Direview)
+      </a>
       <div class="submit-row">
         <button type="button" class="btn btn-primary" id="j-submit">Ajukan Listing</button>
       </div>
@@ -456,6 +460,8 @@
       }
     });
   }
+
+  const WA_NUMBER = "6281227341300"; // Admin WA number, seller taps a real link to notify (avoids the iOS popup issue)
 
   const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
 
@@ -713,6 +719,7 @@
     submitBtn.disabled = true;
     submitBtn.textContent = 'Mengirim...';
     document.getElementById('j-form-msg').style.display = 'none';
+    document.getElementById('j-wa-notify').style.display = 'none';
     showFormMsg('Mengirim foto & video, mohon tunggu...', false, 'Ini bisa makan waktu sampai 1 menit tergantung kecepatan internet kamu — jangan tutup halaman ini dulu ya.');
 
     try{
@@ -742,6 +749,11 @@
       }
 
       showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
+
+      const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${model} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
+      const waNotify = document.getElementById('j-wa-notify');
+      waNotify.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
+      waNotify.style.display = 'flex';
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';

@@ -6,7 +6,6 @@
 
 import { cloudinaryUpload, parseCloudinaryUrl } from "../_lib/cloudinary.js";
 import { sendAdminNotification } from "../_lib/resend.js";
-import { sendAdminWhatsApp } from "../_lib/callmebot.js";
 
 const MAX_PHOTOS = 5;
 const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6MB — safety net above the ~1600px/JPEG-80% client compression target
@@ -192,17 +191,6 @@ async function handlePost(context) {
     );
   } else {
     console.error("RESEND_API_KEY not configured — skipping admin email notification");
-  }
-
-  if (env.CALLMEBOT_APIKEY && env.CALLMEBOT_PHONE) {
-    const waMsg = `Ada listing baru menunggu review di Marketplace: ${title.trim()} dari ${sellerName.trim()}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
-    waitUntil(
-      sendAdminWhatsApp(env.CALLMEBOT_PHONE, env.CALLMEBOT_APIKEY, waMsg).catch((err) =>
-        console.error("sendAdminWhatsApp failed:", err)
-      )
-    );
-  } else {
-    console.error("CALLMEBOT_APIKEY/CALLMEBOT_PHONE not configured — skipping admin WA notification");
   }
 
   return new Response(JSON.stringify({ ok: true, id }), {
