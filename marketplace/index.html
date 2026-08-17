@@ -737,9 +737,27 @@
       jualFotos.forEach((f, i) => fd.append('photos', f.blob, `photo-${i + 1}.jpg`));
       fd.append('video', jualVideo.file, jualVideo.file.name);
 
-      const res = await fetch('/api/marketplace-submit', { method: 'POST', body: fd });
-      const data = await res.json();
-      if(!res.ok) throw new Error(data.error || 'Gagal mengirim listing.');
+      const data = await new Promise((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/api/marketplace-submit', true);
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) {
+            const percent = Math.round((e.loaded / e.total) * 100);
+            submitBtn.textContent = `MENGIRIM (${percent}%)...`;
+          }
+        };
+        xhr.onload = () => {
+          try {
+            const res = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300) resolve(res);
+            else reject(new Error(res.error || 'Gagal mengirim listing.'));
+          } catch(e) {
+            reject(new Error('Gagal membaca respons server.'));
+          }
+        };
+        xhr.onerror = () => reject(new Error('Koneksi internet terputus saat mengirim.'));
+        xhr.send(fd);
+      });
 
       if (typeof gtag === 'function') {
         gtag('event', 'generate_lead', { content_type: 'marketplace_jual', item_id: model });
