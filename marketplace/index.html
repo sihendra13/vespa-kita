@@ -717,15 +717,7 @@
     document.getElementById('j-form-msg').style.display = 'none';
     showFormMsg('Mengirim foto & video, mohon tunggu...', false, 'Ini bisa makan waktu sampai 1 menit tergantung kecepatan internet kamu — jangan tutup halaman ini dulu ya.');
 
-    // Open the WA tab synchronously, inside the click handler, before any
-    // await — browsers silently block window.open() calls made after an
-    // async gap (e.g. once a fetch() resolves), since by then it's no longer
-    // considered a trusted user gesture. We navigate this pre-opened tab to
-    // the real wa.me URL once the upload succeeds, or close it on failure.
-    // Known issue: on iOS Safari the redirect can silently no-op if the
-    // upload takes long enough, leaving a blank about:blank tab — accepted
-    // as a temporary tradeoff per user decision.
-    const waTab = window.open('', '_blank');
+    // We will navigate the current tab directly to WhatsApp after a successful upload.
 
     try{
       const fd = new FormData();
@@ -756,7 +748,7 @@
       showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
 
       const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${model} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
-      if(waTab) waTab.location = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
+      window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';
@@ -773,7 +765,6 @@
       jualVideo = null;
       renderVideoPreview();
     }catch(err){
-      if(waTab) waTab.close();
       showFormMsg(err.message || 'Gagal mengirim listing, coba lagi ya.', true);
     }finally{
       submitBtn.disabled = false;
