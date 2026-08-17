@@ -150,7 +150,15 @@
 
   .listing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
   @media (max-width:900px){ .listing-grid{grid-template-columns:1fr 1fr;} }
-  @media (max-width:620px){ .listing-grid{grid-template-columns:1fr;} }
+  @media (max-width:620px){
+    .listing-grid{
+      display:flex; grid-template-columns:none; overflow-x:auto; gap:14px;
+      scroll-snap-type:x mandatory; padding-bottom:4px;
+    }
+    .listing-grid .listing-card{flex:0 0 85%; scroll-snap-align:start;}
+  }
+
+  .listing-view-all{text-align:center; margin-top:32px;}
 
   .listing-card{
     background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px;
@@ -279,6 +287,10 @@
     </div>
 
     <div id="listing-grid" class="listing-grid reveal"></div>
+
+    <div id="listing-view-all" class="listing-view-all reveal" style="display:none;">
+      <a href="/marketplace/semua/" class="btn btn-outline">Lihat Semua Listing</a>
+    </div>
 
     <div id="listing-empty" class="mp-empty reveal" style="display:none;">
       <h3>Belum Ada Listing Saat Ini</h3>
@@ -453,9 +465,23 @@
   // Published listings live in Cloudflare KV, served via /api/marketplace-listings.
   // New submissions go through /api/marketplace-submit and land as "pending" —
   // an admin approves them at /marketplace/admin/ before they show up here.
+  const MAX_FEATURED = 3;
+
+  // Fisher-Yates — unbiased shuffle, used so the featured 3 rotate across all
+  // published listings instead of always favoring the newest.
+  function shuffle(arr){
+    const a = arr.slice();
+    for(let i = a.length - 1; i > 0; i--){
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
   async function loadListings(){
     const grid = document.getElementById('listing-grid');
     const empty = document.getElementById('listing-empty');
+    const viewAll = document.getElementById('listing-view-all');
     let listings = [];
     try{
       const res = await fetch('/api/marketplace-listings');
@@ -466,14 +492,18 @@
 
     if(!listings || listings.length === 0){
       grid.style.display = 'none';
+      viewAll.style.display = 'none';
       empty.style.display = 'block';
       return;
     }
 
-    grid.style.display = 'grid';
+    grid.style.removeProperty('display'); // let CSS (grid on desktop, flex+scroll-snap on mobile) control this, not an inline override
     empty.style.display = 'none';
+    viewAll.style.display = listings.length > MAX_FEATURED ? 'block' : 'none';
 
-    grid.innerHTML = listings.map(l => `
+    const featured = shuffle(listings).slice(0, MAX_FEATURED);
+
+    grid.innerHTML = featured.map(l => `
       <div class="listing-card">
         <a href="/marketplace/l/${l.id}" class="listing-card-link" aria-label="Lihat detail"></a>
         <div class="listing-photo" style="background-image:url('${(l.photos && l.photos[0]) || ''}')">
