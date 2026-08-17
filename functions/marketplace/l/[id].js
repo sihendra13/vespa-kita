@@ -159,7 +159,9 @@ export async function onRequestGet(context) {
     background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.35);
     padding:5px 10px; border-radius:12px; display:inline-block; margin:0 8px 8px 0;
   }
-  .price{font-family:var(--mono); font-weight:700; font-size:26px; color:var(--krem); margin:14px 0 20px;}
+  .price{font-family:var(--mono); font-weight:700; font-size:26px; color:var(--krem); margin:14px 0 6px;}
+  .stats-row{display:flex; gap:14px; font-family:var(--mono); font-size:11.5px; color:var(--chrome); margin-bottom:20px;}
+  .stats-row span{display:inline-flex; align-items:center; gap:5px;}
   .spec-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:24px; padding-bottom:24px; border-bottom:1px dashed rgba(241,232,214,0.18);}
   .spec-item .k{font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase; color:var(--chrome); margin-bottom:4px;}
   .spec-item .v{font-size:14px; color:var(--krem);}
@@ -210,6 +212,10 @@ export async function onRequestGet(context) {
     <h1>${escapeHtml(title)}</h1>
     <div>${badges}</div>
     <div class="price">${escapeHtml(fmtRupiah(price))}</div>
+    <div class="stats-row">
+      <span>&#128065; <span id="views-count">${row.views}</span> Views</span>
+      <span>&#128172; <span id="clicks-count">${row.clicks}</span> Chat WA</span>
+    </div>
 
     <div class="spec-grid">
       <div class="spec-item"><div class="k">Tahun</div><div class="v">${escapeHtml(row.year)}</div></div>
@@ -252,8 +258,30 @@ export async function onRequestGet(context) {
   if (typeof gtag === 'function') {
     gtag('event', 'view_item', { item_id: ${JSON.stringify(id)}, item_name: ${JSON.stringify(title)} });
   }
+
+  // Client-side only, so bot/crawler hits (WhatsApp/Facebook/Google fetching
+  // this page for a link preview or index) don't inflate the counters.
+  var listingId = ${JSON.stringify(id)};
+  var viewedKey = 'vk_viewed_' + listingId;
+  if (!sessionStorage.getItem(viewedKey)) {
+    sessionStorage.setItem(viewedKey, '1');
+    fetch('/api/marketplace-track', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: listingId, type: 'view' }),
+    }).then(function () {
+      var el = document.getElementById('views-count');
+      el.textContent = Number(el.textContent) + 1;
+    }).catch(function () {});
+  }
+
   document.getElementById('wa-cta').addEventListener('click', () => {
     if (typeof gtag === 'function') gtag('event', 'generate_lead', { content_type: 'marketplace_contact_seller', item_id: ${JSON.stringify(id)} });
+    fetch('/api/marketplace-track', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ id: listingId, type: 'click' }),
+    }).catch(function () {});
   });
 </script>
 

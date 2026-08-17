@@ -22,7 +22,9 @@ CREATE TABLE IF NOT EXISTS listings (
   video TEXT NOT NULL, -- JSON Cloudinary {url, publicId} object — required as of the doc/IG update
   submitted_at TEXT NOT NULL,
   reviewed_at TEXT,
-  published_at TEXT
+  published_at TEXT,
+  views INTEGER NOT NULL DEFAULT 0, -- incremented client-side on detail page load (avoids bot/crawler inflation)
+  clicks INTEGER NOT NULL DEFAULT 0 -- incremented client-side right before the WA redirect
 );
 
 CREATE INDEX IF NOT EXISTS idx_listings_status ON listings(status);
