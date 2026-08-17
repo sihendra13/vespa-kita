@@ -14,6 +14,7 @@ const MAX_VIDEO_BYTES = 30 * 1024 * 1024; // 30MB. Duration (max 60s) is enforce
 const MAX_TITLE = 120;
 const MAX_DESCRIPTION = 800;
 const MAX_TOTAL_LISTINGS = 500; // abuse ceiling for the whole table
+const MIN_PRICE = 500_000; // no real Vespa listing should be below this — catches shorthand price entry mistakes
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
@@ -88,7 +89,9 @@ async function handlePost(context) {
   const sellerIg = sellerIgRaw.trim().replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
 
   const price = Number(priceRaw);
-  if (!Number.isFinite(price) || !(price > 0) || price > 1_000_000_000) return badRequest("Harga tidak valid.");
+  // MIN_PRICE catches shorthand like "28jt" slipping past the client-side digit-strip
+  // (becomes 28, not 28000000) as a technically-valid-but-nonsensical price.
+  if (!Number.isFinite(price) || price < MIN_PRICE || price > 1_000_000_000) return badRequest("Harga tidak valid.");
 
   const year = Number(yearRaw);
   if (!Number.isInteger(year) || year < 1946 || year > new Date().getFullYear() + 1) return badRequest("Tahun tidak valid.");

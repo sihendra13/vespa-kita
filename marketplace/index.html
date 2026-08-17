@@ -334,7 +334,7 @@
         </div>
         <div class="field">
           <label>Harga yang Diinginkan</label>
-          <input type="text" id="j-harga" placeholder="Contoh: 28000000" inputmode="numeric">
+          <input type="text" id="j-harga" placeholder="Contoh: 28000000 (angka penuh, bukan 28jt)" inputmode="numeric">
         </div>
       </div>
       <div class="field-row">
@@ -700,6 +700,10 @@
 
     if(!nama || !wa || !model || !harga){
       showFormMsg('Mohon isi nama, no. WhatsApp, model & tahun, dan harga dulu ya.', true);
+      return;
+    }
+    if(harga < 500000){
+      showFormMsg('Harga kayaknya belum bener nih.', true, 'Tulis angka penuh ya, contoh 28000000 — bukan singkatan kayak "28jt".');
       return;
     }
     if(!ig){
