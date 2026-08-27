@@ -866,6 +866,90 @@
   </div>
 </section>
 
+<!-- PARTNERSHIP MARQUEE -->
+<section class="dark" style="padding: 24px 0 40px 0; border-top: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
+  <div class="wrap">
+    <div style="font-family: var(--mono); font-size: 11px; color: var(--krem); opacity: 0.5; text-transform: uppercase; letter-spacing: 0.2em; text-align: center; margin-bottom: 32px;">
+      Official Partners &amp; Collaborations
+    </div>
+  </div>
+  
+  <style>
+    .marquee-container {
+      display: flex;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+      width: 100%;
+      mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+      -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    }
+    .marquee-content {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      padding-left: 32px;
+      animation: scroll-left 25s linear infinite;
+    }
+    @keyframes scroll-left {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-card {
+      background: #ffffff;
+      border-radius: 8px;
+      padding: 8px 24px;
+      height: 80px;
+      min-width: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .marquee-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 8px 24px rgba(245, 49, 29, 0.2);
+    }
+    .marquee-logo {
+      width: auto;
+      object-fit: contain;
+    }
+    .logo-hs { height: 60px; }
+    .logo-kenanga { height: 60px; }
+    .logo-unlock { height: 64px; transform: scale(1.4); }
+    .logo-northy { height: 18px; }
+  </style>
+
+  <div class="marquee-container">
+    <div class="marquee-content">
+      <!-- Set 1 -->
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-hs.jpg" alt="HS" class="marquee-logo logo-hs"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-kenanga.jpg" alt="Kenanga Garage" class="marquee-logo logo-kenanga"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-unlock.png" alt="Unlock Indonesia" class="marquee-logo logo-unlock"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-northy.png" alt="Northy" class="marquee-logo logo-northy" style="filter: brightness(0);"></div>
+      
+      <!-- Set 2 -->
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-hs.jpg" alt="HS" class="marquee-logo logo-hs"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-kenanga.jpg" alt="Kenanga Garage" class="marquee-logo logo-kenanga"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-unlock.png" alt="Unlock Indonesia" class="marquee-logo logo-unlock"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-northy.png" alt="Northy" class="marquee-logo logo-northy" style="filter: brightness(0);"></div>
+
+      <!-- Set 3 (for smooth looping) -->
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-hs.jpg" alt="HS" class="marquee-logo logo-hs"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-kenanga.jpg" alt="Kenanga Garage" class="marquee-logo logo-kenanga"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-unlock.png" alt="Unlock Indonesia" class="marquee-logo logo-unlock"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-northy.png" alt="Northy" class="marquee-logo logo-northy" style="filter: brightness(0);"></div>
+
+      <!-- Set 4 (for smooth looping) -->
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-hs.jpg" alt="HS" class="marquee-logo logo-hs"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-kenanga.jpg" alt="Kenanga Garage" class="marquee-logo logo-kenanga"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-unlock.png" alt="Unlock Indonesia" class="marquee-logo logo-unlock"></div>
+      <div class="marquee-card"><img src="/60s-yogyakarta/sponsor-northy.png" alt="Northy" class="marquee-logo logo-northy" style="filter: brightness(0);"></div>
+    </div>
+  </div>
+</section>
+
 <!-- NEXT EVENTS -->
 <section class="dark" id="next-events" style="padding: 60px 0 80px 0; border-top: 1px solid rgba(255,255,255,0.08);">
   <div class="wrap">
