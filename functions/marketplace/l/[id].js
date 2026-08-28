@@ -148,7 +148,7 @@ export async function onRequestGet(context) {
   .back-link:hover{color:var(--mint);}
 
   .main-photo-wrap{width:100%; border-radius:8px; overflow:hidden; background:var(--ink); margin-bottom:10px;}
-  .main-photo-wrap img{width:100%; height:auto; aspect-ratio:4/3; object-fit:cover;}
+  .main-photo-wrap img{width:100%; height:auto; aspect-ratio:4/3; object-fit:contain;}
   .thumbs{display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap;}
   .thumb{width:64px; height:64px; object-fit:cover; border-radius:4px; cursor:pointer; opacity:0.55; border:2px solid transparent;}
   .thumb.active{opacity:1; border-color:var(--mint);}
