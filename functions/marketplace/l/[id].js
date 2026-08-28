@@ -252,6 +252,12 @@ export async function onRequestGet(context) {
   <p>VespaKita &middot; Yogyakarta - Indonesia</p>
 </footer>
 
+<div id="image-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.95); padding:20px; align-items:center; justify-content:center; flex-direction:column; backdrop-filter: blur(5px);">
+  <button id="close-modal" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#fff; cursor:pointer; font-size:42px; line-height:1; width:50px; height:50px; display:flex; align-items:center; justify-content:center;">&times;</button>
+  <img id="modal-img" src="" style="max-width:100%; max-height:85vh; object-fit:contain; border-radius:4px;">
+  <p style="color:var(--chrome); font-size:12px; margin-top:16px; font-family:var(--mono); text-transform:uppercase;">Bisa di-zoom (Cubit Layar)</p>
+</div>
+
 <script>
   document.querySelectorAll('.thumb').forEach((el) => {
     el.addEventListener('click', () => {
@@ -259,6 +265,23 @@ export async function onRequestGet(context) {
       document.querySelectorAll('.thumb').forEach((t) => t.classList.remove('active'));
       el.classList.add('active');
     });
+  });
+
+  const modal = document.getElementById('image-modal');
+  const modalImg = document.getElementById('modal-img');
+  const mainPhoto = document.getElementById('main-photo');
+  const closeModal = document.getElementById('close-modal');
+
+  mainPhoto.style.cursor = 'zoom-in';
+  mainPhoto.addEventListener('click', () => {
+    modalImg.src = mainPhoto.src;
+    modal.style.display = 'flex';
+  });
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
   });
   if (typeof gtag === 'function') {
     gtag('event', 'view_item', { item_id: ${JSON.stringify(id)}, item_name: ${JSON.stringify(title)} });
