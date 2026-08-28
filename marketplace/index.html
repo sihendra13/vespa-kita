@@ -132,7 +132,22 @@
   .btn-outline:hover{background:var(--krem); color:var(--aspal);}
 
   /* ---------- MARKETPLACE HERO ---------- */
-  .mp-hero{padding-top:150px; padding-bottom:64px;}
+  .mp-hero{
+    padding-top:150px; 
+    padding-bottom:64px;
+    background-color: #17191b; 
+    background-image: linear-gradient(to right, #17191b 20%, rgba(23,25,27,0.8) 60%, rgba(23,25,27,0) 100%), url('/marketplace/image/hero.png?v=5'); 
+    background-position: right bottom; 
+    background-size: auto 80%; 
+    background-repeat: no-repeat;
+  }
+  @media (max-width: 768px) {
+    .mp-hero {
+      background-image: linear-gradient(to bottom, #17191b 0%, rgba(23,25,27,0.85) 60%, #17191b 100%), url('/marketplace/image/hero.png?v=6');
+      background-position: right bottom;
+      background-size: 180% auto;
+    }
+  }
   .mp-hero h1{font-size:clamp(38px,6vw,64px); color:var(--krem);}
   .mp-hero h1 .accent{color:var(--merah);}
   .mp-hero p.lede{font-size:16px; max-width:560px; color:var(--krem); margin-top:18px; opacity:0.85;}
