@@ -190,6 +190,7 @@
           const waMsg = encodeURIComponent(`Halo ${l.sellerName}! Listing Vespa ${l.title} Anda sudah lolos kurasi dan resmi tayang di VespaKita. Silakan cek di https://www.vespakita.com/marketplace/`);
           return renderItem(l, [
             {label:'Kabari Penjual', action:'link', cls:'btn-contact', href:`https://wa.me/${l.sellerPhone}?text=${waMsg}`},
+            {label:'Edit Harga', action:'edit-price', cls:'btn-contact'},
             {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
             {label:'Hapus', action:'delete', cls:'btn-delete'},
           ]);
@@ -208,9 +209,22 @@
         const action = btn.dataset.action;
         const id = btn.dataset.id;
         if (action === 'delete' && !confirm('Hapus listing ini permanen?')) return;
+        
+        let newPrice = undefined;
+        if (action === 'edit-price') {
+          const raw = prompt('Masukkan harga baru (hanya angka, misal: 25000000):');
+          if (raw === null) return;
+          const parsed = parseInt(raw.replace(/\D/g, ''), 10);
+          if (!parsed || isNaN(parsed)) {
+            alert('Format harga tidak valid.');
+            return;
+          }
+          newPrice = parsed;
+        }
+
         btn.disabled = true;
         try{
-          await api('/api/marketplace-admin', { method: 'POST', body: JSON.stringify({ id, action }) });
+          await api('/api/marketplace-admin', { method: 'POST', body: JSON.stringify({ id, action, newPrice }) });
           loadAll();
         }catch(err){
           alert('Gagal memproses. Coba lagi.');

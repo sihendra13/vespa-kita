@@ -57,7 +57,7 @@ export async function onRequestGet(context) {
   });
 }
 
-const VALID_ACTIONS = ["approve", "reject", "unpublish", "delete"];
+const VALID_ACTIONS = ["approve", "reject", "unpublish", "delete", "edit-price"];
 
 export async function onRequestPost(context) {
   const { request, env } = context;
@@ -71,7 +71,7 @@ export async function onRequestPost(context) {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
   }
 
-  const { id, action } = body || {};
+  const { id, action, newPrice } = body || {};
   if (!id || !VALID_ACTIONS.includes(action)) {
     return new Response(JSON.stringify({ error: "Invalid action" }), { status: 400 });
   }
@@ -100,6 +100,11 @@ export async function onRequestPost(context) {
     await env.DB.prepare(`UPDATE listings SET status = 'rejected', reviewed_at = ? WHERE id = ?`).bind(now, id).run();
   } else if (action === "unpublish") {
     await env.DB.prepare(`UPDATE listings SET status = 'unpublished', reviewed_at = ? WHERE id = ?`).bind(now, id).run();
+  } else if (action === "edit-price") {
+    if (typeof newPrice !== "number") {
+      return new Response(JSON.stringify({ error: "Invalid price" }), { status: 400 });
+    }
+    await env.DB.prepare(`UPDATE listings SET price = ? WHERE id = ?`).bind(newPrice, id).run();
   }
 
   return new Response(JSON.stringify({ ok: true }), {
