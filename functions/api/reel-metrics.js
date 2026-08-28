@@ -31,7 +31,9 @@ export async function onRequestGet(context) {
   }
 
   const body = await upstream.json();
-  const metrics = body?.data?.[0]?.metrics || {};
+  const post = body?.data?.[0] || {};
+  const metrics = post.metrics || {};
+  const media = post.media?.[0] || {};
 
   return new Response(
     JSON.stringify({
@@ -39,12 +41,18 @@ export async function onRequestGet(context) {
       comments: metrics.comments ?? null,
       shares: metrics.shares ?? null,
       views: metrics.views ?? null,
+      thumbnailUrl: media.thumbnail_url ?? null,
+      videoUrl: media.url ?? null,
+      permalink: post.platform_url ?? null,
     }),
     {
       status: 200,
       headers: {
         "content-type": "application/json",
-        "cache-control": "public, max-age=3600",
+        // Media URLs are Instagram CDN links that expire after a few hours,
+        // so this must not be cached long — keep it short, unlike the
+        // metrics-only response this replaced.
+        "cache-control": "public, max-age=300",
       },
     }
   );

@@ -544,6 +544,19 @@
     height:calc(100% + 54px) !important;
     border:none !important;
   }
+  .reel-thumb-img, .reel-video{
+    position:absolute; inset:0; width:100%; height:100%;
+    object-fit:cover; border:none; background:#000;
+  }
+  .reel-play-btn{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:64px; height:64px; border-radius:50%;
+    background:rgba(0,0,0,.55); border:2px solid rgba(255,255,255,.85);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:background .2s, transform .2s;
+  }
+  .reel-play-btn:hover{ background:rgba(0,0,0,.75); transform:translate(-50%,-50%) scale(1.08); }
+  .reel-play-btn svg{ width:26px; height:26px; fill:#fff; margin-left:3px; }
   
   /* Bold SVG stats */
   .reel-stats-container{
@@ -954,6 +967,7 @@
     </div>
   </div>
 </section>
+
 <!-- NEXT EVENTS -->
 <section class="dark" id="next-events" style="padding: 60px 0 80px 0; border-top: 1px solid rgba(255,255,255,0.08);">
   <div class="wrap">
@@ -1014,6 +1028,8 @@
   </div>
 </section>
 
+
+
 <div class="tearline to-light"></div>
 
 <!-- EVENT HIGHLIGHTS -->
@@ -1067,8 +1083,11 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbhO3cqK-Ls/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-5">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-5')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/watch?v=Qnt9lnMtJQw" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'momen_spesial'});}">
@@ -1117,8 +1136,11 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbPVuh-Pn4v/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-1">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-1')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/@VespaKitaSemua" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'reel_card'});}">
@@ -1167,8 +1189,11 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbOWhTxvG_s/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-2">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-2')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/@VespaKitaSemua" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'reel_card'});}">
@@ -1217,8 +1242,11 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbSle38PI8p/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-3">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-3')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/@VespaKitaSemua" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'reel_card'});}">
@@ -1267,8 +1295,11 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbE6dk-TyPL/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-6">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-6')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/watch?v=xRL-k6GscYA&t=1s" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'konsep_baru_jsp_2026'});}">
@@ -1317,14 +1348,34 @@
             </div>
             <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener" class="btn-view-profile">View Profile</a>
           </div>
-          <div class="reel-crop-container">
-            <iframe src="https://www.instagram.com/reel/DbQptNEvW70/embed" allowtransparency="true" allowfullscreen="true" frameborder="0" scrolling="no"></iframe>
+          <div class="reel-crop-container" id="reel-media-4">
+            <img class="reel-thumb-img" alt="" loading="lazy">
+            <button type="button" class="reel-play-btn" aria-label="Play video" onclick="playReelVideo('reel-media-4')">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
           </div>
         </div>
         <a href="https://www.youtube.com/@VespaKitaSemua" target="_blank" rel="noopener" class="btn-watch-episode" onclick="if(typeof gtag==='function'){gtag('event','select_content',{'content_type':'youtube_crosslink','item_id':'reel_card'});}">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"></path></svg>
           Watch Full Episode on YouTube
         </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARKETPLACE BANNER -->
+<section class="light" id="marketplace-banner" style="padding: 40px 0 100px 0;">
+  <div class="wrap">
+    <div style="background: var(--aspal); border-radius: 12px; padding: 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px; box-shadow: 0 12px 32px rgba(0,0,0,0.1);">
+      <div style="flex: 1; min-width: 300px;" class="reveal">
+        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">Marketplace VespaKita</div>
+        <h2 style="font-size: 32px; margin-bottom: 16px; line-height: 1.2; color: var(--krem);">JUAL BELI VESPA AMAN <br><span class="accent">TANPA TIPU-TIPU</span></h2>
+        <p style="color: var(--chrome); max-width: 500px; margin: 0; line-height: 1.6;">Semua unit telah dikurasi ketat oleh tim VespaKita. Cari Vespa impianmu atau pasang iklan dengan tenang.</p>
+      </div>
+      <div style="display: flex; gap: 16px; flex-wrap: wrap;" class="reveal">
+        <a href="/marketplace/" class="btn" style="background: var(--merah); color: #fff; padding: 16px 32px; border-radius: 6px; font-family: var(--mono); font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; transition: background 0.2s;" onmouseover="this.style.background='var(--merah-dark)';" onmouseout="this.style.background='var(--merah)';">Cari Vespa</a>
+        <a href="/marketplace/#jual" class="btn" style="border: 1px solid rgba(255,255,255,0.2); color: var(--krem); padding: 16px 32px; border-radius: 6px; font-family: var(--mono); font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; transition: all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.4)';" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(255,255,255,0.2)';">Pasang Iklan</a>
       </div>
     </div>
   </div>
@@ -1358,15 +1409,15 @@
       <h2>Talking about streets, community, and the Vespa scene</h2>
     </div>
     <div class="podcast-grid">
-      <button type="button" class="video-card reveal" data-yt="xRL-k6GscYA" aria-label="Putar video VespaKita Podcast">
+      <button type="button" class="video-card reveal" data-yt="xRL-k6GscYA" aria-label="Play video VespaKita Podcast">
         <img src="https://img.youtube.com/vi/xRL-k6GscYA/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
         <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
       </button>
-      <button type="button" class="video-card reveal" data-yt="Qnt9lnMtJQw" aria-label="Putar video VespaKita Podcast">
+      <button type="button" class="video-card reveal" data-yt="Qnt9lnMtJQw" aria-label="Play video VespaKita Podcast">
         <img src="https://img.youtube.com/vi/Qnt9lnMtJQw/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
         <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
       </button>
-      <button type="button" class="video-card reveal" data-yt="cJ5tFg6wJSk" aria-label="Putar video VespaKita Podcast">
+      <button type="button" class="video-card reveal" data-yt="cJ5tFg6wJSk" aria-label="Play video VespaKita Podcast">
         <img src="https://img.youtube.com/vi/cJ5tFg6wJSk/hqdefault.jpg" alt="VespaKita Podcast" loading="lazy">
         <span class="play-btn"><span><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></span></span>
       </button>
@@ -1753,9 +1804,45 @@
       if(viewsCaption && m.views !== null && m.views !== undefined){
         viewsCaption.childNodes[0].textContent = fmtID(m.views) + ' ';
       }
+
+      // Thumbnail + video: mirrors the "reel-stats-N" -> "reel-media-N" id pattern.
+      const mediaEl = document.getElementById(elementId.replace('reel-stats-', 'reel-media-'));
+      if(mediaEl){
+        if(m.thumbnailUrl){
+          const img = mediaEl.querySelector('.reel-thumb-img');
+          if(img) img.src = m.thumbnailUrl;
+        }
+        mediaEl.dataset.videoUrl = m.videoUrl || '';
+        mediaEl.dataset.permalink = m.permalink || '';
+      }
     }catch(err){
       console.error(`Reel metrics error for ${elementId}:`, err);
     }
+  }
+
+  // Swaps the thumbnail+play-button for an inline <video>. Falls back to
+  // opening the post on Instagram if the video URL isn't ready yet (e.g.
+  // metrics fetch still in flight) or failed to load.
+  function playReelVideo(mediaId){
+    const mediaEl = document.getElementById(mediaId);
+    if(!mediaEl) return;
+    const videoUrl = mediaEl.dataset.videoUrl;
+    const permalink = mediaEl.dataset.permalink;
+    if(!videoUrl){
+      if(permalink) window.open(permalink, '_blank', 'noopener');
+      return;
+    }
+    mediaEl.innerHTML = '';
+    const video = document.createElement('video');
+    video.className = 'reel-video';
+    video.src = videoUrl;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.onerror = () => {
+      if(permalink) window.open(permalink, '_blank', 'noopener');
+    };
+    mediaEl.appendChild(video);
   }
   loadReelMetrics('reel-stats-1', '17878485828504906');
   loadReelMetrics('reel-stats-2', '18086976170539585');
