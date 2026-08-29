@@ -1,4 +1,7 @@
 (function() {
+  if (window.innerWidth > 768) {
+    return;
+  }
   if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     return;
   }
