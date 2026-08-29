@@ -208,10 +208,10 @@ export async function onRequestGet(context) {
     z-index: 1000;
     padding: 4px 8px;
     padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .bottom-nav.bnav-shrink {
-    bottom: 12px;
+    bottom: 16px;
     left: 12px;
     right: 12px;
     border-radius: 30px;
@@ -245,7 +245,7 @@ export async function onRequestGet(context) {
   }
   .bnav-item:hover { color: #ffffff; }
   .bnav-item.active {
-    color: var(--merah, #c2272d);
+    color: #ffffff;
     background: rgba(255, 255, 255, 0.12);
   }
   .bnav-item:hover svg { opacity: 1; color: var(--merah, #c2272d); }

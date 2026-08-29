@@ -842,12 +842,12 @@
     z-index: 1000;
     padding: 4px 8px;
     padding-bottom: calc(4px + env(safe-area-inset-bottom, 0px));
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
   
   /* When shrunk on mobile scroll (Pill shape) */
   .bottom-nav.bnav-shrink {
-    bottom: 12px; /* Diturunkan agar tidak melompat terlalu tinggi */
+    bottom: 16px; /* Diturunkan agar tidak melompat terlalu tinggi */
     left: 12px;
     right: 12px;
     border-radius: 30px;
@@ -883,7 +883,7 @@
     color: #ffffff;
   }
   .bnav-item.active {
-    color: var(--merah);
+    color: #ffffff;
     background: rgba(255, 255, 255, 0.12); /* Chip putih transparan */
   }
   .bnav-item:hover svg {
@@ -1079,7 +1079,7 @@
               </div>
               <span style="font-family: var(--mono); font-size: 11px; color: var(--krem); opacity: 0.7;">20 - 23 Agustus 2026</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
               <h3 style="font-family: var(--display); font-size: 2rem; line-height: 1.1; color: var(--krem); margin-bottom: 0;">60'S YOGYAKARTA</h3>
               <div style="padding: 4px 10px; font-family: var(--mono); font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; color: #f4c871; background: rgba(244, 200, 113, 0.15); border: 1px solid rgba(244, 200, 113, 0.4); border-radius: 20px; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: default; white-space: nowrap;">
                 <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -1105,7 +1105,7 @@
               </div>
               <span style="font-family: var(--mono); font-size: 11px; color: var(--krem); opacity: 0.7;">5-6 September 2026</span>
             </div>
-            <h3 style="font-family: var(--display); font-size: 2rem; margin-bottom: 12px; line-height: 1.1; color: var(--krem);">VW CLUB YOGYAKARTA</h3>
+            <h3 style="font-family: var(--display); font-size: 2rem; margin-bottom: 16px; line-height: 1.1; color: var(--krem);">VW CLUB YOGYAKARTA</h3>
             <p style="font-size: 14px; opacity: 0.8; line-height: 1.5; margin-bottom: 24px;">Swingin' Summer VDUB 2026 — silaturahmi akbar para pecinta Volkswagen klasik se-Jawa &amp; Bali di Bojong Asri &amp; Pantai Depok, Bantul.</p>
           </div>
           <div style="display: flex; gap: 12px; margin-top: auto;">
@@ -1459,7 +1459,7 @@
   <div class="wrap">
     <div style="background-color: var(--aspal); background-image: linear-gradient(to right, #17191b 45%, rgba(23,25,27,0) 100%), url('/marketplace/image/hero.png?v=8'); background-position: right center; background-size: 55% auto; background-repeat: no-repeat; border-radius: 12px; padding: 48px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 32px; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative; overflow: hidden;">
       <div style="flex: 1; min-width: 300px;" class="reveal">
-        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">Marketplace VespaKita</div>
+        <div class="eyebrow" style="margin-bottom: 16px; color: var(--merah);">Marketplace VespaKita</div>
         <h2 style="font-size: 32px; margin-bottom: 16px; line-height: 1.2; color: var(--krem);">JUAL BELI VESPA AMAN <br><span class="accent">TANPA TIPU-TIPU</span></h2>
         <p style="color: var(--chrome); max-width: 500px; margin: 0; line-height: 1.6;">Semua unit telah dikurasi ketat oleh tim VespaKita. Cari Vespa impianmu atau pasang iklan dengan tenang.</p>
       </div>
@@ -1663,7 +1663,7 @@
       
       <!-- Starter Card -->
       <div class="next-event-card" style="padding: 34px; display: flex; flex-direction: column; background: var(--ink); height: 100%;">
-        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">PILIHAN PAKET</div>
+        <div class="eyebrow" style="margin-bottom: 16px; color: var(--merah);">PILIHAN PAKET</div>
         <h3 style="font-size: 28px; margin-bottom: 8px; color: var(--krem); font-family: var(--display); letter-spacing: 0.02em; text-transform: uppercase; line-height: 1;">Paket Starter</h3>
         <p style="color: var(--chrome); font-size: 14.5px; margin-bottom: 24px; line-height: 1.4;">Cocok untuk tes pasar & perkenalan produk awal dengan proses cepat.</p>
         <div class="num" style="font-family: var(--mono); color: var(--mint); font-size: 20px; font-weight: 700; margin-bottom: 24px; border-bottom: 1px dashed rgba(241,232,214,0.15); padding-bottom: 16px;">Mulai dari Rp100.000</div>
@@ -1683,7 +1683,7 @@
 
       <!-- Enterprise Card -->
       <div class="next-event-card" style="padding: 34px; display: flex; flex-direction: column; background: var(--ink); height: 100%;">
-        <div class="eyebrow" style="margin-bottom: 12px; color: var(--merah);">PILIHAN PAKET</div>
+        <div class="eyebrow" style="margin-bottom: 16px; color: var(--merah);">PILIHAN PAKET</div>
         <h3 style="font-size: 28px; margin-bottom: 8px; color: var(--krem); font-family: var(--display); letter-spacing: 0.02em; text-transform: uppercase; line-height: 1;">Paket Enterprise</h3>
         <p style="color: var(--chrome); font-size: 14.5px; margin-bottom: 24px; line-height: 1.4;">Solusi kampanye komprehensif untuk penetrasi & peluncuran skala besar.</p>
         <div class="num" style="font-family: var(--mono); color: var(--merah); font-size: 20px; font-weight: 700; margin-bottom: 24px; border-bottom: 1px dashed rgba(241,232,214,0.15); padding-bottom: 16px;">Custom / Sesuai Kebutuhan</div>
@@ -1758,7 +1758,7 @@
   <div class="yt-modal-backdrop" data-close-paket></div>
   <div class="form-card" style="position: relative; z-index: 2; width: 100%; max-width: 520px; background: var(--aspal-2); border: 1px solid rgba(241,232,214,0.12); margin: auto; padding: 40px; border-radius: 6px;">
     <button class="yt-modal-close" data-close-paket style="top: 12px; right: 20px; color: var(--chrome); font-size: 32px; z-index: 10;">&times;</button>
-    <div class="eyebrow" style="justify-content: center; margin-bottom: 12px;" id="modal-paket-eyebrow">Pengajuan Kolaborasi</div>
+    <div class="eyebrow" style="justify-content: center; margin-bottom: 16px;" id="modal-paket-eyebrow">Pengajuan Kolaborasi</div>
     <h3 style="margin-bottom: 24px; font-size: 24px; color: var(--krem); text-align: center; font-family: var(--display); letter-spacing: 0.02em;" id="modal-paket-title">Booking Paket</h3>
     
     <form id="paket-form" action="https://formsubmit.co/hendra@vespakita.com" method="POST">

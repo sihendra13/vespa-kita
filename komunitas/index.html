@@ -114,11 +114,22 @@
   .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
   .reveal.in{opacity:1; transform:translateY(0);}
   @media (prefers-reduced-motion: reduce){ *{transition-duration:0.001ms !important; animation-duration:0.001ms !important;} }
+
+  /* BOTTOM NAVIGATION (PWA / MOBILE) */
+  .bottom-nav{display:none; position:fixed; top:auto; bottom:0; left:0; right:0; background:rgba(23,25,27,0.95); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-top:1px solid rgba(255,255,255,0.1); z-index:1000; padding-bottom:env(safe-area-inset-bottom, 0px);}
+  .bnav-item{flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:12px 0 10px; color:var(--chrome); text-decoration:none; font-size:10px; font-family:var(--mono); text-transform:uppercase; transition:all 0.2s;}
+  .bnav-item svg{margin-bottom:4px; width:22px; height:22px; opacity:0.7; transition:all 0.2s;}
+  .bnav-item:hover, .bnav-item.active{color:var(--krem);}
+  .bnav-item:hover svg, .bnav-item.active svg{opacity:1; color:var(--merah);}
+  @media (max-width:768px){
+    .bottom-nav{display:flex;}
+    body{padding-bottom:70px;}
+  }
 </style>
 </head>
 <body>
 
-<div class="proto-banner">PROTOTIPE DESAIN — data contoh, belum tersambung ke database. Belum untuk production.</div>
+<div class="proto-banner">PROTOTIPE DESAIN — data 60's Yogyakarta &amp; VW Club Yogyakarta asli, tapi halaman ini belum tersambung ke database/nav production.</div>
 
 <nav>
   <div class="wrap">
@@ -142,9 +153,9 @@
       <a href="daftar/" class="btn btn-outline">Daftarkan Komunitas Kamu</a>
     </div>
     <div class="kom-stats">
-      <div class="kom-stat"><div class="num">6</div><div class="lbl">Komunitas Terdaftar</div></div>
-      <div class="kom-stat"><div class="num">5</div><div class="lbl">Kota di Indonesia</div></div>
-      <div class="kom-stat"><div class="num">2.100+</div><div class="lbl">Total Anggota</div></div>
+      <div class="kom-stat"><div class="num">2</div><div class="lbl">Komunitas Terdaftar</div></div>
+      <div class="kom-stat"><div class="num">1</div><div class="lbl">Kota di Indonesia</div></div>
+      <div class="kom-stat"><div class="num">227+</div><div class="lbl">Total Anggota</div></div>
     </div>
   </div>
 </section>
@@ -193,15 +204,37 @@
   </div>
 </footer>
 
+<!-- BOTTOM NAVIGATION (MOBILE / PWA) -->
+<nav class="bottom-nav">
+  <a href="/" class="bnav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+    <span>Beranda</span>
+  </a>
+  <a href="/marketplace/" class="bnav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+    <span>Jual Beli</span>
+  </a>
+  <a href="./" class="bnav-item active">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M12 3.5a4 4 0 0 1 0 7"></path></svg>
+    <span>Komunitas</span>
+  </a>
+  <a href="/#kolaborasi" class="bnav-item">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+    <span>Kolaborasi</span>
+  </a>
+</nav>
+
 <script>
-  // ---------- MOCK DATA (prototipe — nanti diganti fetch ke /api/communities) ----------
+  // ---------- DATA (prototipe — nanti diganti fetch ke /api/communities; 2 komunitas asli di bawah ini sudah pakai data sungguhan dari halaman proposal masing-masing) ----------
   const MOCK_COMMUNITIES = [
-    {slug:'jsp-yogyakarta', nama:'Jogja Scooter Parade', kota:'Yogyakarta', anggota:840, verified:true, tags:['Vespa Klasik','Event Akbar'], cover:'../jsp_landscape_poster.jpg', logo:'../logo.png'},
-    {slug:'vespa-klasik-bandung', nama:'Vespa Klasik Bandung', kota:'Bandung', anggota:410, verified:true, tags:['Vespa Klasik'], cover:'../logo.png', logo:'../logo.png'},
-    {slug:'scooterist-jakarta', nama:'Scooterist Jakarta', kota:'Jakarta', anggota:560, verified:true, tags:['Vespa Modern','Touring'], cover:'../logo.png', logo:'../logo.png'},
-    {slug:'vespa-excel-surabaya', nama:'Vespa Excel Surabaya', kota:'Surabaya', anggota:230, verified:false, tags:['Vespa Excel'], cover:'../logo.png', logo:'../logo.png'},
-    {slug:'piaggio-owners-semarang', nama:'Piaggio Owners Semarang', kota:'Semarang', anggota:180, verified:true, tags:['Vespa Modern'], cover:'../logo.png', logo:'../logo.png'},
-    {slug:'vw-klub-yogyakarta', nama:'VW Klub Yogyakarta', kota:'Yogyakarta', anggota:120, verified:true, tags:['Kolaborasi'], cover:'../logo.png', logo:'../logo.png'},
+    {
+      slug:'vespa-60s-yogyakarta', nama:"Vespa 60's Yogyakarta", kota:'Yogyakarta', anggota:null, verified:true,
+      tags:['Vespa Klasik','Touring'], cover:'../60s-yogyakarta/gallery-1.jpg', logo:'../60s-yogyakarta/60s-logo.png'
+    },
+    {
+      slug:'vw-club-yogyakarta', nama:'Volkswagen Club Yogyakarta', kota:'Yogyakarta', anggota:227, verified:true,
+      tags:['Komunitas Otomotif Klasik'], cover:'../vw-yogyakarta/images/hero-bg_poster.jpg', logo:'../vw-yogyakarta/images/vcy-logo.png'
+    },
   ];
 
   const grid = document.getElementById('kom-grid');
@@ -236,7 +269,7 @@
           <div class="kom-meta">${c.kota}</div>
           <div class="kom-tags">${c.tags.map(t => `<span class="kom-tag">${t}</span>`).join('')}</div>
           <div class="kom-stats-row">
-            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg> ${c.anggota} Anggota</span>
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg> ${c.anggota ? c.anggota + ' Anggota' : 'Anggota aktif'}</span>
           </div>
         </div>
       </div>
