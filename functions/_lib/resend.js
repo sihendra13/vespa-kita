@@ -47,3 +47,43 @@ Review & approve di: ${listing.adminLink || ADMIN_URL}`;
   console.log("Resend response:", res.status, bodyText.slice(0, 300));
   if (!res.ok) throw new Error(`Resend failed (${res.status}): ${bodyText.slice(0, 300)}`);
 }
+
+const COMMUNITY_ADMIN_URL = "https://www.vespakita.com/komunitas/admin/";
+
+export async function sendCommunityAdminNotification(apiKey, submission) {
+  const text = `Ada pengajuan event komunitas baru masuk, menunggu review.
+
+Komunitas: ${submission.name}
+Kota: ${submission.city}
+Perkiraan anggota: ${submission.memberEstimate || "-"}
+Instagram: @${submission.ig || "-"}
+WhatsApp: ${submission.wa}
+
+Event: ${submission.eventTitle}
+Tanggal: ${submission.eventDateText || "-"}
+Estimasi peserta: ${submission.participantEstimate || "-"}
+Dukungan dibutuhkan: ${submission.supportType || "-"}
+
+Deskripsi komunitas: ${submission.description || "-"}
+Rencana event: ${submission.eventDescription || "-"}
+
+Review & approve di: ${submission.adminLink || COMMUNITY_ADMIN_URL}`;
+
+  const res = await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      from: "VespaKita Komunitas <onboarding@resend.dev>",
+      to: [ADMIN_EMAIL],
+      subject: `Pengajuan event baru: ${submission.eventTitle}`,
+      text,
+    }),
+  });
+
+  const bodyText = await res.text();
+  console.log("Resend response:", res.status, bodyText.slice(0, 300));
+  if (!res.ok) throw new Error(`Resend failed (${res.status}): ${bodyText.slice(0, 300)}`);
+}
