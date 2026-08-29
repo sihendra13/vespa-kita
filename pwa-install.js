@@ -16,7 +16,7 @@
       <img src="/icon-192.png" style="width:44px; height:44px; border-radius:8px;">
       <div style="flex:1;">
         <div style="font-family:var(--mono, monospace); font-size:11px; color:var(--mint, #6FA89A); text-transform:uppercase; font-weight:bold; letter-spacing:0.05em;">VespaKita App</div>
-        <div style="font-size:12px; color:var(--chrome, #A9A49B); line-height:1.3; margin-top:4px;">Instal aplikasi VespaKita untuk pengalaman yang lebih menyenangkan.</div>
+        <div style="font-size:12px; color:#FFFFFF; line-height:1.3; margin-top:4px;">Instal aplikasi VespaKita untuk pengalaman yang lebih menyenangkan.</div>
       </div>
       <button id="pwa-install-btn" style="background:var(--merah, #C2272D); color:#fff; border:none; padding:8px 14px; border-radius:6px; font-family:var(--body, sans-serif); font-weight:600; font-size:13px; cursor:pointer;">Install</button>
       <button id="pwa-close-btn" style="background:transparent; border:none; color:var(--chrome, #A9A49B); font-size:22px; cursor:pointer; padding:0 0 0 8px; line-height:1;">&times;</button>
