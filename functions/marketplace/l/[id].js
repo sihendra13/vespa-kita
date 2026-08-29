@@ -103,6 +103,8 @@ export async function onRequestGet(context) {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escapeHtml(title)} - ${escapeHtml(fmtRupiah(price))} | VespaKita Marketplace</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#15171A">
 <link rel="icon" type="image/png" href="/favicon.png">
 <link rel="apple-touch-icon" href="/favicon.png">
 <meta name="description" content="${escapeHtml(ogDescription)}">
@@ -329,6 +331,13 @@ export async function onRequestGet(context) {
   });
 </script>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => {});
+    });
+  }
+</script>
 </body>
 </html>`;
 

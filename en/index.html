@@ -13,6 +13,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VespaKita - Vespa For Us All</title>
   <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#15171A">
   <link rel="apple-touch-icon" href="/favicon.png">
 <meta name="description" content="Media independen dunia Vespa &amp; komunitas Indonesia — podcast, liputan event, dan cerita autentik yang menghubungkan Brand dengan komunitas secara terpercaya.">
 <meta name="robots" content="index, follow">
@@ -2187,5 +2189,14 @@
   </a>
 </nav>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(err => {
+        console.log('SW registration failed: ', err);
+      });
+    });
+  }
+</script>
 </body>
 </html>
