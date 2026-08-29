@@ -847,13 +847,13 @@
   
   /* When shrunk on mobile scroll (Pill shape) */
   .bottom-nav.bnav-shrink {
-    bottom: 24px;
-    left: 16px;
-    right: 16px;
+    bottom: 12px; /* Diturunkan agar tidak melompat terlalu tinggi */
+    left: 12px;
+    right: 12px;
     border-radius: 30px;
     border: 1px solid rgba(255,255,255,0.15);
     box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    padding-bottom: 4px; /* env inset not needed when floating */
+    padding-bottom: 4px;
   }
   .bnav-item {
     flex: 1;
