@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[PROTOTIPE] Daftarkan Komunitas | VespaKita</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --aspal:#15171A; --aspal-2:#1E2124; --krem:#F1E8D6; --krem-2:#E7DBC2;
+    --merah:#C2272D; --merah-dark:#8F1B20; --mint:#6FA89A; --chrome:#A9A49B; --ink:#15171A; --emas:#D4AF37;
+    --display:'Anton', sans-serif; --body:'Work Sans', sans-serif; --mono:'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--body); background:var(--aspal); color:var(--krem); line-height:1.5; overflow-x:hidden;}
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--mint); display:flex; align-items:center; gap:10px; margin-bottom:16px; justify-content:center;}
+  .eyebrow::before{content:""; width:22px; height:2px; background:var(--merah); display:inline-block;}
+  h1,h2,h3{font-family:var(--display); font-weight:400; text-transform:uppercase; letter-spacing:0.01em; line-height:0.98;}
+  section{position:relative; padding:96px 0 80px;}
+  .dark{background:var(--aspal); color:var(--krem);}
+
+  .proto-banner{background:var(--emas); color:var(--ink); font-family:var(--mono); font-size:12px; letter-spacing:0.04em; text-align:center; padding:8px 16px; position:relative; z-index:60;}
+
+  nav{position:fixed; top:30px; left:0; right:0; z-index:50; background:rgba(21,23,26,0.78); backdrop-filter:blur(6px); border-bottom:1px solid rgba(241,232,214,0.1);}
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; padding-top:14px; padding-bottom:14px;}
+  .logo{font-family:var(--display); font-size:22px; letter-spacing:0.02em; color:var(--krem); display:flex; align-items:center; gap:8px;}
+  .logo img{height:56px; width:auto; display:block;}
+  .navlinks{display:flex; gap:28px; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; font-family:var(--mono); margin-left:80px;}
+  .navlinks a{opacity:0.75; transition:opacity .2s;}
+  .navlinks a:hover{opacity:1; color:var(--mint);}
+  @media (max-width:760px){ .navlinks{display:none;} }
+
+  .btn{display:inline-block; padding:15px 26px; font-family:var(--mono); font-size:13px; letter-spacing:0.05em; text-transform:uppercase; border-radius:2px; transition:transform .15s ease, background .15s ease; border:none;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--merah); color:var(--krem);}
+  .btn-primary:hover{background:#D6363C;}
+  .btn-primary:disabled{opacity:0.6; cursor:not-allowed; transform:none;}
+
+  .section-head{max-width:640px; margin:0 auto 40px; text-align:center;}
+  .section-head h2{font-size:clamp(28px,4vw,40px); color:var(--krem);}
+  .section-head p{margin-top:14px; color:var(--chrome); font-size:15px;}
+
+  .form-card{max-width:640px; margin:0 auto; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.12); border-radius:6px; padding:40px;}
+  @media (max-width:560px){ .form-card{padding:28px 20px;} }
+  .field{margin-bottom:20px;}
+  .field label{display:block; font-family:var(--mono); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--chrome); margin-bottom:8px;}
+  .field .req{color:var(--merah);}
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18);
+    border-radius:2px; padding:12px 14px; font-family:var(--body); font-size:14px;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--mint); outline-offset:1px;}
+  .field input:invalid:not(:placeholder-shown){border-color:var(--merah);}
+  .field-error{display:none; font-size:12px; color:var(--merah); margin-top:6px; font-family:var(--mono);}
+  .field-error.show{display:block;}
+  .field-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:520px){ .field-row{grid-template-columns:1fr;} }
+  .form-note{font-size:12px; color:var(--chrome); margin-bottom:24px; line-height:1.5; background:rgba(111,168,154,0.08); border:1px solid rgba(111,168,154,0.25); border-radius:4px; padding:14px 16px;}
+  .submit-row{margin-top:8px;}
+  .submit-row .btn{width:100%; text-align:center; border:none;}
+
+  .form-success{display:none; text-align:center; padding:40px 20px;}
+  .form-success.show{display:block;}
+  .form-success svg{color:var(--mint); margin:0 auto 20px;}
+  .form-success h3{font-size:24px; color:var(--krem); margin-bottom:12px;}
+  .form-success p{color:var(--chrome); font-size:14px; max-width:400px; margin:0 auto;}
+
+  footer{background:var(--aspal); padding:50px 0 34px; border-top:1px solid rgba(241,232,214,0.08);}
+  .footer-grid{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
+  footer p{color:var(--chrome); font-size:13px;}
+  .foot-links{display:flex; gap:18px; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;}
+</style>
+</head>
+<body>
+
+<div class="proto-banner">PROTOTIPE DESAIN — form ini belum mengirim data kemana pun.</div>
+
+<nav>
+  <div class="wrap">
+    <a href="/" class="logo"><img src="../../logo.png" alt="VespaKita Logo"></a>
+    <div class="navlinks">
+      <a href="/">Beranda</a>
+      <a href="/marketplace/">Marketplace</a>
+      <a href="../">Komunitas</a>
+    </div>
+  </div>
+</nav>
+
+<section class="dark">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Daftarkan Komunitas</div>
+      <h2>Gabung Direktori Komunitas VespaKita</h2>
+      <p>Isi form ini lengkap. Tim kami akan meninjau sebelum profil komunitas kamu tayang publik.</p>
+    </div>
+
+    <div class="form-card" id="form-wrap">
+      <div class="form-note">
+        Cara kerjanya: isi form ini → masuk antrian review tim VespaKita → begitu diverifikasi, komunitas kamu dapat halaman profil sendiri, bisa posting kegiatan, dan pengunjung bisa berkomentar di halamannya.
+      </div>
+
+      <form id="daftar-form" novalidate>
+        <div class="field">
+          <label for="k-nama">Nama Komunitas <span class="req">*</span></label>
+          <input type="text" id="k-nama" placeholder="Contoh: Jogja Scooter Parade" required>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="k-kota">Kota Basis <span class="req">*</span></label>
+            <input type="text" id="k-kota" placeholder="Contoh: Yogyakarta" required>
+          </div>
+          <div class="field">
+            <label for="k-tahun">Tahun Berdiri</label>
+            <input type="number" id="k-tahun" placeholder="Contoh: 2016" min="1960" max="2026">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="k-anggota">Perkiraan Jumlah Anggota</label>
+            <input type="number" id="k-anggota" placeholder="Contoh: 150" min="1">
+          </div>
+          <div class="field">
+            <label for="k-kategori">Jenis Vespa / Fokus Komunitas</label>
+            <select id="k-kategori">
+              <option>Vespa Klasik</option>
+              <option>Vespa Modern</option>
+              <option>Vespa Excel</option>
+              <option>Campuran / Umum</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="k-deskripsi">Deskripsi Komunitas <span class="req">*</span></label>
+          <textarea id="k-deskripsi" rows="4" placeholder="Ceritakan sejarah singkat, kegiatan rutin, dan hal yang membuat komunitas kamu unik." required></textarea>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="k-ig">Instagram Komunitas <span class="req">*</span></label>
+            <input type="text" id="k-ig" placeholder="@namakomunitas" required>
+          </div>
+          <div class="field">
+            <label for="k-wa">No. WhatsApp Admin <span class="req">*</span></label>
+            <input type="text" id="k-wa" placeholder="Contoh: 081234567890" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="k-logo">Logo Komunitas</label>
+          <input type="file" id="k-logo" accept="image/jpeg,image/png,image/webp">
+        </div>
+        <div class="field">
+          <label for="k-foto">Foto Kegiatan (maks. 5)</label>
+          <input type="file" id="k-foto" accept="image/jpeg,image/png,image/webp" multiple>
+        </div>
+        <div id="k-form-msg" class="field-error"></div>
+        <div class="submit-row">
+          <button type="submit" class="btn btn-primary" id="k-submit">Ajukan Pendaftaran</button>
+        </div>
+      </form>
+
+      <div class="form-success" id="form-success">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
+        <h3>Pendaftaran Terkirim</h3>
+        <p>Terima kasih! Tim VespaKita akan meninjau data komunitas kamu. Kami hubungi lewat WhatsApp begitu profil komunitas disetujui dan tayang.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="logo" style="font-size:18px;"><img src="../../logo.png" alt="VespaKita Logo" style="height:48px;"></div>
+      <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
+    </div>
+    <div class="foot-links">
+      <a href="/">Beranda</a>
+      <a href="../">Komunitas</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const form = document.getElementById('daftar-form');
+  const msg = document.getElementById('k-form-msg');
+  const requiredIds = ['k-nama','k-kota','k-deskripsi','k-ig','k-wa'];
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const missing = requiredIds.filter(id => !document.getElementById(id).value.trim());
+    if(missing.length){
+      msg.textContent = 'Lengkapi dulu kolom yang wajib diisi (tanda *) sebelum mengirim.';
+      msg.classList.add('show');
+      document.getElementById(missing[0]).focus();
+      return;
+    }
+    msg.classList.remove('show');
+
+    // PROTOTIPE: belum ada endpoint API sungguhan, jadi cuma menampilkan state sukses.
+    const submitBtn = document.getElementById('k-submit');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Mengirim...';
+    setTimeout(() => {
+      form.style.display = 'none';
+      document.querySelector('.form-note').style.display = 'none';
+      document.getElementById('form-success').classList.add('show');
+    }, 600);
+  });
+</script>
+</body>
+</html>

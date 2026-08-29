@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>[PROTOTIPE] Direktori Komunitas Vespa | VespaKita</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" type="image/png" href="../favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --aspal:#15171A; --aspal-2:#1E2124; --krem:#F1E8D6; --krem-2:#E7DBC2;
+    --merah:#C2272D; --merah-dark:#8F1B20; --mint:#6FA89A; --chrome:#A9A49B; --ink:#15171A; --emas:#D4AF37;
+    --display:'Anton', sans-serif; --body:'Work Sans', sans-serif; --mono:'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:var(--body); background:var(--aspal); color:var(--krem); line-height:1.5; overflow-x:hidden;}
+  img{max-width:100%; display:block;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  .eyebrow{font-family:var(--mono); font-size:12px; letter-spacing:0.18em; text-transform:uppercase; color:var(--mint); display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+  .eyebrow::before{content:""; width:22px; height:2px; background:var(--merah); display:inline-block;}
+  h1,h2,h3{font-family:var(--display); font-weight:400; text-transform:uppercase; letter-spacing:0.01em; line-height:0.98;}
+  section{position:relative; padding:96px 0;}
+  .dark{background:var(--aspal); color:var(--krem);}
+
+  /* PROTOTYPE BANNER */
+  .proto-banner{background:var(--emas); color:var(--ink); font-family:var(--mono); font-size:12px; letter-spacing:0.04em; text-align:center; padding:8px 16px; position:relative; z-index:60;}
+
+  /* NAV */
+  nav{position:fixed; top:30px; left:0; right:0; z-index:50; background:rgba(21,23,26,0.78); backdrop-filter:blur(6px); border-bottom:1px solid rgba(241,232,214,0.1);}
+  nav .wrap{display:flex; align-items:center; justify-content:space-between; padding-top:14px; padding-bottom:14px;}
+  .logo{font-family:var(--display); font-size:22px; letter-spacing:0.02em; color:var(--krem); display:flex; align-items:center; gap:8px;}
+  .logo img{height:56px; width:auto; display:block;}
+  .navlinks{display:flex; gap:28px; font-size:13px; letter-spacing:0.04em; text-transform:uppercase; font-family:var(--mono); margin-left:80px;}
+  .navlinks a{opacity:0.75; transition:opacity .2s;}
+  .navlinks a:hover, .navlinks a.active{opacity:1; color:var(--mint);}
+  .navcta{background:var(--merah); color:var(--krem); padding:10px 18px; font-family:var(--mono); font-size:12px; letter-spacing:0.06em; text-transform:uppercase; border-radius:2px; margin-left:auto;}
+  @media (max-width:760px){ .navlinks{display:none;} }
+
+  .btn{display:inline-block; padding:15px 26px; font-family:var(--mono); font-size:13px; letter-spacing:0.05em; text-transform:uppercase; border-radius:2px; transition:transform .15s ease, background .15s ease; border:none;}
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--merah); color:var(--krem);}
+  .btn-primary:hover{background:#D6363C;}
+  .btn-outline{border:1.5px solid var(--krem); color:var(--krem); background:transparent;}
+  .btn-outline:hover{background:var(--krem); color:var(--aspal);}
+
+  /* HERO */
+  .kom-hero{padding-top:180px; padding-bottom:56px; background:linear-gradient(160deg, #1c2320 0%, var(--aspal) 55%);}
+  .kom-hero h1{font-size:clamp(36px,5.6vw,58px); color:var(--krem);}
+  .kom-hero h1 .accent{color:var(--merah);}
+  .kom-hero p.lede{font-size:16px; max-width:600px; color:var(--krem); margin-top:16px; opacity:0.85;}
+  .kom-hero-ctas{display:flex; gap:14px; margin-top:28px; flex-wrap:wrap;}
+  .kom-stats{display:flex; gap:36px; margin-top:40px; flex-wrap:wrap;}
+  .kom-stat .num{font-family:var(--display); font-size:32px; color:var(--mint);}
+  .kom-stat .lbl{font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--chrome); margin-top:4px;}
+
+  /* FILTER BAR */
+  .filter-bar{display:flex; gap:14px; flex-wrap:wrap; align-items:center; margin-bottom:36px; padding:18px 20px; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px;}
+  .filter-bar input[type="search"], .filter-bar select{
+    background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:4px;
+    padding:12px 14px; font-family:var(--body); font-size:14px;
+  }
+  .filter-bar input[type="search"]{flex:1; min-width:200px;}
+  .filter-bar input:focus, .filter-bar select:focus{outline:2px solid var(--mint); outline-offset:1px;}
+  .filter-count{font-family:var(--mono); font-size:12px; color:var(--chrome); margin-left:auto;}
+
+  /* GRID */
+  .section-head{max-width:640px; margin-bottom:32px;}
+  .section-head h2{font-size:clamp(26px,3.6vw,38px);}
+  .section-head p{margin-top:12px; color:var(--chrome); font-size:15px;}
+
+  .kom-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+  @media (max-width:900px){ .kom-grid{grid-template-columns:1fr 1fr;} }
+  @media (max-width:620px){ .kom-grid{grid-template-columns:1fr;} }
+
+  .kom-card{
+    background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px;
+    overflow:hidden; display:flex; flex-direction:column; position:relative;
+    transition:transform .2s ease, border-color .2s ease;
+  }
+  .kom-card:hover{transform:translateY(-4px); border-color:rgba(111,168,154,0.4);}
+  .kom-card-link{position:absolute; inset:0; z-index:1;}
+  .kom-cover{position:relative; width:100%; padding-top:42%; background:var(--ink) center/cover no-repeat;}
+  .kom-logo{
+    position:absolute; left:20px; bottom:-28px; width:64px; height:64px; border-radius:50%;
+    border:3px solid var(--aspal-2); background:var(--aspal) center/cover no-repeat; z-index:2;
+  }
+  .kom-badge-verified{
+    position:absolute; top:10px; right:10px; width:22px; height:22px; color:var(--emas);
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,0.6));
+  }
+  .kom-body{padding:40px 20px 20px; display:flex; flex-direction:column; gap:8px; flex:1;}
+  .kom-title{font-family:var(--body); font-weight:700; font-size:16px; color:var(--krem); line-height:1.3;}
+  .kom-meta{font-family:var(--mono); font-size:11px; letter-spacing:0.04em; color:var(--chrome); text-transform:uppercase;}
+  .kom-tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:2px;}
+  .kom-tag{font-family:var(--mono); font-size:10px; letter-spacing:0.04em; text-transform:uppercase; background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.35); padding:3px 8px; border-radius:10px;}
+  .kom-stats-row{display:flex; gap:14px; font-family:var(--mono); font-size:10.5px; color:var(--chrome); margin-top:8px;}
+  .kom-stats-row span{display:inline-flex; align-items:center; gap:4px;}
+
+  /* CTA banner */
+  .kom-cta{background:var(--aspal-2); border:1px solid rgba(194,39,45,0.3); border-radius:8px; padding:48px 40px; text-align:center; margin-top:64px;}
+  .kom-cta h3{font-size:clamp(24px,3.4vw,32px); color:var(--krem); margin-bottom:14px;}
+  .kom-cta p{color:var(--chrome); font-size:14px; max-width:480px; margin:0 auto 24px;}
+
+  footer{background:var(--aspal); padding:50px 0 34px; border-top:1px solid rgba(241,232,214,0.08);}
+  .footer-grid{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
+  footer p{color:var(--chrome); font-size:13px;}
+  .foot-links{display:flex; gap:18px; font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em;}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){ *{transition-duration:0.001ms !important; animation-duration:0.001ms !important;} }
+</style>
+</head>
+<body>
+
+<div class="proto-banner">PROTOTIPE DESAIN — data contoh, belum tersambung ke database. Belum untuk production.</div>
+
+<nav>
+  <div class="wrap">
+    <a href="/" class="logo"><img src="../logo.png" alt="VespaKita Logo"></a>
+    <div class="navlinks">
+      <a href="/">Beranda</a>
+      <a href="/marketplace/">Marketplace</a>
+      <a href="#" class="active">Komunitas</a>
+    </div>
+    <a href="daftar/" class="navcta">Daftarkan Komunitas</a>
+  </div>
+</nav>
+
+<section class="dark kom-hero">
+  <div class="wrap">
+    <div class="eyebrow">Direktori Komunitas VespaKita</div>
+    <h1>SEMUA KOMUNITAS<br><span class="accent">VESPA INDONESIA</span></h1>
+    <p class="lede">Temukan dan terhubung dengan komunitas Vespa di kotamu. Setiap komunitas terverifikasi manual oleh tim VespaKita, bisa posting kegiatan, dan terbuka untuk kolaborasi brand maupun EO.</p>
+    <div class="kom-hero-ctas">
+      <a href="#direktori" class="btn btn-primary">Cari Komunitas</a>
+      <a href="daftar/" class="btn btn-outline">Daftarkan Komunitas Kamu</a>
+    </div>
+    <div class="kom-stats">
+      <div class="kom-stat"><div class="num">6</div><div class="lbl">Komunitas Terdaftar</div></div>
+      <div class="kom-stat"><div class="num">5</div><div class="lbl">Kota di Indonesia</div></div>
+      <div class="kom-stat"><div class="num">2.100+</div><div class="lbl">Total Anggota</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="direktori">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Direktori</div>
+      <h2>Cari Komunitasmu</h2>
+      <p>Filter berdasarkan kota atau cari nama komunitas.</p>
+    </div>
+
+    <div class="filter-bar reveal">
+      <input type="search" id="kom-search" placeholder="Cari nama komunitas..." aria-label="Cari komunitas">
+      <select id="kom-filter-kota" aria-label="Filter kota">
+        <option value="">Semua Kota</option>
+      </select>
+      <span class="filter-count" id="kom-count"></span>
+    </div>
+
+    <div id="kom-grid" class="kom-grid reveal"></div>
+  </div>
+</section>
+
+<section class="dark">
+  <div class="wrap">
+    <div class="kom-cta reveal">
+      <h3>Punya Komunitas Vespa?</h3>
+      <p>Daftarkan komunitas kamu gratis. Setelah diverifikasi, komunitas kamu punya halaman profil sendiri, bisa posting kegiatan/proposal kolaborasi, dan dapat berinteraksi lewat kolom komentar.</p>
+      <a href="daftar/" class="btn btn-primary">Daftarkan Sekarang</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-grid">
+    <div>
+      <div class="logo" style="font-size:18px;"><img src="../logo.png" alt="VespaKita Logo" style="height:48px;"></div>
+      <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
+    </div>
+    <div class="foot-links">
+      <a href="/">Beranda</a>
+      <a href="/marketplace/">Marketplace</a>
+      <a href="daftar/">Daftarkan Komunitas</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---------- MOCK DATA (prototipe — nanti diganti fetch ke /api/communities) ----------
+  const MOCK_COMMUNITIES = [
+    {slug:'jsp-yogyakarta', nama:'Jogja Scooter Parade', kota:'Yogyakarta', anggota:840, verified:true, tags:['Vespa Klasik','Event Akbar'], cover:'../jsp_landscape_poster.jpg', logo:'../logo.png'},
+    {slug:'vespa-klasik-bandung', nama:'Vespa Klasik Bandung', kota:'Bandung', anggota:410, verified:true, tags:['Vespa Klasik'], cover:'../logo.png', logo:'../logo.png'},
+    {slug:'scooterist-jakarta', nama:'Scooterist Jakarta', kota:'Jakarta', anggota:560, verified:true, tags:['Vespa Modern','Touring'], cover:'../logo.png', logo:'../logo.png'},
+    {slug:'vespa-excel-surabaya', nama:'Vespa Excel Surabaya', kota:'Surabaya', anggota:230, verified:false, tags:['Vespa Excel'], cover:'../logo.png', logo:'../logo.png'},
+    {slug:'piaggio-owners-semarang', nama:'Piaggio Owners Semarang', kota:'Semarang', anggota:180, verified:true, tags:['Vespa Modern'], cover:'../logo.png', logo:'../logo.png'},
+    {slug:'vw-klub-yogyakarta', nama:'VW Klub Yogyakarta', kota:'Yogyakarta', anggota:120, verified:true, tags:['Kolaborasi'], cover:'../logo.png', logo:'../logo.png'},
+  ];
+
+  const grid = document.getElementById('kom-grid');
+  const search = document.getElementById('kom-search');
+  const filterKota = document.getElementById('kom-filter-kota');
+  const countEl = document.getElementById('kom-count');
+
+  // populate kota filter
+  [...new Set(MOCK_COMMUNITIES.map(c => c.kota))].sort().forEach(kota => {
+    const opt = document.createElement('option');
+    opt.value = kota; opt.textContent = kota;
+    filterKota.appendChild(opt);
+  });
+
+  function render(){
+    const q = search.value.trim().toLowerCase();
+    const kota = filterKota.value;
+    const filtered = MOCK_COMMUNITIES.filter(c =>
+      (!q || c.nama.toLowerCase().includes(q)) && (!kota || c.kota === kota)
+    );
+    countEl.textContent = `${filtered.length} komunitas`;
+
+    grid.innerHTML = filtered.map(c => `
+      <div class="kom-card">
+        <a href="c/${c.slug}/" class="kom-card-link" aria-label="Lihat profil ${c.nama}"></a>
+        <div class="kom-cover" style="background-image:url('${c.cover}')">
+          <div class="kom-logo" style="background-image:url('${c.logo}')"></div>
+          ${c.verified ? `<div class="kom-badge-verified" title="Terverifikasi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></div>` : ''}
+        </div>
+        <div class="kom-body">
+          <div class="kom-title">${c.nama}</div>
+          <div class="kom-meta">${c.kota}</div>
+          <div class="kom-tags">${c.tags.map(t => `<span class="kom-tag">${t}</span>`).join('')}</div>
+          <div class="kom-stats-row">
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg> ${c.anggota} Anggota</span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  search.addEventListener('input', render);
+  filterKota.addEventListener('change', render);
+  render();
+
+  // scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.1});
+  revealEls.forEach(el=>io.observe(el));
+  setTimeout(()=>revealEls.forEach(el=>el.classList.add('in')), 1500);
+</script>
+</body>
+</html>
