@@ -53,6 +53,7 @@ function rowToEvent(row) {
     supportType: row.support_type,
     description: row.description,
     sponsorLogos: JSON.parse(row.sponsor_logos || "[]").map((s) => s.url),
+    detailUrl: row.detail_url || "",
     submittedAt: row.submitted_at,
     reviewedAt: row.reviewed_at,
     publishedAt: row.published_at,

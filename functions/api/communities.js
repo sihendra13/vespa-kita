@@ -27,6 +27,7 @@ function rowToEvent(row) {
     supportType: row.support_type,
     description: row.description,
     sponsorLogos: JSON.parse(row.sponsor_logos || "[]").map((s) => s.url),
+    detailUrl: row.detail_url || "",
   };
 }
 

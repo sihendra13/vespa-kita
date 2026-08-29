@@ -65,6 +65,9 @@ export async function onRequestGet(context) {
       const statusBadge = sponsorLogos.length
         ? `<div class="event-status" style="background:rgba(212,175,55,0.12); color:var(--emas); border:1px solid rgba(212,175,55,0.35);">&#10003; Sponsor Berhasil Didapat VespaKita</div>`
         : `<div class="event-status open">Terbuka Kolaborasi</div>`;
+      const detailLink = e.detail_url
+        ? `<a href="${escapeHtml(e.detail_url)}" class="btn btn-outline btn-sm" style="margin-top:16px;">Lihat Detail Lengkap</a>`
+        : "";
       return `
       <div class="event-card">
         <div class="event-body" style="flex:1;">
@@ -73,6 +76,7 @@ export async function onRequestGet(context) {
           <div class="event-meta">${escapeHtml(e.event_date_text || "-")} &middot; ~${e.participant_estimate || "?"} peserta</div>
           ${e.description ? `<div class="event-desc" style="margin-top:8px;">${escapeHtml(e.description)}</div>` : ""}
           ${sponsorBlock}
+          ${detailLink}
         </div>
       </div>`;
     })

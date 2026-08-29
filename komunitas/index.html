@@ -183,15 +183,6 @@
     <div class="section-head reveal">
       <div class="eyebrow">Direktori</div>
       <h2>Komunitas yang Sudah Dibantu</h2>
-      <p>Filter berdasarkan kota atau cari nama komunitas.</p>
-    </div>
-
-    <div class="filter-bar reveal">
-      <input type="search" id="kom-search" placeholder="Cari nama komunitas..." aria-label="Cari komunitas">
-      <select id="kom-filter-kota" aria-label="Filter kota">
-        <option value="">Semua Kota</option>
-      </select>
-      <span class="filter-count" id="kom-count"></span>
     </div>
 
     <div id="kom-grid" class="kom-grid reveal"></div>
@@ -244,28 +235,17 @@
 
 <script>
   const grid = document.getElementById('kom-grid');
-  const search = document.getElementById('kom-search');
-  const filterKota = document.getElementById('kom-filter-kota');
-  const countEl = document.getElementById('kom-count');
-
   let COMMUNITIES = [];
 
   function render(){
-    const q = search.value.trim().toLowerCase();
-    const kota = filterKota.value;
-    const filtered = COMMUNITIES.filter(c =>
-      (!q || c.name.toLowerCase().includes(q)) && (!kota || c.city === kota)
-    );
-    countEl.textContent = `${filtered.length} komunitas`;
-
-    if(filtered.length === 0){
+    if(COMMUNITIES.length === 0){
       grid.innerHTML = `<div class="mp-empty" style="grid-column:1/-1; text-align:center; padding:64px 24px; background:var(--aspal-2); border:1px dashed rgba(241,232,214,0.2); border-radius:6px;">
-        <p style="color:var(--chrome); font-size:14px;">${COMMUNITIES.length === 0 ? 'Belum ada komunitas yang tayang.' : 'Tidak ada komunitas yang cocok dengan pencarian.'}</p>
+        <p style="color:var(--chrome); font-size:14px;">Belum ada komunitas yang tayang.</p>
       </div>`;
       return;
     }
 
-    grid.innerHTML = filtered.map(c => `
+    grid.innerHTML = COMMUNITIES.map(c => `
       <div class="kom-card">
         <a href="c/${c.id}" class="kom-card-link" aria-label="Lihat profil ${c.name}"></a>
         <div class="kom-cover" style="background-image:url('${c.coverPhotoUrl || c.logoUrl || ''}')">
@@ -291,18 +271,9 @@
       console.error('Gagal memuat komunitas:', err);
       COMMUNITIES = [];
     }
-
-    [...new Set(COMMUNITIES.map(c => c.city))].sort().forEach(city => {
-      const opt = document.createElement('option');
-      opt.value = city; opt.textContent = city;
-      filterKota.appendChild(opt);
-    });
-
     render();
   }
 
-  search.addEventListener('input', render);
-  filterKota.addEventListener('change', render);
   loadCommunities();
 
   // scroll reveal
