@@ -338,6 +338,7 @@ export async function onRequestGet(context) {
     });
   }
 </script>
+<script src="/pwa-install.js"></script>
 </body>
 </html>`;
 
