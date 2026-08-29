@@ -1,6 +1,8 @@
-const CACHE_NAME = 'vespakita-v1';
+const CACHE_NAME = 'vespakita-v2';
 const ASSETS_TO_CACHE = [
   '/',
+  '/en/',
+  '/marketplace/',
   '/manifest.json',
   '/logo.png',
   '/favicon.png',

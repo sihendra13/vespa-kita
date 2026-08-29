@@ -2167,6 +2167,57 @@
     });
   }
 
+  // BOTTOM NAV ACTIVE STATE MANAGER
+  document.addEventListener('DOMContentLoaded', () => {
+    const bnavItems = document.querySelectorAll('.bnav-item');
+    if (!bnavItems.length) return;
+
+    // Handle clicks for instant feedback
+    bnavItems.forEach(item => {
+      item.addEventListener('click', function() {
+        if (this.getAttribute('href').startsWith('#') || this.getAttribute('href') === '/') {
+          bnavItems.forEach(i => i.classList.remove('active'));
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Handle scroll observing
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          let matched = false;
+          bnavItems.forEach(item => {
+            if (item.getAttribute('href') === '#' + id) {
+              bnavItems.forEach(i => i.classList.remove('active'));
+              item.classList.add('active');
+              matched = true;
+            }
+          });
+          // If we scroll to a section that doesn't have a specific bottom nav link,
+          // but we are near the top (e.g. hero), activate Beranda.
+          if (!matched && window.scrollY < 500) {
+            bnavItems.forEach(i => i.classList.remove('active'));
+            const beranda = document.querySelector('.bnav-item[href="/"]');
+            if (beranda) beranda.classList.add('active');
+          }
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('section[id], header').forEach(sec => observer.observe(sec));
+    
+    // Fallback for scrolling back to very top
+    window.addEventListener('scroll', () => {
+      if (window.scrollY < 300) {
+        bnavItems.forEach(i => i.classList.remove('active'));
+        const beranda = document.querySelector('.bnav-item[href="/"]');
+        if (beranda) beranda.classList.add('active');
+      }
+    });
+  });
+
 </script>
 
 <!-- BOTTOM NAVIGATION (MOBILE) -->
