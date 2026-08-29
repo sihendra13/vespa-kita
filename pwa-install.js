@@ -2,8 +2,12 @@
   if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
     return;
   }
-  if (localStorage.getItem('pwa_banner_dismissed') === 'true') {
-    return;
+  const dismissedTime = localStorage.getItem('pwa_banner_dismissed_time');
+  if (dismissedTime) {
+    const daysSinceDismissed = (Date.now() - parseInt(dismissedTime)) / (1000 * 60 * 60 * 24);
+    if (daysSinceDismissed < 7) {
+      return;
+    }
   }
 
   let deferredPrompt;
@@ -71,7 +75,7 @@
 
   document.getElementById('pwa-close-btn').addEventListener('click', () => {
     banner.style.transform = 'translateY(-150%)';
-    localStorage.setItem('pwa_banner_dismissed', 'true');
+    localStorage.setItem('pwa_banner_dismissed_time', Date.now().toString());
   });
 
   const iosModalEl = document.getElementById('pwa-ios-modal');
