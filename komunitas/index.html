@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>[PROTOTIPE] Direktori Komunitas Vespa | VespaKita</title>
+<title>Direktori Komunitas Vespa | VespaKita</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,7 +31,7 @@
   .proto-banner{background:var(--emas); color:var(--ink); font-family:var(--mono); font-size:12px; letter-spacing:0.04em; text-align:center; padding:8px 16px; position:relative; z-index:60;}
 
   /* NAV */
-  nav{position:fixed; top:30px; left:0; right:0; z-index:50; background:rgba(21,23,26,0.78); backdrop-filter:blur(6px); border-bottom:1px solid rgba(241,232,214,0.1);}
+  nav{position:fixed; top:0; left:0; right:0; z-index:50; background:rgba(21,23,26,0.78); backdrop-filter:blur(6px); border-bottom:1px solid rgba(241,232,214,0.1);}
   nav .wrap{display:flex; align-items:center; justify-content:space-between; padding-top:14px; padding-bottom:14px;}
   .logo{font-family:var(--display); font-size:22px; letter-spacing:0.02em; color:var(--krem); display:flex; align-items:center; gap:8px;}
   .logo img{height:56px; width:auto; display:block;}
@@ -67,6 +67,10 @@
   .filter-bar input[type="search"]{flex:1; min-width:200px;}
   .filter-bar input:focus, .filter-bar select:focus{outline:2px solid var(--mint); outline-offset:1px;}
   .filter-count{font-family:var(--mono); font-size:12px; color:var(--chrome); margin-left:auto;}
+
+  /* PROOF LOGOS */
+  .proof-logos{display:flex; align-items:center; justify-content:center; gap:40px; flex-wrap:wrap; padding:32px 24px; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:8px;}
+  .proof-logos img{height:36px; width:auto; object-fit:contain; opacity:0.9;}
 
   /* GRID */
   .section-head{max-width:640px; margin-bottom:32px;}
@@ -129,8 +133,6 @@
 </head>
 <body>
 
-<div class="proto-banner">PROTOTIPE DESAIN — data 60's Yogyakarta &amp; VW Club Yogyakarta asli, tapi halaman ini belum tersambung ke database/nav production.</div>
-
 <nav>
   <div class="wrap">
     <a href="/" class="logo"><img src="../logo.png" alt="VespaKita Logo"></a>
@@ -139,23 +141,39 @@
       <a href="/marketplace/">Marketplace</a>
       <a href="#" class="active">Komunitas</a>
     </div>
-    <a href="daftar/" class="navcta">Daftarkan Komunitas</a>
+    <a href="daftar/" class="navcta">Ajukan Event Kamu</a>
   </div>
 </nav>
 
 <section class="dark kom-hero">
   <div class="wrap">
-    <div class="eyebrow">Direktori Komunitas VespaKita</div>
-    <h1>SEMUA KOMUNITAS<br><span class="accent">VESPA INDONESIA</span></h1>
-    <p class="lede">Temukan dan terhubung dengan komunitas Vespa di kotamu. Setiap komunitas terverifikasi manual oleh tim VespaKita, bisa posting kegiatan, dan terbuka untuk kolaborasi brand maupun EO.</p>
+    <div class="eyebrow">Untuk Komunitas Vespa Indonesia</div>
+    <h1>PUNYA EVENT?<br><span class="accent">KAMI BANTU CARIKAN SPONSOR</span></h1>
+    <p class="lede">VespaKita bantu komunitas kamu mendapatkan sponsor untuk kegiatan touring, gathering, atau jambore — lewat jaringan brand yang sudah kami bangun. Terbukti: Road to Jakarta (Vespa 60's Yogyakarta) berhasil kami carikan sponsor dari 4 brand nasional.</p>
     <div class="kom-hero-ctas">
-      <a href="#direktori" class="btn btn-primary">Cari Komunitas</a>
-      <a href="daftar/" class="btn btn-outline">Daftarkan Komunitas Kamu</a>
+      <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
+      <a href="#direktori" class="btn btn-outline">Lihat Komunitas yang Sudah Dibantu</a>
     </div>
     <div class="kom-stats">
-      <div class="kom-stat"><div class="num">2</div><div class="lbl">Komunitas Terdaftar</div></div>
-      <div class="kom-stat"><div class="num">1</div><div class="lbl">Kota di Indonesia</div></div>
+      <div class="kom-stat"><div class="num">2</div><div class="lbl">Komunitas Terbantu</div></div>
+      <div class="kom-stat"><div class="num">4</div><div class="lbl">Sponsor Tersalurkan</div></div>
       <div class="kom-stat"><div class="num">227+</div><div class="lbl">Total Anggota</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="bukti">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">Bukti Nyata</div>
+      <h2>Sudah Terbukti Membantu</h2>
+      <p>Road to Jakarta — perjalanan Vespa 60's Yogyakarta menuju Jamnas Vespa 60's Indonesia 2026 — didukung 4 sponsor yang kami hubungkan langsung.</p>
+    </div>
+    <div class="proof-logos reveal">
+      <img src="../60s-yogyakarta/sponsor-hs.jpg" alt="Sponsor HS" loading="lazy">
+      <img src="../60s-yogyakarta/sponsor-kenanga.jpg" alt="Sponsor Kenanga Garage" loading="lazy">
+      <img src="../60s-yogyakarta/sponsor-unlock.png" alt="Sponsor Unlock Indonesia" loading="lazy">
+      <img src="../60s-yogyakarta/sponsor-northy.png" alt="Sponsor Northy" style="filter:brightness(0) invert(1);" loading="lazy">
     </div>
   </div>
 </section>
@@ -164,16 +182,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <div class="eyebrow">Direktori</div>
-      <h2>Cari Komunitasmu</h2>
-      <p>Filter berdasarkan kota atau cari nama komunitas.</p>
-    </div>
-
-    <div class="filter-bar reveal">
-      <input type="search" id="kom-search" placeholder="Cari nama komunitas..." aria-label="Cari komunitas">
-      <select id="kom-filter-kota" aria-label="Filter kota">
-        <option value="">Semua Kota</option>
-      </select>
-      <span class="filter-count" id="kom-count"></span>
+      <h2>Komunitas yang Sudah Dibantu</h2>
     </div>
 
     <div id="kom-grid" class="kom-grid reveal"></div>
@@ -183,9 +192,9 @@
 <section class="dark">
   <div class="wrap">
     <div class="kom-cta reveal">
-      <h3>Punya Komunitas Vespa?</h3>
-      <p>Daftarkan komunitas kamu gratis. Setelah diverifikasi, komunitas kamu punya halaman profil sendiri, bisa posting kegiatan/proposal kolaborasi, dan dapat berinteraksi lewat kolom komentar.</p>
-      <a href="daftar/" class="btn btn-primary">Daftarkan Sekarang</a>
+      <h3>Ada Event Komunitas yang Butuh Sponsor?</h3>
+      <p>Ceritakan rencana kegiatan komunitas kamu — touring, gathering, atau jambore. Tim VespaKita akan bantu carikan sponsor lewat jaringan brand yang sudah kami bangun.</p>
+      <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
     </div>
   </div>
 </section>
@@ -199,7 +208,7 @@
     <div class="foot-links">
       <a href="/">Beranda</a>
       <a href="/marketplace/">Marketplace</a>
-      <a href="daftar/">Daftarkan Komunitas</a>
+      <a href="daftar/">Ajukan Event</a>
     </div>
   </div>
 </footer>
@@ -225,60 +234,47 @@
 </nav>
 
 <script>
-  // ---------- DATA (prototipe — nanti diganti fetch ke /api/communities; 2 komunitas asli di bawah ini sudah pakai data sungguhan dari halaman proposal masing-masing) ----------
-  const MOCK_COMMUNITIES = [
-    {
-      slug:'vespa-60s-yogyakarta', nama:"Vespa 60's Yogyakarta", kota:'Yogyakarta', anggota:null, verified:true,
-      tags:['Vespa Klasik','Touring'], cover:'../60s-yogyakarta/gallery-1.jpg', logo:'../60s-yogyakarta/60s-logo.png'
-    },
-    {
-      slug:'vw-club-yogyakarta', nama:'Volkswagen Club Yogyakarta', kota:'Yogyakarta', anggota:227, verified:true,
-      tags:['Komunitas Otomotif Klasik'], cover:'../vw-yogyakarta/images/hero-bg_poster.jpg', logo:'../vw-yogyakarta/images/vcy-logo.png'
-    },
-  ];
-
   const grid = document.getElementById('kom-grid');
-  const search = document.getElementById('kom-search');
-  const filterKota = document.getElementById('kom-filter-kota');
-  const countEl = document.getElementById('kom-count');
-
-  // populate kota filter
-  [...new Set(MOCK_COMMUNITIES.map(c => c.kota))].sort().forEach(kota => {
-    const opt = document.createElement('option');
-    opt.value = kota; opt.textContent = kota;
-    filterKota.appendChild(opt);
-  });
+  let COMMUNITIES = [];
 
   function render(){
-    const q = search.value.trim().toLowerCase();
-    const kota = filterKota.value;
-    const filtered = MOCK_COMMUNITIES.filter(c =>
-      (!q || c.nama.toLowerCase().includes(q)) && (!kota || c.kota === kota)
-    );
-    countEl.textContent = `${filtered.length} komunitas`;
+    if(COMMUNITIES.length === 0){
+      grid.innerHTML = `<div class="mp-empty" style="grid-column:1/-1; text-align:center; padding:64px 24px; background:var(--aspal-2); border:1px dashed rgba(241,232,214,0.2); border-radius:6px;">
+        <p style="color:var(--chrome); font-size:14px;">Belum ada komunitas yang tayang.</p>
+      </div>`;
+      return;
+    }
 
-    grid.innerHTML = filtered.map(c => `
+    grid.innerHTML = COMMUNITIES.map(c => `
       <div class="kom-card">
-        <a href="c/${c.slug}/" class="kom-card-link" aria-label="Lihat profil ${c.nama}"></a>
-        <div class="kom-cover" style="background-image:url('${c.cover}')">
-          <div class="kom-logo" style="background-image:url('${c.logo}')"></div>
-          ${c.verified ? `<div class="kom-badge-verified" title="Terverifikasi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></div>` : ''}
+        <a href="c/${c.id}" class="kom-card-link" aria-label="Lihat profil ${c.name}"></a>
+        <div class="kom-cover" style="background-image:url('${c.coverPhotoUrl || c.logoUrl || ''}')">
+          <div class="kom-logo" style="background-image:url('${c.logoUrl || ''}')"></div>
+          <div class="kom-badge-verified" title="Terverifikasi"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg></div>
         </div>
         <div class="kom-body">
-          <div class="kom-title">${c.nama}</div>
-          <div class="kom-meta">${c.kota}</div>
-          <div class="kom-tags">${c.tags.map(t => `<span class="kom-tag">${t}</span>`).join('')}</div>
+          <div class="kom-title">${c.name}</div>
+          <div class="kom-meta">${c.city}</div>
           <div class="kom-stats-row">
-            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg> ${c.anggota ? c.anggota + ' Anggota' : 'Anggota aktif'}</span>
+            <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"></path></svg> ${c.memberEstimate ? c.memberEstimate + ' Anggota' : 'Anggota aktif'}</span>
           </div>
         </div>
       </div>
     `).join('');
   }
 
-  search.addEventListener('input', render);
-  filterKota.addEventListener('change', render);
-  render();
+  async function loadCommunities(){
+    try{
+      const res = await fetch('/api/communities');
+      COMMUNITIES = await res.json();
+    }catch(err){
+      console.error('Gagal memuat komunitas:', err);
+      COMMUNITIES = [];
+    }
+    render();
+  }
+
+  loadCommunities();
 
   // scroll reveal
   const revealEls = document.querySelectorAll('.reveal');

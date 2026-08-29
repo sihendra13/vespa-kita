@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Komunitas | VespaKita</title>
+<meta name="robots" content="noindex, nofollow">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --aspal:#15171A; --aspal-2:#1E2124; --krem:#F1E8D6; --krem-2:#E7DBC2;
+    --merah:#C2272D; --merah-dark:#8F1B20; --mint:#6FA89A; --chrome:#A9A49B; --emas:#D4AF37;
+    --body: 'Work Sans', sans-serif; --mono: 'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{font-family:var(--body); background:var(--aspal); color:var(--krem); line-height:1.5; padding:32px 20px 80px;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:920px; margin:0 auto;}
+  h1{font-size:22px; margin-bottom:4px;}
+  .sub{color:var(--chrome); font-size:13px; margin-bottom:28px;}
+
+  #gate{max-width:360px; margin:80px auto; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.12); border-radius:6px; padding:32px;}
+  #gate input{width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:2px; padding:12px 40px 12px 14px; font-family:var(--body); font-size:14px;}
+  .gate-pass-wrap{position:relative; margin-bottom:14px;}
+  #gate .gate-pass-toggle{position:absolute; top:0; right:0; height:100%; width:40px; background:none; border:none; color:var(--chrome); cursor:pointer; display:flex; align-items:center; justify-content:center;}
+  #gate .gate-pass-toggle:hover{color:var(--krem);}
+  #gate button{width:100%; padding:13px; background:var(--merah); color:var(--krem); border:none; border-radius:2px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.05em; cursor:pointer;}
+  #gate-error{color:var(--merah); font-size:12px; margin-top:10px; min-height:16px;}
+
+  .section-title{font-family:var(--mono); font-size:12px; letter-spacing:0.1em; text-transform:uppercase; color:var(--mint); margin:32px 0 14px; display:flex; align-items:center; gap:10px;}
+  .count-badge{background:rgba(111,168,154,0.15); color:var(--mint); padding:2px 8px; border-radius:10px; font-size:11px;}
+
+  .item{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; padding:18px 20px; margin-bottom:12px; display:flex; gap:16px;}
+  .item-photos{display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap; max-width:120px;}
+  .item-photos img{width:64px; height:64px; object-fit:cover; border-radius:4px; background:var(--aspal);}
+  .item-thumb{cursor:pointer; transition:opacity .15s;}
+  .item-thumb:hover{opacity:0.8;}
+
+  .lightbox{position:fixed; inset:0; z-index:999; display:none; align-items:center; justify-content:center; background:rgba(10,10,10,0.92); padding:24px;}
+  .lightbox.active{display:flex;}
+  .lightbox-content{max-width:min(90vw,700px); max-height:85vh;}
+  .lightbox-content img{max-width:100%; max-height:85vh; border-radius:6px; display:block; margin:0 auto;}
+  .lightbox-close{position:absolute; top:20px; right:24px; background:none; border:none; color:var(--krem); font-size:36px; line-height:1; cursor:pointer; z-index:1;}
+  .item-body{flex:1; min-width:0;}
+  .item-title{font-weight:700; font-size:15px;}
+  .item-meta{font-family:var(--mono); font-size:11px; color:var(--chrome); margin-top:4px; text-transform:uppercase;}
+  .item-contact{font-size:12px; color:var(--chrome); margin-top:6px;}
+  .item-desc{font-size:12.5px; color:var(--krem); opacity:0.8; margin-top:8px; max-height:60px; overflow:auto;}
+  .event-block{margin-top:12px; padding-top:12px; border-top:1px solid rgba(241,232,214,0.08);}
+  .event-title{font-size:13px; font-weight:700; color:var(--krem);}
+  .event-meta{font-family:var(--mono); font-size:10.5px; color:var(--chrome); margin-top:3px; text-transform:uppercase;}
+  .status-badge{font-family:var(--mono); font-size:10px; letter-spacing:0.03em; text-transform:uppercase; padding:3px 8px; border-radius:10px; display:inline-block; margin-top:4px;}
+  .status-pending{background:rgba(212,175,55,0.12); color:var(--emas); border:1px solid rgba(212,175,55,0.3);}
+  .status-published{background:rgba(111,168,154,0.12); color:var(--mint); border:1px solid rgba(111,168,154,0.3);}
+  .status-rejected{background:rgba(194,39,45,0.12); color:var(--merah); border:1px solid rgba(194,39,45,0.3);}
+  .item-actions{display:flex; flex-direction:column; gap:8px; flex-shrink:0; justify-content:center;}
+  .item-actions button, .item-actions a{
+    font-family:var(--mono); font-size:11px; letter-spacing:0.04em; text-transform:uppercase;
+    padding:9px 14px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:transparent; color:var(--krem); cursor:pointer; white-space:nowrap;
+  }
+  .btn-approve{background:var(--merah) !important; border-color:var(--merah) !important; color:var(--krem) !important;}
+  .btn-contact{border-color:var(--krem) !important; color:var(--krem) !important;}
+  .btn-reject{border-color:var(--merah) !important; color:var(--merah) !important;}
+  .btn-delete{color:var(--chrome) !important;}
+  .empty-note{color:var(--chrome); font-size:13px; padding:12px 0;}
+
+  @media (max-width:640px){
+    .item{flex-direction:column;}
+    .item-photos{max-width:100%;}
+    .item-actions{flex-direction:row; flex-wrap:wrap;}
+    .item-actions button, .item-actions a{flex:1; min-width:120px;}
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <h1 style="margin-bottom:18px;">Admin Komunitas</h1>
+  <div class="gate-pass-wrap">
+    <input type="password" id="gate-pass" placeholder="Password admin">
+    <button type="button" class="gate-pass-toggle" id="gate-pass-toggle" aria-label="Tampilkan password">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+    </button>
+  </div>
+  <button id="gate-submit">Masuk</button>
+  <div id="gate-error"></div>
+</div>
+
+<div id="app" class="wrap" style="display:none;">
+  <h1>Admin Komunitas</h1>
+  <div class="sub">Review pengajuan event komunitas, approve untuk ditayangkan di /komunitas/.</div>
+
+  <div class="section-title">Menunggu Review <span class="count-badge" id="count-pending">0</span></div>
+  <div id="list-pending"></div>
+
+  <div class="section-title">Tayang di Direktori <span class="count-badge" id="count-published">0</span></div>
+  <div id="list-published"></div>
+
+  <div class="section-title">Ditolak / Diturunkan <span class="count-badge" id="count-other">0</span></div>
+  <div id="list-other"></div>
+</div>
+
+<div id="lightbox" class="lightbox">
+  <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Tutup">&times;</button>
+  <div class="lightbox-content" id="lightbox-content"></div>
+</div>
+
+<script>
+  const fmtDate = (iso) => iso ? new Date(iso).toLocaleString('id-ID', {dateStyle:'medium', timeStyle:'short'}) : '-';
+
+  function getToken(){ return sessionStorage.getItem('kom_admin_token') || ''; }
+
+  async function api(path, opts = {}){
+    const res = await fetch(path, {
+      ...opts,
+      headers: {
+        'content-type': 'application/json',
+        'Authorization': 'Bearer ' + getToken(),
+        ...(opts.headers || {}),
+      },
+    });
+    if (res.status === 401) throw new Error('unauthorized');
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'request failed');
+    return data;
+  }
+
+  function statusBadge(status){
+    const cls = status === 'published' ? 'status-published' : status === 'rejected' ? 'status-rejected' : 'status-pending';
+    return `<span class="status-badge ${cls}">${status}</span>`;
+  }
+
+  function renderItem(c, actions){
+    const photos = [c.logoUrl, c.coverPhotoUrl].filter(Boolean).map(p => `<img src="${p}" alt="" class="item-thumb" data-lightbox-src="${p}">`).join('') || `<img src="" alt="" style="opacity:0;">`;
+    const actionBtns = actions.map(a => {
+      if (a.action === 'link') {
+        return `<a href="${a.href}" target="_blank" class="${a.cls}" style="text-align:center; text-decoration:none; display:block;">${a.label}</a>`;
+      }
+      return `<button class="${a.cls}" data-action="${a.action}" data-id="${c.id}">${a.label}</button>`;
+    }).join('');
+    const eventsHtml = (c.events || []).map(e => `
+      <div class="event-block">
+        <div class="event-title">${e.title} ${statusBadge(e.status)}</div>
+        <div class="event-meta">${e.eventDateText || '-'} &middot; ~${e.participantEstimate || '?'} peserta &middot; ${e.supportType || '-'}</div>
+        ${e.description ? `<div class="item-desc">${e.description}</div>` : ''}
+      </div>
+    `).join('');
+    return `
+      <div class="item">
+        <div class="item-photos">${photos}</div>
+        <div class="item-body">
+          <div class="item-title">${c.name} ${statusBadge(c.status)}</div>
+          <div class="item-meta">${c.city} &middot; ~${c.memberEstimate || '?'} anggota</div>
+          <div class="item-contact">wa.me/${c.wa} &middot; <a href="https://instagram.com/${c.ig}" target="_blank" rel="noopener" style="color:var(--mint);">IG: @${c.ig}</a> &middot; diajukan ${fmtDate(c.submittedAt)}</div>
+          ${c.description ? `<div class="item-desc">${c.description}</div>` : ''}
+          ${eventsHtml}
+        </div>
+        <div class="item-actions">${actionBtns}</div>
+      </div>
+    `;
+  }
+
+  async function loadAll(){
+    let communities;
+    try{
+      communities = await api('/api/community-admin');
+    }catch(err){
+      if (err.message === 'unauthorized'){
+        showGateError('Password salah atau sesi habis.');
+        document.getElementById('app').style.display = 'none';
+        document.getElementById('gate').style.display = 'block';
+      } else {
+        alert('Gagal memuat data: ' + err.message);
+      }
+      return;
+    }
+
+    const pending = communities.filter(c => c.status === 'pending');
+    const published = communities.filter(c => c.status === 'published');
+    const other = communities.filter(c => c.status === 'rejected' || c.status === 'unpublished');
+
+    document.getElementById('count-pending').textContent = pending.length;
+    document.getElementById('count-published').textContent = published.length;
+    document.getElementById('count-other').textContent = other.length;
+
+    document.getElementById('list-pending').innerHTML = pending.length
+      ? pending.map(c => {
+          const waMsg = encodeURIComponent(`Halo ${c.name}! Kami dari admin VespaKita, terkait pengajuan event kalian di VespaKita...`);
+          return renderItem(c, [
+            {label:'Chat Komunitas', action:'link', cls:'btn-contact', href:`https://wa.me/${c.wa}?text=${waMsg}`},
+            {label:'Approve', action:'approve', cls:'btn-approve'},
+            {label:'Reject', action:'reject', cls:'btn-reject'},
+          ]);
+        }).join('')
+      : '<div class="empty-note">Tidak ada pengajuan menunggu review.</div>';
+
+    document.getElementById('list-published').innerHTML = published.length
+      ? published.map(c => {
+          const waMsg = encodeURIComponent(`Halo ${c.name}! Profil komunitas kalian sudah tayang di https://www.vespakita.com/komunitas/`);
+          return renderItem(c, [
+            {label:'Kabari Komunitas', action:'link', cls:'btn-contact', href:`https://wa.me/${c.wa}?text=${waMsg}`},
+            {label:'Turunkan', action:'unpublish', cls:'btn-reject'},
+            {label:'Hapus', action:'delete', cls:'btn-delete'},
+          ]);
+        }).join('')
+      : '<div class="empty-note">Belum ada yang tayang.</div>';
+
+    document.getElementById('list-other').innerHTML = other.length
+      ? other.map(c => renderItem(c, [
+          {label:'Approve', action:'approve', cls:'btn-approve'},
+          {label:'Hapus', action:'delete', cls:'btn-delete'},
+        ])).join('')
+      : '<div class="empty-note">Tidak ada.</div>';
+
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const action = btn.dataset.action;
+        const id = btn.dataset.id;
+        if (action === 'delete' && !confirm('Hapus pengajuan ini permanen?')) return;
+
+        btn.disabled = true;
+        try{
+          await api('/api/community-admin', { method: 'POST', body: JSON.stringify({ id, action }) });
+          loadAll();
+        }catch(err){
+          alert('Gagal memproses. Coba lagi.');
+          btn.disabled = false;
+        }
+      });
+    });
+  }
+
+  function showGateError(msg){
+    document.getElementById('gate-error').textContent = msg;
+  }
+
+  document.getElementById('gate-submit').addEventListener('click', async () => {
+    const pass = document.getElementById('gate-pass').value;
+    if(!pass) return;
+    sessionStorage.setItem('kom_admin_token', pass);
+    showGateError('');
+    try{
+      await api('/api/community-admin');
+      document.getElementById('gate').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      loadAll();
+    }catch(err){
+      showGateError('Password salah.');
+      sessionStorage.removeItem('kom_admin_token');
+    }
+  });
+  document.getElementById('gate-pass').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('gate-submit').click();
+  });
+  document.getElementById('gate-pass-toggle').addEventListener('click', () => {
+    const input = document.getElementById('gate-pass');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    document.getElementById('gate-pass-toggle').setAttribute('aria-label', isHidden ? 'Sembunyikan password' : 'Tampilkan password');
+  });
+
+  function openLightbox(src){
+    document.getElementById('lightbox-content').innerHTML = `<img src="${src}" alt="">`;
+    document.getElementById('lightbox').classList.add('active');
+  }
+  function closeLightbox(){
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightbox-content').innerHTML = '';
+  }
+  document.addEventListener('click', (e) => {
+    const thumb = e.target.closest('.item-thumb');
+    if (thumb) openLightbox(thumb.dataset.lightboxSrc);
+  });
+  document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if (e.target.id === 'lightbox') closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+
+  if (getToken()){
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadAll();
+  }
+</script>
+
+</body>
+</html>
