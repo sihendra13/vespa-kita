@@ -30,7 +30,7 @@
     left: '16px',
     right: '16px',
     zIndex: '9999',
-    transform: 'translateY(-150%)',
+    transform: 'translateY(-250%)',
     transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
     maxWidth: '400px',
     margin: '0 auto'
@@ -71,7 +71,7 @@
   }
 
   document.getElementById('pwa-close-btn').addEventListener('click', () => {
-    banner.style.transform = 'translateY(-150%)';
+    banner.style.transform = 'translateY(-250%)';
     sessionStorage.setItem('pwa_banner_dismissed_session', 'true');
   });
 
@@ -83,12 +83,12 @@
   document.getElementById('pwa-install-btn').addEventListener('click', async () => {
     if (isIOS) {
       iosModalEl.style.display = 'flex';
-      banner.style.transform = 'translateY(-150%)';
+      banner.style.transform = 'translateY(-250%)';
     } else if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       if (outcome === 'accepted') {
-        banner.style.transform = 'translateY(-150%)';
+        banner.style.transform = 'translateY(-250%)';
       }
       deferredPrompt = null;
     } else {
