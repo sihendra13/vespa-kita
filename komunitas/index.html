@@ -71,7 +71,12 @@
   /* PROOF LOGOS */
   .proof-logos{display:flex; align-items:center; justify-content:flex-start; gap:16px; flex-wrap:nowrap; padding:32px 0; overflow-x:auto; -webkit-overflow-scrolling:touch; scrollbar-width:none;}
   .proof-logos::-webkit-scrollbar{display:none;}
-  .proof-logos img{height:72px; width:140px; background:#ffffff; border-radius:12px; padding:16px; object-fit:contain; flex-shrink:0;}
+  .sponsor-card { background: #ffffff; border-radius: 8px; padding: 8px 24px; height: 80px; min-width: 140px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); flex-shrink: 0; overflow: hidden; }
+  .sponsor-card img { width: auto; object-fit: contain; mix-blend-mode: multiply; }
+  .s-logo-hs { height: 60px; }
+  .s-logo-kenanga { height: 60px; }
+  .s-logo-unlock { height: 64px; transform: scale(1.5); mix-blend-mode: multiply; }
+  .s-logo-northy { height: 18px; }
 
   /* GRID */
   .section-head{max-width:640px; margin-bottom:32px;}
@@ -149,11 +154,11 @@
 <section class="dark kom-hero">
   <div class="wrap">
     <div class="eyebrow">Untuk Komunitas Vespa Indonesia</div>
-    <h1>PUNYA EVENT?<br><span class="accent">KAMI BANTU CARIKAN SPONSOR</span></h1>
-    <p class="lede">VespaKita bantu komunitas kamu mendapatkan sponsor untuk kegiatan touring, gathering, atau jambore — lewat jaringan brand yang sudah kami bangun. Terbukti: Road to Jakarta (Vespa 60's Yogyakarta) berhasil kami carikan sponsor dari 4 brand nasional.</p>
+    <h1>PUNYA EVENT?<br><span class="accent">DAPATKAN DUKUNGAN SPONSOR</span></h1>
+    <p class="lede">VespaKita siap membantu komunitas kamu mendapatkan dukungan sponsor untuk kegiatan touring, gathering, atau jambore melalui jaringan brand yang telah kami bangun. Terbukti: <i>Road to Jakarta</i> (Vespa 60's Yogyakarta) sukses bersinergi dengan 4 brand nasional.</p>
     <div class="kom-hero-ctas">
       <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
-      <a href="#direktori" class="btn btn-outline">Lihat Komunitas yang Sudah Dibantu</a>
+      <a href="#direktori" class="btn btn-outline">Lihat Jejaring Komunitas</a>
     </div>
     <div class="kom-stats">
       <div class="kom-stat"><div class="num">2</div><div class="lbl">Komunitas Terbantu</div></div>
@@ -171,10 +176,10 @@
       <p style="font-size: 16px; line-height: 1.6; color: var(--chrome);">Perjalanan Vespa 60's Yogyakarta menuju ajang bergengsi Jamnas Vespa 60's Indonesia 2026 menjadi portofolio kebanggaan kami dalam menjembatani semangat komunitas dengan dukungan penuh dari berbagai brand terkemuka.</p>
     </div>
     <div class="proof-logos reveal" style="margin-top: 16px;">
-      <img src="../60s-yogyakarta/sponsor-hs.jpg" alt="Sponsor HS" loading="lazy">
-      <img src="../60s-yogyakarta/sponsor-kenanga.jpg" alt="Sponsor Kenanga Garage" loading="lazy">
-      <img src="../60s-yogyakarta/sponsor-unlock.png" alt="Sponsor Unlock Indonesia" loading="lazy">
-      <img src="../60s-yogyakarta/sponsor-northy.png" alt="Sponsor Northy"  loading="lazy">
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-hs.jpg" alt="Sponsor HS" class="s-logo-hs" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-kenanga.jpg" alt="Sponsor Kenanga Garage" class="s-logo-kenanga" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-unlock.png" alt="Sponsor Unlock Indonesia" class="s-logo-unlock" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-northy.png" alt="Sponsor Northy" class="s-logo-northy" style="filter: brightness(0);" loading="lazy"></div>
     </div>
   </div>
 </section>
@@ -193,8 +198,8 @@
 <section class="dark">
   <div class="wrap">
     <div class="kom-cta reveal">
-      <h3>Ada Event Komunitas yang Butuh Sponsor?</h3>
-      <p>Ceritakan rencana kegiatan komunitas kamu — touring, gathering, atau jambore. Tim VespaKita akan bantu carikan sponsor lewat jaringan brand yang sudah kami bangun.</p>
+      <h3>Wujudkan Event Komunitasmu!</h3>
+      <p>Ceritakan rencana kegiatan komunitasmu seperti touring, gathering, atau jambore. Tim VespaKita siap menghubungkan misimu dengan jaringan brand dan sponsor yang tepat.</p>
       <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
     </div>
   </div>
