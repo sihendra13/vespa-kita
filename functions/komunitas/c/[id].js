@@ -168,16 +168,16 @@ export async function onRequestGet(context) {
   .btn-outline:hover{background:var(--krem); color:var(--aspal);}
   .btn-sm{padding:10px 16px; font-size:12px;}
 
-  .profile-cover{margin-top:68px; width:100%; height:260px; background:var(--ink) center/cover no-repeat; position:relative;}
+  .profile-cover{margin-top:68px; width:100%; height:340px; background:var(--ink) center/cover no-repeat; position:relative;}
   .profile-cover::after{content:""; position:absolute; inset:0; background:linear-gradient(to top, var(--aspal) 0%, rgba(21,23,26,0.2) 60%, rgba(21,23,26,0.1) 100%);}
-  .profile-head{display:flex; align-items:flex-end; gap:24px; margin-top:-64px; position:relative; z-index:2; flex-wrap:wrap;}
-  .profile-logo{width:112px; height:112px; border-radius:50%; border:4px solid var(--aspal); background:var(--aspal-2) center/contain no-repeat; flex-shrink:0;}
+  .profile-head{display:flex; align-items:flex-end; gap:28px; margin-top:-76px; position:relative; z-index:2; flex-wrap:wrap;}
+  .profile-logo{width:144px; height:144px; border-radius:50%; border:6px solid var(--aspal); background:#ffffff center/70% no-repeat; box-shadow: 0 4px 24px rgba(0,0,0,0.4); flex-shrink:0;}
   .profile-info{flex:1; padding-bottom:8px; min-width:240px;}
-  .profile-name{font-size:clamp(22px,4vw,34px); display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .profile-name{font-size:clamp(28px,5vw,42px); font-weight: 500; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
   .profile-badge{width:24px; height:24px; color:var(--emas); flex-shrink:0;}
-  .profile-meta{font-family:var(--mono); font-size:12px; color:var(--chrome); text-transform:uppercase; letter-spacing:0.04em; margin-top:8px; display:flex; gap:16px; flex-wrap:wrap;}
+  .profile-meta{font-family:var(--mono); font-size:13px; color:var(--chrome); text-transform:uppercase; letter-spacing:0.04em; margin-top:8px; display:flex; gap:16px; flex-wrap:wrap;}
   .profile-actions{display:flex; gap:12px; padding-bottom:8px; flex-wrap:wrap;}
-  .about-text{color:var(--krem-2); font-size:15px; max-width:720px; margin-top:16px; line-height:1.7; white-space:pre-line;}
+  .about-text{color:rgba(239,233,216,0.85); font-size:16.5px; max-width:800px; margin-top:24px; line-height:1.8; white-space:pre-line; letter-spacing:0.01em;}
 
   .section-head{max-width:640px; margin-bottom:28px;}
   .section-head h2{font-size:clamp(24px,3.4vw,32px);}
@@ -258,7 +258,7 @@ export async function onRequestGet(context) {
         </div>
       </div>
       <div class="profile-actions">
-        ${community.ig ? `<a href="${escapeHtml(igHref)}" target="_blank" rel="noopener" class="btn btn-outline">Instagram</a>` : ""}
+        ${community.ig ? `<a href="${escapeHtml(igHref)}" target="_blank" rel="noopener" class="btn btn-outline" style="display:flex; align-items:center; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a>` : ""}
         ${community.wa ? `<a href="${escapeHtml(waHref)}" target="_blank" rel="noopener" class="btn btn-primary">Hubungi via WA</a>` : ""}
       </div>
     </div>
