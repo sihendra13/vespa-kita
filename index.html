@@ -861,13 +861,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 4px;
-    margin: 0 4px;
+    padding: 8px 2px;
+    margin: 0 2px;
     color: #ffffff; /* Teks warna putih */
     text-decoration: none;
-    font-size: 9px;
+    font-size: 8.5px;
+    white-space: nowrap;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     font-family: var(--mono);
     text-transform: uppercase;
     border-radius: 20px;
@@ -913,13 +914,7 @@
       <a href="#audiens">Audiens</a>
       <a href="#mediakit">Media Kit</a>
       <a href="/marketplace/">Marketplace</a>
-      <div class="dropdown">
-        <a href="#" class="dropdown-toggle" style="cursor: pointer;">Community</a>
-        <div class="dropdown-menu">
-          <a href="/60s-yogyakarta/">60's Yogyakarta</a>
-          <a href="/vw-yogyakarta/">VW Club Yogyakarta</a>
-        </div>
-      </div>
+      <a href="/komunitas/">Komunitas</a>
       <a href="#kolaborasi" class="nav-mobile-cta">Mari Berkolaborasi</a>
     </div>
     <div class="lang-selector">
@@ -2108,22 +2103,6 @@
         iconMenu.style.display = 'block';
         iconClose.style.display = 'none';
         checkScroll();
-      }
-    });
-  }
-
-  // Dropdown toggle
-  const dropdownToggle = document.querySelector('.dropdown-toggle');
-  const dropdown = document.querySelector('.dropdown');
-  if (dropdownToggle && dropdown) {
-    dropdownToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropdown.classList.toggle('active');
-    });
-    document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove('active');
       }
     });
   }
