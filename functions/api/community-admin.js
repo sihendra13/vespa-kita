@@ -33,6 +33,7 @@ function rowToCommunity(row) {
     memberEstimate: row.member_estimate,
     ig: row.ig,
     wa: row.wa,
+    adminEmail: row.admin_email,
     logoUrl: row.logo_url,
     coverPhotoUrl: row.cover_photo_url,
     submittedAt: row.submitted_at,

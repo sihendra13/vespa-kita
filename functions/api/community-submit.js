@@ -62,6 +62,7 @@ async function handlePost(context) {
   const memberEstimateRaw = form.get("memberEstimate");
   const igRaw = String(form.get("ig") || "");
   const waRaw = String(form.get("wa") || "");
+  const adminEmailRaw = String(form.get("adminEmail") || "").trim();
 
   const eventTitle = String(form.get("eventTitle") || "");
   const eventDateText = String(form.get("eventDateText") || "");
@@ -82,6 +83,11 @@ async function handlePost(context) {
   const waDigits = waRaw.replace(/\D/g, "");
   if (waDigits.length < 9 || waDigits.length > 15) return badRequest("No. WhatsApp tidak valid.");
   const wa = waDigits.startsWith("62") ? waDigits : "62" + waDigits.replace(/^0/, "");
+
+  if (!adminEmailRaw || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(adminEmailRaw) || adminEmailRaw.length > 200) {
+    return badRequest("Email Google pengurus wajib diisi dan harus valid.");
+  }
+  const adminEmail = adminEmailRaw.toLowerCase();
 
   const memberEstimate = memberEstimateRaw ? Number(memberEstimateRaw) : null;
   if (memberEstimate !== null && (!Number.isInteger(memberEstimate) || memberEstimate < 0)) {
@@ -148,8 +154,8 @@ async function handlePost(context) {
   const now = new Date().toISOString();
 
   await env.DB.prepare(
-    `INSERT INTO communities (id, status, name, city, description, member_estimate, ig, wa, logo_url, logo_public_id, cover_photo_url, cover_photo_public_id, submitted_at, reviewed_at, published_at)
-     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
+    `INSERT INTO communities (id, status, name, city, description, member_estimate, ig, wa, admin_email, logo_url, logo_public_id, cover_photo_url, cover_photo_public_id, submitted_at, reviewed_at, published_at)
+     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
   )
     .bind(
       communityId,
@@ -159,6 +165,7 @@ async function handlePost(context) {
       memberEstimate,
       ig,
       wa,
+      adminEmail,
       logoResult?.url || "",
       logoResult?.publicId || "",
       coverResult?.url || "",
