@@ -152,6 +152,7 @@
           <div class="item-title">${c.name} ${statusBadge(c.status)}</div>
           <div class="item-meta">${c.city} &middot; ~${c.memberEstimate || '?'} anggota</div>
           <div class="item-contact">wa.me/${c.wa} &middot; <a href="https://instagram.com/${c.ig}" target="_blank" rel="noopener" style="color:var(--mint);">IG: @${c.ig}</a> &middot; diajukan ${fmtDate(c.submittedAt)}</div>
+          ${c.adminEmail ? `<div class="item-contact">Email pengurus (admin komentar): ${c.adminEmail}</div>` : ''}
           ${c.description ? `<div class="item-desc">${c.description}</div>` : ''}
           ${eventsHtml}
         </div>

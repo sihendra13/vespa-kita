@@ -207,6 +207,7 @@ export async function onRequestGet(context) {
   .comment-content{flex:1; max-width:65ch;}
   .comment-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
   .comment-name{font-weight:700; font-size:13.5px;}
+  .admin-badge{font-family:var(--mono); font-size:9.5px; letter-spacing:0.04em; text-transform:uppercase; background:rgba(212,175,55,0.12); color:var(--emas); border:1px solid rgba(212,175,55,0.35); padding:2px 7px; border-radius:9px;}
   .comment-time{font-family:var(--mono); font-size:11px; color:var(--chrome);}
   .comment-text{font-size:14px; color:var(--krem-2); margin-top:4px; line-height:1.55; white-space:pre-line;}
   .comment-empty{color:var(--chrome); font-size:13.5px; text-align:center; padding:20px 0;}
@@ -382,9 +383,12 @@ ${eventsSection}
         var avatar = c.userAvatarUrl
           ? '<div class="avatar" style="background-image:url(\\'' + escapeHtml(c.userAvatarUrl) + '\\')"></div>'
           : '<div class="avatar">' + escapeHtml((c.userName || '?').charAt(0)) + '</div>';
+        var adminBadge = c.isAdminReply
+          ? '<span class="admin-badge">Admin Komunitas</span>'
+          : '';
         return '<div class="comment-item">' + avatar +
           '<div class="comment-content">' +
-            '<div class="comment-head"><span class="comment-name">' + escapeHtml(c.userName) + '</span>' +
+            '<div class="comment-head"><span class="comment-name">' + escapeHtml(c.userName) + '</span>' + adminBadge +
             '<span class="comment-time">' + fmtTime(c.createdAt) + '</span></div>' +
             '<div class="comment-text">' + escapeHtml(c.text) + '</div>' +
           '</div></div>';

@@ -13,13 +13,17 @@ const GOOGLE_CLIENT_ID = "214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.goo
 const MAX_TEXT = 500;
 const MAX_COMMENTS_PER_TARGET = 2000; // abuse ceiling
 
-function rowToComment(row) {
+function rowToComment(row, adminEmail) {
   return {
     id: row.id,
     userName: row.user_name,
     userAvatarUrl: row.user_avatar_url,
     text: row.text,
     createdAt: row.created_at,
+    // Not "verified admin account" in a strong sense — just "this Google
+    // account's email matches what the community gave us at signup". Good
+    // enough for a lightweight badge, not for anything security-sensitive.
+    isAdminReply: !!adminEmail && row.user_email.toLowerCase() === adminEmail,
   };
 }
 
@@ -34,12 +38,19 @@ export async function onRequestGet(context) {
     return new Response(JSON.stringify({ error: "targetType and targetId required" }), { status: 400 });
   }
 
-  const { results } = await env.DB
-    .prepare(`SELECT * FROM comments WHERE target_type = ? AND target_id = ? AND status = 'visible' ORDER BY created_at DESC`)
-    .bind(targetType, targetId)
-    .all();
+  const [{ results }, community] = await Promise.all([
+    env.DB
+      .prepare(`SELECT * FROM comments WHERE target_type = ? AND target_id = ? AND status = 'visible' ORDER BY created_at DESC`)
+      .bind(targetType, targetId)
+      .all(),
+    targetType === "community"
+      ? env.DB.prepare(`SELECT admin_email FROM communities WHERE id = ?`).bind(targetId).first()
+      : Promise.resolve(null),
+  ]);
 
-  return new Response(JSON.stringify((results || []).map(rowToComment)), {
+  const adminEmail = (community?.admin_email || "").toLowerCase() || null;
+
+  return new Response(JSON.stringify((results || []).map((r) => rowToComment(r, adminEmail))), {
     headers: { "content-type": "application/json", "cache-control": "public, max-age=30" },
   });
 }

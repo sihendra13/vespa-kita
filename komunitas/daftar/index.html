@@ -119,7 +119,7 @@
       <form id="daftar-form" novalidate>
         <div class="field">
           <label for="k-nama">Nama Komunitas <span class="req">*</span></label>
-          <input type="text" id="k-nama" placeholder="Contoh: Jogja Scooter Parade" required>
+          <input type="text" id="k-nama" placeholder="Contoh: Vespa 60's Yogyakarta" required>
         </div>
         <div class="field-row">
           <div class="field">
@@ -181,6 +181,11 @@
           </div>
         </div>
         <div class="field">
+          <label for="k-admin-email">Email Google Pengurus <span class="req">*</span></label>
+          <input type="email" id="k-admin-email" placeholder="Contoh: pengurus@gmail.com" required>
+          <div class="form-note" style="margin-top:10px; margin-bottom:0;">Waktu pengurus login pakai email ini untuk berkomentar di halaman komunitas, komentarnya otomatis dapat tanda "Admin Komunitas".</div>
+        </div>
+        <div class="field">
           <label for="k-logo">Logo Komunitas</label>
           <input type="file" id="k-logo" accept="image/jpeg,image/png,image/webp">
         </div>
@@ -239,7 +244,7 @@
 <script>
   const form = document.getElementById('daftar-form');
   const msg = document.getElementById('k-form-msg');
-  const requiredIds = ['k-nama','k-kota','k-deskripsi','k-event-nama','k-event-deskripsi','k-ig','k-wa'];
+  const requiredIds = ['k-nama','k-kota','k-deskripsi','k-event-nama','k-event-deskripsi','k-ig','k-wa','k-admin-email'];
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -268,6 +273,7 @@
     fd.append('eventDescription', document.getElementById('k-event-deskripsi').value);
     fd.append('ig', document.getElementById('k-ig').value);
     fd.append('wa', document.getElementById('k-wa').value);
+    fd.append('adminEmail', document.getElementById('k-admin-email').value);
     const logoFile = document.getElementById('k-logo').files[0];
     if(logoFile) fd.append('logo', logoFile);
     Array.from(document.getElementById('k-foto').files).forEach(f => fd.append('photos', f));
