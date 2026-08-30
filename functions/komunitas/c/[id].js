@@ -194,7 +194,22 @@ export async function onRequestGet(context) {
   .comment-box{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; padding:28px;}
   .login-gate{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px; background:var(--aspal); border:1px dashed rgba(241,232,214,0.2); border-radius:6px; flex-wrap:wrap;}
   .login-gate p{font-size:13.5px; color:var(--chrome); max-width:360px;}
-  .btn-google{display:inline-flex; align-items:center; gap:10px; background:var(--krem); color:var(--ink); padding:12px 20px; border-radius:2px; font-family:var(--mono); font-size:12.5px; text-transform:uppercase; letter-spacing:0.03em; border:none;}
+  .comment-composer{display:none; gap:14px; align-items:flex-start; margin-bottom:24px;}
+  .comment-composer.active{display:flex;}
+  .avatar{width:38px; height:38px; border-radius:50%; background:var(--merah) center/cover no-repeat; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:13px; color:var(--krem);}
+  .composer-input{flex:1;}
+  .composer-input textarea{width:100%; background:var(--aspal); color:var(--krem); border:1px solid rgba(241,232,214,0.18); border-radius:4px; padding:12px 14px; font-size:14px; resize:vertical; min-height:60px;}
+  .composer-input textarea:focus{outline:2px solid var(--mint); outline-offset:1px;}
+  .composer-actions{display:flex; justify-content:space-between; align-items:center; margin-top:10px;}
+  .composer-msg{font-size:12px; color:var(--merah);}
+  .comment-list{display:flex; flex-direction:column; gap:20px; margin-top:8px;}
+  .comment-item{display:flex; gap:14px; align-items:flex-start;}
+  .comment-content{flex:1; max-width:65ch;}
+  .comment-head{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .comment-name{font-weight:700; font-size:13.5px;}
+  .comment-time{font-family:var(--mono); font-size:11px; color:var(--chrome);}
+  .comment-text{font-size:14px; color:var(--krem-2); margin-top:4px; line-height:1.55; white-space:pre-line;}
+  .comment-empty{color:var(--chrome); font-size:13.5px; text-align:center; padding:20px 0;}
 
   footer{background:var(--aspal); padding:50px 0 34px; border-top:1px solid rgba(241,232,214,0.08);}
   .footer-grid{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
@@ -260,16 +275,26 @@ ${eventsSection}
     <div class="section-head">
       <div class="eyebrow">Komentar</div>
       <h2>Diskusi</h2>
-      <p style="margin-top:10px; color:var(--chrome); font-size:14px;">Fitur komentar segera hadir — login diperlukan supaya komentar bukan dari akun palsu.</p>
+      <p style="margin-top:10px; color:var(--chrome); font-size:14px;">Tanya soal event, ajak gabung, atau kasih testimoni. Login diperlukan supaya komentar bukan dari akun palsu.</p>
     </div>
     <div class="comment-box">
-      <div class="login-gate">
+      <div class="login-gate" id="login-gate">
         <p>Login untuk ikut berkomentar di halaman komunitas ini.</p>
-        <button class="btn-google" disabled style="opacity:0.6; cursor:not-allowed;">
-          <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M23.52 12.27c0-.85-.08-1.67-.22-2.45H12v4.64h6.47a5.53 5.53 0 0 1-2.4 3.63v3h3.88c2.27-2.09 3.57-5.17 3.57-8.82Z"/><path fill="#34A853" d="M12 24c3.24 0 5.96-1.07 7.95-2.91l-3.88-3c-1.08.72-2.45 1.15-4.07 1.15-3.13 0-5.78-2.11-6.73-4.96H1.27v3.09A12 12 0 0 0 12 24Z"/><path fill="#FBBC05" d="M5.27 14.28A7.2 7.2 0 0 1 4.89 12c0-.79.14-1.56.38-2.28V6.63H1.27A12 12 0 0 0 0 12c0 1.94.46 3.77 1.27 5.37l4-3.09Z"/><path fill="#EA4335" d="M12 4.75c1.76 0 3.34.6 4.58 1.79l3.44-3.44C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.69 1.27 6.63l4 3.09C6.22 6.86 8.87 4.75 12 4.75Z"/></svg>
-          Login dengan Google (segera)
-        </button>
+        <div id="google-signin-btn"></div>
       </div>
+
+      <div class="comment-composer" id="composer">
+        <div class="avatar" id="my-avatar"></div>
+        <div class="composer-input">
+          <textarea id="comment-input" placeholder="Tulis komentar..." maxlength="500"></textarea>
+          <div class="composer-actions">
+            <span class="composer-msg" id="composer-msg"></span>
+            <button class="btn btn-primary btn-sm" id="btn-post-comment">Kirim</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="comment-list" id="comment-list"><div class="comment-empty">Memuat komentar...</div></div>
     </div>
   </div>
 </section>
@@ -306,6 +331,7 @@ ${eventsSection}
   </a>
 </nav>
 
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
@@ -315,6 +341,135 @@ ${eventsSection}
   if (typeof gtag === 'function') {
     gtag('event', 'view_item', { item_id: ${JSON.stringify(id)}, item_name: ${JSON.stringify(community.name)}, content_type: 'community_profile' });
   }
+
+  // ---------- Komentar (login Google + verifikasi server-side di /api/comments) ----------
+  (function(){
+    var COMMUNITY_ID = ${JSON.stringify(id)};
+    var GOOGLE_CLIENT_ID = '214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.googleusercontent.com';
+    var STORAGE_KEY = 'vk_google_id_token';
+
+    function escapeHtml(s){
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+      });
+    }
+    function fmtTime(iso){
+      try{ return new Date(iso).toLocaleString('id-ID', {dateStyle:'medium', timeStyle:'short'}); }catch(e){ return ''; }
+    }
+    function decodeJwtPayload(token){
+      try{
+        var payload = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+        return JSON.parse(decodeURIComponent(atob(payload).split('').map(function(c){
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join('')));
+      }catch(e){ return null; }
+    }
+
+    var commentList = document.getElementById('comment-list');
+    var loginGate = document.getElementById('login-gate');
+    var composer = document.getElementById('composer');
+    var myAvatar = document.getElementById('my-avatar');
+    var commentInput = document.getElementById('comment-input');
+    var composerMsg = document.getElementById('composer-msg');
+    var postBtn = document.getElementById('btn-post-comment');
+
+    function renderComments(comments){
+      if(!comments || comments.length === 0){
+        commentList.innerHTML = '<div class="comment-empty">Belum ada komentar. Jadi yang pertama!</div>';
+        return;
+      }
+      commentList.innerHTML = comments.map(function(c){
+        var avatar = c.userAvatarUrl
+          ? '<div class="avatar" style="background-image:url(\\'' + escapeHtml(c.userAvatarUrl) + '\\')"></div>'
+          : '<div class="avatar">' + escapeHtml((c.userName || '?').charAt(0)) + '</div>';
+        return '<div class="comment-item">' + avatar +
+          '<div class="comment-content">' +
+            '<div class="comment-head"><span class="comment-name">' + escapeHtml(c.userName) + '</span>' +
+            '<span class="comment-time">' + fmtTime(c.createdAt) + '</span></div>' +
+            '<div class="comment-text">' + escapeHtml(c.text) + '</div>' +
+          '</div></div>';
+      }).join('');
+    }
+
+    function loadComments(){
+      fetch('/api/comments?targetType=community&targetId=' + encodeURIComponent(COMMUNITY_ID))
+        .then(function(r){ return r.json(); })
+        .then(renderComments)
+        .catch(function(){ commentList.innerHTML = '<div class="comment-empty">Gagal memuat komentar.</div>'; });
+    }
+    loadComments();
+
+    function showLoggedIn(payload){
+      loginGate.style.display = 'none';
+      composer.classList.add('active');
+      myAvatar.style.backgroundImage = payload.picture ? 'url(' + payload.picture + ')' : '';
+      myAvatar.textContent = payload.picture ? '' : (payload.name || '?').charAt(0);
+    }
+
+    function handleCredentialResponse(response){
+      sessionStorage.setItem(STORAGE_KEY, response.credential);
+      var payload = decodeJwtPayload(response.credential);
+      if(payload) showLoggedIn(payload);
+    }
+
+    if(window.google && google.accounts && google.accounts.id){
+      google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
+      google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'medium', text: 'signin_with' });
+    } else {
+      window.addEventListener('load', function(){
+        if(window.google && google.accounts && google.accounts.id){
+          google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: handleCredentialResponse });
+          google.accounts.id.renderButton(document.getElementById('google-signin-btn'), { theme: 'outline', size: 'medium', text: 'signin_with' });
+        }
+      });
+    }
+
+    var existingToken = sessionStorage.getItem(STORAGE_KEY);
+    if(existingToken){
+      var existingPayload = decodeJwtPayload(existingToken);
+      if(existingPayload && existingPayload.exp * 1000 > Date.now()){
+        showLoggedIn(existingPayload);
+      } else {
+        sessionStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    postBtn.addEventListener('click', function(){
+      var text = commentInput.value.trim();
+      if(!text) return;
+      var idToken = sessionStorage.getItem(STORAGE_KEY);
+      if(!idToken){
+        composerMsg.textContent = 'Sesi login habis, silakan login lagi.';
+        return;
+      }
+      postBtn.disabled = true;
+      composerMsg.textContent = '';
+      fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ idToken: idToken, targetType: 'community', targetId: COMMUNITY_ID, text: text })
+      })
+        .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, status: r.status, data: data }; }); })
+        .then(function(res){
+          postBtn.disabled = false;
+          if(!res.ok){
+            if(res.status === 401){
+              sessionStorage.removeItem(STORAGE_KEY);
+              loginGate.style.display = 'flex';
+              composer.classList.remove('active');
+            }
+            composerMsg.textContent = res.data.error || 'Gagal mengirim komentar.';
+            return;
+          }
+          commentInput.value = '';
+          loadComments();
+        })
+        .catch(function(){
+          postBtn.disabled = false;
+          composerMsg.textContent = 'Gagal mengirim komentar, coba lagi.';
+        });
+    });
+  })();
 </script>
 </body>
 </html>`;
