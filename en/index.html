@@ -737,55 +737,6 @@
   @media (prefers-reduced-motion: reduce){
     *{transition-duration:0.001ms !important; animation-duration:0.001ms !important;}
   }
-  /* ---------- DROPDOWN ---------- */
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-  .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--aspal-2);
-    min-width: 170px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
-    z-index: 100;
-    border-radius: 4px;
-    border: 1px solid rgba(241,232,214,0.1);
-    margin-top: 10px;
-    padding: 8px 0;
-  }
-  .dropdown-menu a {
-    color: var(--krem);
-    padding: 10px 16px;
-    text-decoration: none;
-    display: block;
-    font-size: 13px;
-    text-transform: none;
-    opacity: 0.85;
-    transition: background-color 0.2s, opacity 0.2s;
-  }
-  .dropdown-menu a:hover {
-    background-color: rgba(241,232,214,0.08);
-    opacity: 1;
-    color: var(--mint);
-  }
-  .dropdown.active .dropdown-menu,
-  .dropdown:hover .dropdown-menu {
-    display: block;
-  }
-  .dropdown-menu::before {
-    content: '';
-    position: absolute;
-    top: -20px;
-    left: 0;
-    right: 0;
-    height: 20px;
-    background: transparent;
-  }
-  
   /* ── Next Event Card Hover Effects ──────────────── */
   .next-event-card {
     background: var(--aspal-2);
@@ -849,13 +800,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 8px 4px;
-    margin: 0 4px;
+    padding: 8px 2px;
+    margin: 0 2px;
     color: #ffffff; /* Teks warna putih */
     text-decoration: none;
-    font-size: 9px;
+    font-size: 8.5px;
+    white-space: nowrap;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     font-family: var(--mono);
     text-transform: uppercase;
     border-radius: 20px;
@@ -901,13 +853,7 @@
       <a href="#audiens">Audience</a>
       <a href="#mediakit">Media Kit</a>
       <a href="/marketplace/">Marketplace</a>
-      <div class="dropdown">
-        <a href="#" class="dropdown-toggle" style="cursor: pointer;">Community</a>
-        <div class="dropdown-menu">
-          <a href="/60s-yogyakarta/">60's Yogyakarta</a>
-          <a href="/vw-yogyakarta/">VW Club Yogyakarta</a>
-        </div>
-      </div>
+      <a href="/komunitas/">Communities</a>
       <a href="#kolaborasi" class="nav-mobile-cta">Let's Collaborate</a>
     </div>
     <div class="lang-selector">
@@ -2096,22 +2042,6 @@
         iconMenu.style.display = 'block';
         iconClose.style.display = 'none';
         checkScroll();
-      }
-    });
-  }
-
-  // Dropdown toggle
-  const dropdownToggle = document.querySelector('.dropdown-toggle');
-  const dropdown = document.querySelector('.dropdown');
-  if (dropdownToggle && dropdown) {
-    dropdownToggle.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      dropdown.classList.toggle('active');
-    });
-    document.addEventListener('click', (e) => {
-      if (!dropdown.contains(e.target)) {
-        dropdown.classList.remove('active');
       }
     });
   }
