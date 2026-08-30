@@ -168,7 +168,7 @@ export async function onRequestGet(context) {
   .btn-outline:hover{background:var(--krem); color:var(--aspal);}
   .btn-sm{padding:10px 16px; font-size:12px;}
 
-  .profile-cover{margin-top:68px; width:100%; height:340px; background:var(--ink) center/cover no-repeat; position:relative;}
+  .profile-cover{margin-top:68px; width:100%; height:400px; background:var(--ink) center 30%/cover no-repeat; position:relative;}
   .profile-cover::after{content:""; position:absolute; inset:0; background:linear-gradient(to top, var(--aspal) 0%, rgba(21,23,26,0.2) 60%, rgba(21,23,26,0.1) 100%);}
   .profile-head{display:flex; align-items:flex-end; gap:28px; margin-top:-76px; position:relative; z-index:2; flex-wrap:wrap;}
   .profile-logo{width:144px; height:144px; border-radius:50%; border:6px solid var(--aspal); background:#ffffff center/70% no-repeat; box-shadow: 0 4px 24px rgba(0,0,0,0.4); flex-shrink:0;}
