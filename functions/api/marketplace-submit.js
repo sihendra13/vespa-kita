@@ -14,7 +14,8 @@ const MAX_VIDEO_BYTES = 30 * 1024 * 1024; // 30MB. Duration (max 60s) is enforce
 const MAX_TITLE = 120;
 const MAX_DESCRIPTION = 800;
 const MAX_TOTAL_LISTINGS = 500; // abuse ceiling for the whole table
-const MIN_PRICE = 500_000; // no real Vespa listing should be below this — catches shorthand price entry mistakes
+const MIN_PRICE_UNIT = 500_000; // no real Vespa listing should be below this — catches shorthand price entry mistakes
+const MIN_PRICE_SPAREPART = 10_000; // parts/accessories can legitimately be cheap — just a sanity floor, not a Vespa-unit-sized one
 
 const IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const VIDEO_TYPES = new Set(["video/mp4", "video/quicktime", "video/webm"]);
@@ -104,9 +105,12 @@ async function handlePost(context) {
   const sellerIg = sellerIgRaw.trim().replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
 
   const price = Number(priceRaw);
-  // MIN_PRICE catches shorthand like "28jt" slipping past the client-side digit-strip
+  // Catches shorthand like "28jt" slipping past the client-side digit-strip
   // (becomes 28, not 28000000) as a technically-valid-but-nonsensical price.
-  if (!Number.isFinite(price) || price < MIN_PRICE || price > 1_000_000_000) return badRequest("Harga tidak valid.");
+  // Sparepart gets a much lower floor than unit — a spare part can legitimately
+  // cost a few tens of thousands of Rupiah, unlike a whole Vespa.
+  const minPrice = isUnit ? MIN_PRICE_UNIT : MIN_PRICE_SPAREPART;
+  if (!Number.isFinite(price) || price < minPrice || price > 1_000_000_000) return badRequest("Harga tidak valid.");
 
   // Sparepart listings have no model year — 0 is stored as a "not applicable" sentinel,
   // and the front-end never displays a "Tahun" field for category='sparepart'.

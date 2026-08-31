@@ -989,8 +989,9 @@
       showFormMsg(isUnit ? 'Mohon isi nama, no. WhatsApp, model & tahun, dan harga dulu ya.' : 'Mohon isi nama, no. WhatsApp, nama barang, dan harga dulu ya.', true);
       return;
     }
-    if(harga < 500000){
-      showFormMsg('Harga kayaknya belum bener nih.', true, 'Tulis angka penuh ya, contoh 28000000 — bukan singkatan kayak "28jt".');
+    const minHarga = isUnit ? 500000 : 10000; // sparepart can legitimately be much cheaper than a whole Vespa
+    if(harga < minHarga){
+      showFormMsg('Harga kayaknya belum bener nih.', true, isUnit ? 'Tulis angka penuh ya, contoh 28000000 — bukan singkatan kayak "28jt".' : 'Tulis angka penuh ya, contoh 150000 — bukan singkatan kayak "150rb".');
       return;
     }
     if(!ig){
