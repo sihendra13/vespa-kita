@@ -250,6 +250,8 @@
   const msg = document.getElementById('k-form-msg');
   const requiredIds = ['k-nama','k-kota','k-deskripsi','k-event-nama','k-event-deskripsi','k-ig','k-wa','k-admin-email'];
 
+  const WA_NUMBER = "6281227341300"; // Admin WA number — same one used for marketplace listing notifications
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const missing = requiredIds.filter(id => !document.getElementById(id).value.trim());
@@ -260,6 +262,9 @@
       return;
     }
     msg.classList.remove('show');
+
+    const communityName = document.getElementById('k-nama').value.trim();
+    const eventName = document.getElementById('k-event-nama').value.trim();
 
     const submitBtn = document.getElementById('k-submit');
     submitBtn.disabled = true;
@@ -292,6 +297,9 @@
       form.style.display = 'none';
       document.querySelector('.form-note').style.display = 'none';
       document.getElementById('form-success').classList.add('show');
+
+      const notifyMsg = `Ada pengajuan event komunitas baru menunggu review: ${communityName} - ${eventName}.\n\nReview & approve: https://www.vespakita.com/komunitas/admin/`;
+      window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
     }catch(err){
       msg.textContent = err.message || 'Gagal mengirim, coba lagi.';
       msg.classList.add('show');
