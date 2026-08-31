@@ -74,8 +74,15 @@ async function handlePost(context) {
   if (!isNonEmptyString(city, 100)) return badRequest("Kota basis wajib diisi.");
   if (!isNonEmptyString(description, MAX_DESCRIPTION)) return badRequest("Deskripsi komunitas wajib diisi.");
   if (!isNonEmptyString(igRaw, 100)) return badRequest("Instagram komunitas wajib diisi.");
-  if (!isNonEmptyString(eventTitle, 150)) return badRequest("Nama event wajib diisi.");
-  if (!isNonEmptyString(eventDescription, MAX_DESCRIPTION)) return badRequest("Rencana event wajib diisi.");
+
+  // Event details are optional — a community can join the directory without one and
+  // add it later. But if they started filling the event section, require both fields
+  // rather than silently accepting a half-empty event.
+  const hasEventData = isNonEmptyString(eventTitle, 150) || isNonEmptyString(eventDescription, MAX_DESCRIPTION);
+  if (hasEventData) {
+    if (!isNonEmptyString(eventTitle, 150)) return badRequest("Nama event wajib diisi kalau kamu mengisi detail event.");
+    if (!isNonEmptyString(eventDescription, MAX_DESCRIPTION)) return badRequest("Rencana event wajib diisi kalau kamu mengisi detail event.");
+  }
   if (supportType && !SUPPORT_TYPE_OPTIONS.includes(supportType)) return badRequest("Jenis dukungan tidak valid.");
 
   const ig = igRaw.trim().replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
@@ -174,13 +181,15 @@ async function handlePost(context) {
     )
     .run();
 
-  const eventId = crypto.randomUUID();
-  await env.DB.prepare(
-    `INSERT INTO community_events (id, community_id, status, title, event_date_text, participant_estimate, support_type, description, sponsor_logos, submitted_at, reviewed_at, published_at)
-     VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, '[]', ?, NULL, NULL)`
-  )
-    .bind(eventId, communityId, eventTitle.trim(), eventDateText.trim(), participantEstimate, supportType, eventDescription.trim(), now)
-    .run();
+  if (hasEventData) {
+    const eventId = crypto.randomUUID();
+    await env.DB.prepare(
+      `INSERT INTO community_events (id, community_id, status, title, event_date_text, participant_estimate, support_type, description, sponsor_logos, submitted_at, reviewed_at, published_at)
+       VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, '[]', ?, NULL, NULL)`
+    )
+      .bind(eventId, communityId, eventTitle.trim(), eventDateText.trim(), participantEstimate, supportType, eventDescription.trim(), now)
+      .run();
+  }
 
   if (env.RESEND_API_KEY) {
     waitUntil(

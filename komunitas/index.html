@@ -135,7 +135,13 @@
     .bottom-nav{display:flex;}
     body{padding-bottom:70px;}
   }
+
+  .bnav-item { position:relative; }
+  .bnav-item.has-notification::after {
+    content:''; position:absolute; top:8px; right:30%; width:8px; height:8px; background:var(--merah); border-radius:50%; border:2px solid var(--aspal);
+  }
 </style>
+
 </head>
 <body>
 
@@ -147,17 +153,24 @@
       <a href="/marketplace/">Marketplace</a>
       <a href="#" class="active">Komunitas</a>
     </div>
-    <a href="daftar/" class="navcta">Ajukan Event Kamu</a>
+    <a href="daftar/" class="navcta">Daftar Komunitas</a>
   </div>
 </nav>
 
 <section class="dark kom-hero">
+  <div class="wrap" style="padding-top:40px;">
+    <div style="display:flex; background:rgba(255,255,255,0.05); padding:4px; border-radius:12px; margin-bottom:12px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600;">
+      <a href="#" class="active" style="flex:1; text-align:center; padding:12px; border-radius:8px; background:rgba(255,255,255,0.1); color:var(--krem); box-shadow:0 2px 8px rgba(0,0,0,0.2); transition:all 0.2s;">Direktori Klub</a>
+      <a href="tongkrongan/" style="flex:1; text-align:center; padding:12px; border-radius:8px; color:var(--chrome); transition:all 0.2s;">Tongkrongan</a>
+    </div>
+  </div>
+
   <div class="wrap">
     <div class="eyebrow">Untuk Komunitas Vespa Indonesia</div>
-    <h1>PUNYA EVENT?<br><span class="accent">DAPATKAN DUKUNGAN SPONSOR</span></h1>
-    <p class="lede">VespaKita siap membantu komunitas kamu mendapatkan dukungan sponsor untuk kegiatan touring, gathering, atau jambore melalui jaringan brand yang telah kami bangun. Terbukti: <i>Road to Jakarta</i> (Vespa 60's Yogyakarta) sukses bersinergi dengan 4 brand nasional.</p>
+    <h1>GABUNG JADI<br><span class="accent">PARTNER KOMUNITAS VESPAKITA</span></h1>
+    <p class="lede">Daftarkan komunitas Vespa kamu dan dapat halaman profil resmi di direktori — gratis, gampang, nggak perlu punya event dulu. Punya event yang butuh sponsor? Kami bantu carikan brand lewat jaringan yang sudah kami bangun. Terbukti: <i>Road to Jakarta</i> (Vespa 60's Yogyakarta) sukses bersinergi dengan 4 brand nasional.</p>
     <div class="kom-hero-ctas">
-      <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
+      <a href="daftar/" class="btn btn-primary">Daftar Komunitas</a>
       <a href="#direktori" class="btn btn-outline">Lihat Jejaring Komunitas</a>
     </div>
     <div class="kom-stats">
@@ -198,9 +211,9 @@
 <section class="dark">
   <div class="wrap">
     <div class="kom-cta reveal">
-      <h3>Wujudkan Event Komunitasmu!</h3>
-      <p>Ceritakan rencana kegiatan komunitasmu seperti touring, gathering, atau jambore. Tim VespaKita siap menghubungkan misimu dengan jaringan brand dan sponsor yang tepat.</p>
-      <a href="daftar/" class="btn btn-primary">Ajukan Event Kamu</a>
+      <h3>Punya Event? Kami Bantu Carikan Sponsor</h3>
+      <p>Sudah gabung jadi partner komunitas VespaKita? Ceritakan rencana kegiatanmu seperti touring, gathering, atau jambore lewat form yang sama — tim VespaKita siap menghubungkan misimu dengan jaringan brand dan sponsor yang tepat.</p>
+      <a href="daftar/" class="btn btn-primary">Daftar & Ajukan Event</a>
     </div>
   </div>
 </section>
@@ -214,7 +227,7 @@
     <div class="foot-links">
       <a href="/">Beranda</a>
       <a href="/marketplace/">Marketplace</a>
-      <a href="daftar/">Ajukan Event</a>
+      <a href="daftar/">Daftar Komunitas</a>
     </div>
   </div>
 </footer>
@@ -294,5 +307,27 @@
   revealEls.forEach(el=>io.observe(el));
   setTimeout(()=>revealEls.forEach(el=>el.classList.add('in')), 1500);
 </script>
+
+<script>
+  (async function checkTongkronganUpdates() {
+    const lastVisit = localStorage.getItem('last_tongkrongan_visit') || '2000-01-01T00:00:00Z';
+    try {
+      const res = await fetch('/api/tongkrongan-check-updates?since=' + encodeURIComponent(lastVisit));
+      if(res.ok) {
+        const data = await res.json();
+        if(data.hasUpdates) {
+          // Find the Komunitas nav item
+          const navItems = document.querySelectorAll('.bnav-item');
+          navItems.forEach(item => {
+            if(item.textContent.includes('Komunitas')) {
+              item.classList.add('has-notification');
+            }
+          });
+        }
+      }
+    } catch(e) {}
+  })();
+</script>
 </body>
+
 </html>

@@ -51,22 +51,28 @@ Review & approve di: ${listing.adminLink || ADMIN_URL}`;
 const COMMUNITY_ADMIN_URL = "https://www.vespakita.com/komunitas/admin/";
 
 export async function sendCommunityAdminNotification(apiKey, submission) {
-  const text = `Ada pengajuan event komunitas baru masuk, menunggu review.
+  const hasEvent = !!submission.eventTitle;
+  const eventBlock = hasEvent
+    ? `
+Event: ${submission.eventTitle}
+Tanggal: ${submission.eventDateText || "-"}
+Estimasi peserta: ${submission.participantEstimate || "-"}
+Dukungan dibutuhkan: ${submission.supportType || "-"}
+Rencana event: ${submission.eventDescription || "-"}
+`
+    : `
+(Belum mengisi detail event — cuma daftar jadi komunitas partner dulu.)
+`;
+
+  const text = `Ada pengajuan komunitas baru masuk, menunggu review.
 
 Komunitas: ${submission.name}
 Kota: ${submission.city}
 Perkiraan anggota: ${submission.memberEstimate || "-"}
 Instagram: @${submission.ig || "-"}
 WhatsApp: ${submission.wa}
-
-Event: ${submission.eventTitle}
-Tanggal: ${submission.eventDateText || "-"}
-Estimasi peserta: ${submission.participantEstimate || "-"}
-Dukungan dibutuhkan: ${submission.supportType || "-"}
-
 Deskripsi komunitas: ${submission.description || "-"}
-Rencana event: ${submission.eventDescription || "-"}
-
+${eventBlock}
 Review & approve di: ${submission.adminLink || COMMUNITY_ADMIN_URL}`;
 
   const res = await fetch("https://api.resend.com/emails", {
@@ -78,7 +84,9 @@ Review & approve di: ${submission.adminLink || COMMUNITY_ADMIN_URL}`;
     body: JSON.stringify({
       from: "VespaKita Komunitas <onboarding@resend.dev>",
       to: [ADMIN_EMAIL],
-      subject: `Pengajuan event baru: ${submission.eventTitle}`,
+      subject: hasEvent
+        ? `Pengajuan event baru: ${submission.eventTitle}`
+        : `Komunitas baru daftar: ${submission.name}`,
       text,
     }),
   });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ajukan Event untuk Dicarikan Sponsor | VespaKita</title>
+<title>Daftarkan Komunitas Kamu | VespaKita</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" type="image/png" href="../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -106,14 +106,14 @@
 <section class="dark">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Ajukan Event Kamu</div>
-      <h2>Butuh Sponsor untuk Kegiatan Komunitas?</h2>
-      <p>Ceritakan komunitas dan rencana event kamu. Tim VespaKita akan bantu carikan sponsor lewat jaringan brand yang sudah kami bangun — seperti yang kami lakukan untuk Road to Jakarta (Vespa 60's Yogyakarta).</p>
+      <div class="eyebrow">Daftarkan Komunitas Kamu</div>
+      <h2>Gabung Jadi Partner Komunitas VespaKita</h2>
+      <p>Daftarkan komunitas kamu dan dapat halaman profil resmi di direktori — gratis, gampang, nggak perlu punya event dulu. Punya event yang butuh sponsor? Isi juga bagian "Detail Event" di bawah, tim kami bantu carikan brand lewat jaringan yang sudah kami bangun — seperti yang kami lakukan untuk Road to Jakarta (Vespa 60's Yogyakarta).</p>
     </div>
 
     <div class="form-card" id="form-wrap">
       <div class="form-note">
-        Cara kerjanya: isi form ini → tim VespaKita hubungi kamu untuk diskusi kebutuhan sponsorship → kami carikan brand yang cocok lewat jaringan kolaborasi kami → komunitas kamu juga dapat halaman profil di direktori sebagai bukti kerja sama, lengkap dengan kolom komentar.
+        Cara kerjanya: isi form ini → komunitas kamu masuk antrian review tim VespaKita → begitu di-approve, komunitas kamu langsung dapat halaman profil di direktori. Kalau kamu juga isi bagian "Detail Event", tim kami akan hubungi buat diskusi kebutuhan sponsorship dan carikan brand yang cocok.
       </div>
 
       <form id="daftar-form" novalidate>
@@ -137,11 +137,11 @@
         </div>
 
         <div class="field" style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(241,232,214,0.12);">
-          <label style="font-size:13px; color:var(--krem);">Detail Event yang Butuh Sponsor</label>
+          <label style="font-size:13px; color:var(--krem);">Detail Event yang Butuh Sponsor (Opsional — bisa diisi belakangan)</label>
         </div>
         <div class="field">
-          <label for="k-event-nama">Nama Event <span class="req">*</span></label>
-          <input type="text" id="k-event-nama" placeholder="Contoh: Touring Akbar Yogyakarta-Jakarta" required>
+          <label for="k-event-nama">Nama Event</label>
+          <input type="text" id="k-event-nama" placeholder="Contoh: Touring Akbar Yogyakarta-Jakarta">
         </div>
         <div class="field-row">
           <div class="field">
@@ -163,8 +163,8 @@
           </select>
         </div>
         <div class="field">
-          <label for="k-event-deskripsi">Ceritakan Rencana Event Kamu <span class="req">*</span></label>
-          <textarea id="k-event-deskripsi" rows="3" placeholder="Rute, rangkaian acara, target peserta, dan hal lain yang perlu diketahui tim kami." required></textarea>
+          <label for="k-event-deskripsi">Ceritakan Rencana Event Kamu</label>
+          <textarea id="k-event-deskripsi" rows="3" placeholder="Rute, rangkaian acara, target peserta, dan hal lain yang perlu diketahui tim kami."></textarea>
         </div>
 
         <div class="field" style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(241,232,214,0.12);">
@@ -195,14 +195,14 @@
         </div>
         <div id="k-form-msg" class="field-error"></div>
         <div class="submit-row">
-          <button type="submit" class="btn btn-primary" id="k-submit">Ajukan Event Kamu</button>
+          <button type="submit" class="btn btn-primary" id="k-submit">Daftarkan Komunitas</button>
         </div>
       </form>
 
       <div class="form-success" id="form-success">
         <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
-        <h3>Pengajuan Terkirim</h3>
-        <p>Terima kasih! Tim VespaKita akan meninjau rencana event kamu dan menghubungi lewat WhatsApp untuk diskusi kebutuhan sponsorship.</p>
+        <h3>Pendaftaran Terkirim</h3>
+        <p>Terima kasih! Tim VespaKita akan meninjau pendaftaran komunitas kamu, biasanya 1x24 jam. Kalau kamu juga isi detail event, kami akan hubungi lewat WhatsApp untuk diskusi kebutuhan sponsorship.</p>
       </div>
     </div>
   </div>
@@ -248,7 +248,10 @@
 <script>
   const form = document.getElementById('daftar-form');
   const msg = document.getElementById('k-form-msg');
-  const requiredIds = ['k-nama','k-kota','k-deskripsi','k-event-nama','k-event-deskripsi','k-ig','k-wa','k-admin-email'];
+  // Event fields are intentionally not in this list — a community can join without
+  // one and add it later. See the eventName/eventDesc check below for the
+  // "fill one, must fill both" rule when someone does start the event section.
+  const requiredIds = ['k-nama','k-kota','k-deskripsi','k-ig','k-wa','k-admin-email'];
 
   const WA_NUMBER = "6281227341300"; // Admin WA number — same one used for marketplace listing notifications
 
@@ -261,10 +264,17 @@
       document.getElementById(missing[0]).focus();
       return;
     }
-    msg.classList.remove('show');
 
     const communityName = document.getElementById('k-nama').value.trim();
     const eventName = document.getElementById('k-event-nama').value.trim();
+    const eventDesc = document.getElementById('k-event-deskripsi').value.trim();
+    if((eventName && !eventDesc) || (!eventName && eventDesc)){
+      msg.textContent = 'Kalau mau isi detail event, "Nama Event" dan "Ceritakan Rencana Event" dua-duanya wajib diisi ya — atau kosongkan semua dan isi belakangan.';
+      msg.classList.add('show');
+      document.getElementById(eventName ? 'k-event-deskripsi' : 'k-event-nama').focus();
+      return;
+    }
+    msg.classList.remove('show');
 
     const submitBtn = document.getElementById('k-submit');
     submitBtn.disabled = true;
@@ -298,13 +308,15 @@
       document.querySelector('.form-note').style.display = 'none';
       document.getElementById('form-success').classList.add('show');
 
-      const notifyMsg = `Ada pengajuan event komunitas baru menunggu review: ${communityName} - ${eventName}.\n\nReview & approve: https://www.vespakita.com/komunitas/admin/`;
+      const notifyMsg = eventName
+        ? `Ada pengajuan komunitas baru menunggu review: ${communityName} (+ event: ${eventName}).\n\nReview & approve: https://www.vespakita.com/komunitas/admin/`
+        : `Ada komunitas baru daftar, menunggu review: ${communityName}.\n\nReview & approve: https://www.vespakita.com/komunitas/admin/`;
       window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
     }catch(err){
       msg.textContent = err.message || 'Gagal mengirim, coba lagi.';
       msg.classList.add('show');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Ajukan Event Kamu';
+      submitBtn.textContent = 'Daftarkan Komunitas';
     }
   });
 </script>
