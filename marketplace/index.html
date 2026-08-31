@@ -542,7 +542,7 @@
 
       <!-- SHARED MEDIA FIELDS -->
       <div class="field">
-        <label id="lbl-foto">Foto Unit (maks. 5)</label>
+        <label id="lbl-foto">Foto Unit (min. 2, maks. 5)</label>
         <input type="file" id="j-foto" accept="image/jpeg,image/png,image/webp" multiple>
         <div id="j-foto-preview" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;"></div>
       </div>
@@ -809,7 +809,7 @@
     formTabParts.style.color = isUnit ? 'var(--chrome)' : 'var(--krem)';
     formUnitFields.style.display = isUnit ? 'block' : 'none';
     formPartsFields.style.display = isUnit ? 'none' : 'block';
-    lblFoto.textContent = isUnit ? 'Foto Unit (maks. 5)' : 'Foto Barang (maks. 5)';
+    lblFoto.textContent = isUnit ? 'Foto Unit (min. 2, maks. 5)' : 'Foto Barang (min. 2, maks. 5)';
     lblVideo.textContent = isUnit ? 'Video Unit (Wajib, maks. 60 detik & 30MB)' : 'Video Barang (Opsional, maks. 60 detik & 30MB)';
   }
   if(formTabUnit && formTabParts){
@@ -854,6 +854,7 @@
   }
 
   const MAX_FOTO = 5;
+  const MIN_FOTO = 2;
   const MAX_VIDEO_BYTES = 30 * 1024 * 1024;
   const MAX_VIDEO_SECONDS = 60;
   let jualFotos = []; // array of {blob, previewUrl}
@@ -1000,6 +1001,10 @@
     }
     if(isUnit && !jualVideo){
       showFormMsg('Video unit wajib diupload dulu ya.', true);
+      return;
+    }
+    if(jualFotos.length < MIN_FOTO){
+      showFormMsg(`Minimal ${MIN_FOTO} foto ya.`, true, 'Listing tanpa cukup foto susah dipercaya calon pembeli.');
       return;
     }
 

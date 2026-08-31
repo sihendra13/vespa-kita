@@ -8,6 +8,7 @@ import { cloudinaryUpload, parseCloudinaryUrl } from "../_lib/cloudinary.js";
 import { sendAdminNotification } from "../_lib/resend.js";
 
 const MAX_PHOTOS = 5;
+const MIN_PHOTOS = 2;
 const MAX_PHOTO_BYTES = 6 * 1024 * 1024; // 6MB — safety net above the ~1600px/JPEG-80% client compression target
 const MAX_VIDEO_BYTES = 30 * 1024 * 1024; // 30MB. Duration (max 60s) is enforced client-side only —
 // Workers has no video-parsing primitive to check duration server-side without a heavy dependency.
@@ -127,6 +128,7 @@ async function handlePost(context) {
   if (description.length > MAX_DESCRIPTION) return badRequest("Deskripsi terlalu panjang.");
 
   const photoFiles = form.getAll("photos").filter((f) => f instanceof File && f.size > 0);
+  if (photoFiles.length < MIN_PHOTOS) return badRequest(`Minimal ${MIN_PHOTOS} foto.`);
   if (photoFiles.length > MAX_PHOTOS) return badRequest(`Maksimal ${MAX_PHOTOS} foto.`);
   for (const f of photoFiles) {
     if (!IMAGE_TYPES.has(f.type)) return badRequest("Format foto harus JPG, PNG, atau WebP.");
