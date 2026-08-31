@@ -122,6 +122,7 @@
   }
 
   function renderItem(l, actions){
+    const isUnit = l.category !== 'sparepart';
     const photos = (l.photos || []).map(p => `<img src="${p}" alt="" class="item-thumb" data-lightbox-type="image" data-lightbox-src="${p}">`).join('') || `<img src="" alt="" style="opacity:0;">`;
     const video = l.video ? `<video src="${l.video}" class="item-thumb" data-lightbox-type="video" data-lightbox-src="${l.video}" style="width:64px; height:64px; object-fit:cover; border-radius:4px; background:#000;" muted></video>` : '';
     const actionBtns = actions.map(a => {
@@ -130,19 +131,25 @@
       }
       return `<button class="${a.cls}" data-action="${a.action}" data-id="${l.id}">${a.label}</button>`;
     }).join('');
+    const metaParts = [l.location, isUnit ? l.year : null, l.condition].filter(Boolean);
+    const docsHtml = isUnit
+      ? `<div class="item-docs" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
+          <span class="doc-badge">${l.docSurat}</span>
+          <span class="doc-badge">Pajak: ${l.docPajak}</span>
+          <span class="doc-badge">${l.docKepemilikan}</span>
+        </div>`
+      : (l.compatibility
+          ? `<div class="item-docs" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;"><span class="doc-badge">Fit: ${l.compatibility}</span></div>`
+          : '');
     return `
       <div class="item">
         <div class="item-photos">${photos}${video}</div>
         <div class="item-body">
-          <div class="item-title">${l.title}</div>
-          <div class="item-meta">${l.location} &middot; ${l.year} &middot; ${l.condition}</div>
+          <div class="item-title">${isUnit ? '' : '&#9881;&#65039; '}${l.title}</div>
+          <div class="item-meta">${metaParts.join(' &middot; ')}</div>
           <div class="item-price">${fmtRupiah(l.price)}</div>
           <div class="item-seller">${l.sellerName} &middot; wa.me/${l.sellerPhone} &middot; <a href="https://instagram.com/${l.sellerIg}" target="_blank" rel="noopener" style="color:var(--mint);">IG: @${l.sellerIg}</a> &middot; diajukan ${fmtDate(l.submittedAt)}</div>
-          <div class="item-docs" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:6px;">
-            <span class="doc-badge">${l.docSurat}</span>
-            <span class="doc-badge">Pajak: ${l.docPajak}</span>
-            <span class="doc-badge">${l.docKepemilikan}</span>
-          </div>
+          ${docsHtml}
           ${l.minusDesc ? `<div class="item-desc" style="margin-top:6px;"><strong>Minus:</strong> ${l.minusDesc}</div>` : ''}
           ${l.description ? `<div class="item-desc">${l.description}</div>` : ''}
         </div>

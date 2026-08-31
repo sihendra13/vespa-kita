@@ -50,14 +50,19 @@ export async function onRequestGet(context) {
   const video = row.video ? JSON.parse(row.video).url : null;
   const title = row.title;
   const price = row.price;
+  const isUnit = row.category !== "sparepart";
   const canonicalUrl = `${SITE_URL}/marketplace/l/${id}`;
   const ogImage = photos[0] || `${SITE_URL}/logo-share.png`;
-  const ogDescription = `${row.condition} · ${row.year} · ${row.location}. ${fmtRupiah(price)}. Dicek manual oleh tim VespaKita.`;
+  const ogDescription = isUnit
+    ? `${row.condition} · ${row.year} · ${row.location}. ${fmtRupiah(price)}. Dicek manual oleh tim VespaKita.`
+    : `${row.condition} · ${row.location}. ${fmtRupiah(price)}. Dicek manual oleh tim VespaKita.`;
 
-  const waMsg = `Halo, saya lihat listing ${title} di Marketplace VespaKita (${canonicalUrl}). Apakah unit ini masih tersedia?`;
+  const waMsg = `Halo, saya lihat listing ${title} di Marketplace VespaKita (${canonicalUrl}). Apakah ${isUnit ? "unit" : "barang"} ini masih tersedia?`;
   const waHref = `https://wa.me/${row.seller_phone}?text=${encodeURIComponent(waMsg)}`;
 
-  const badges = [row.doc_surat, row.doc_pajak ? `Pajak ${row.doc_pajak}` : "", row.doc_kepemilikan]
+  const badges = (isUnit
+    ? [row.doc_surat, row.doc_pajak ? `Pajak ${row.doc_pajak}` : "", row.doc_kepemilikan]
+    : [row.compatibility ? `Fit: ${row.compatibility}` : ""])
     .filter(Boolean)
     .map((b) => `<span class="doc-badge">${escapeHtml(b)}</span>`)
     .join("");
@@ -288,10 +293,11 @@ export async function onRequestGet(context) {
     </div>
 
     <div class="spec-grid">
-      <div class="spec-item"><div class="k">Tahun</div><div class="v">${escapeHtml(row.year)}</div></div>
+      ${isUnit ? `<div class="spec-item"><div class="k">Tahun</div><div class="v">${escapeHtml(row.year)}</div></div>` : ""}
       <div class="spec-item"><div class="k">Kondisi</div><div class="v">${escapeHtml(row.condition)}</div></div>
       <div class="spec-item"><div class="k">Lokasi</div><div class="v">${escapeHtml(row.location)}</div></div>
       <div class="spec-item"><div class="k">Penjual</div><div class="v">${escapeHtml(row.seller_name)}</div></div>
+      ${!isUnit && row.compatibility ? `<div class="spec-item"><div class="k">Kecocokan Tipe Vespa</div><div class="v">${escapeHtml(row.compatibility)}</div></div>` : ""}
     </div>
 
     <div class="curation-box">

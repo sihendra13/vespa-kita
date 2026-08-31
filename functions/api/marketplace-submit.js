@@ -24,6 +24,11 @@ const DOC_PAJAK_OPTIONS = ["Pajak Hidup", "Pajak Mati"];
 const DOC_KEPEMILIKAN_OPTIONS = ["Tangan Pertama dari Baru", "Milik Pribadi (Tangan Ke-2 dst)", "Atas Nama Orang Lain"];
 const MAX_MINUS_DESC = 500;
 
+const CATEGORY_OPTIONS = ["unit", "sparepart"];
+const UNIT_CONDITION_OPTIONS = ["Original", "Restorasi"];
+const PARTS_CONDITION_OPTIONS = ["Baru", "Bekas"];
+const MAX_COMPATIBILITY = 200;
+
 function isNonEmptyString(v, max) {
   return typeof v === "string" && v.trim().length > 0 && v.length <= max;
 }
@@ -62,6 +67,10 @@ async function handlePost(context) {
     return badRequest("Form tidak valid.");
   }
 
+  const category = String(form.get("category") || "unit");
+  if (!CATEGORY_OPTIONS.includes(category)) return badRequest("Kategori tidak valid.");
+  const isUnit = category === "unit";
+
   const title = String(form.get("title") || "");
   const sellerName = String(form.get("sellerName") || "");
   const location = String(form.get("location") || "");
@@ -70,20 +79,26 @@ async function handlePost(context) {
   const yearRaw = form.get("year");
   const sellerPhoneRaw = String(form.get("sellerPhone") || "");
   const sellerIgRaw = String(form.get("sellerIg") || "");
-  const docSurat = String(form.get("docSurat") || "");
-  const docPajak = String(form.get("docPajak") || "");
-  const docKepemilikan = String(form.get("docKepemilikan") || "");
+  const docSurat = isUnit ? String(form.get("docSurat") || "") : "";
+  const docPajak = isUnit ? String(form.get("docPajak") || "") : "";
+  const docKepemilikan = isUnit ? String(form.get("docKepemilikan") || "") : "";
   const description = String(form.get("description") || "");
-  const minusDesc = String(form.get("minusDesc") || "");
+  const minusDesc = isUnit ? String(form.get("minusDesc") || "") : "";
+  const compatibility = isUnit ? "" : String(form.get("compatibility") || "");
 
-  if (!isNonEmptyString(title, MAX_TITLE)) return badRequest("Model & tahun Vespa wajib diisi.");
+  if (!isNonEmptyString(title, MAX_TITLE)) return badRequest(isUnit ? "Model & tahun Vespa wajib diisi." : "Nama barang wajib diisi.");
   if (!isNonEmptyString(sellerName, 100)) return badRequest("Nama wajib diisi.");
   if (!isNonEmptyString(location, 100)) return badRequest("Lokasi wajib diisi.");
-  if (!["Original", "Restorasi"].includes(condition)) return badRequest("Kondisi tidak valid.");
+  const conditionOptions = isUnit ? UNIT_CONDITION_OPTIONS : PARTS_CONDITION_OPTIONS;
+  if (!conditionOptions.includes(condition)) return badRequest("Kondisi tidak valid.");
   if (!isNonEmptyString(sellerIgRaw, 100)) return badRequest("Username/link Instagram wajib diisi.");
-  if (!DOC_SURAT_OPTIONS.includes(docSurat)) return badRequest("Status surat tidak valid.");
-  if (!DOC_PAJAK_OPTIONS.includes(docPajak)) return badRequest("Status pajak tidak valid.");
-  if (!DOC_KEPEMILIKAN_OPTIONS.includes(docKepemilikan)) return badRequest("Status kepemilikan tidak valid.");
+  if (isUnit) {
+    if (!DOC_SURAT_OPTIONS.includes(docSurat)) return badRequest("Status surat tidak valid.");
+    if (!DOC_PAJAK_OPTIONS.includes(docPajak)) return badRequest("Status pajak tidak valid.");
+    if (!DOC_KEPEMILIKAN_OPTIONS.includes(docKepemilikan)) return badRequest("Status kepemilikan tidak valid.");
+  } else {
+    if (compatibility.length > MAX_COMPATIBILITY) return badRequest("Kecocokan tipe Vespa terlalu panjang.");
+  }
   if (minusDesc.length > MAX_MINUS_DESC) return badRequest("Deskripsi kekurangan terlalu panjang.");
 
   const sellerIg = sellerIgRaw.trim().replace(/^@/, "").replace(/^https?:\/\/(www\.)?instagram\.com\//i, "").replace(/\/$/, "");
@@ -93,8 +108,13 @@ async function handlePost(context) {
   // (becomes 28, not 28000000) as a technically-valid-but-nonsensical price.
   if (!Number.isFinite(price) || price < MIN_PRICE || price > 1_000_000_000) return badRequest("Harga tidak valid.");
 
-  const year = Number(yearRaw);
-  if (!Number.isInteger(year) || year < 1946 || year > new Date().getFullYear() + 1) return badRequest("Tahun tidak valid.");
+  // Sparepart listings have no model year — 0 is stored as a "not applicable" sentinel,
+  // and the front-end never displays a "Tahun" field for category='sparepart'.
+  let year = 0;
+  if (isUnit) {
+    year = Number(yearRaw);
+    if (!Number.isInteger(year) || year < 1946 || year > new Date().getFullYear() + 1) return badRequest("Tahun tidak valid.");
+  }
 
   const phoneDigits = sellerPhoneRaw.replace(/\D/g, "");
   if (phoneDigits.length < 9 || phoneDigits.length > 15) return badRequest("No. WhatsApp tidak valid.");
@@ -109,11 +129,14 @@ async function handlePost(context) {
     if (f.size > MAX_PHOTO_BYTES) return badRequest(`Ukuran foto maksimal ${MAX_PHOTO_BYTES / 1024 / 1024}MB.`);
   }
 
+  // Video is mandatory for unit listings, optional for sparepart.
   const videoFile = form.get("video");
   const hasVideo = videoFile instanceof File && videoFile.size > 0;
-  if (!hasVideo) return badRequest("Video unit wajib diupload.");
-  if (!VIDEO_TYPES.has(videoFile.type)) return badRequest("Format video harus MP4, MOV, atau WebM.");
-  if (videoFile.size > MAX_VIDEO_BYTES) return badRequest(`Ukuran video maksimal ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`);
+  if (isUnit && !hasVideo) return badRequest("Video unit wajib diupload.");
+  if (hasVideo) {
+    if (!VIDEO_TYPES.has(videoFile.type)) return badRequest("Format video harus MP4, MOV, atau WebM.");
+    if (videoFile.size > MAX_VIDEO_BYTES) return badRequest(`Ukuran video maksimal ${MAX_VIDEO_BYTES / 1024 / 1024}MB.`);
+  }
 
   const { count } = (await env.DB.prepare("SELECT COUNT(*) as count FROM listings").first()) || { count: 0 };
   if (count >= MAX_TOTAL_LISTINGS) {
@@ -139,21 +162,24 @@ async function handlePost(context) {
     }
   }
 
-  let videoResult;
-  try {
-    videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
-  } catch (err) {
-    console.error("Cloudinary video upload failed:", err);
-    return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi." }), { status: 500, headers: { "content-type": "application/json" } });
+  let videoResult = null;
+  if (hasVideo) {
+    try {
+      videoResult = await cloudinaryUpload(videoFile, { ...cloudinaryEnv, folder, publicId: "video", resourceType: "video" });
+    } catch (err) {
+      console.error("Cloudinary video upload failed:", err);
+      return new Response(JSON.stringify({ error: "Gagal upload video, coba lagi." }), { status: 500, headers: { "content-type": "application/json" } });
+    }
   }
 
   const now = new Date().toISOString();
   await env.DB.prepare(
-    `INSERT INTO listings (id, status, title, price, year, condition, location, seller_name, seller_phone, seller_ig, doc_surat, doc_pajak, doc_kepemilikan, minus_desc, description, photos, video, submitted_at, reviewed_at, published_at)
-     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
+    `INSERT INTO listings (id, status, category, title, price, year, condition, location, seller_name, seller_phone, seller_ig, doc_surat, doc_pajak, doc_kepemilikan, minus_desc, compatibility, description, photos, video, submitted_at, reviewed_at, published_at)
+     VALUES (?, 'pending', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)`
   )
     .bind(
       id,
+      category,
       title.trim(),
       price,
       year,
@@ -166,9 +192,10 @@ async function handlePost(context) {
       docPajak,
       docKepemilikan,
       minusDesc.trim(),
+      compatibility.trim(),
       description.trim(),
       JSON.stringify(photoResults),
-      JSON.stringify(videoResult),
+      videoResult ? JSON.stringify(videoResult) : null,
       now
     )
     .run();
@@ -176,6 +203,7 @@ async function handlePost(context) {
   if (env.RESEND_API_KEY) {
     waitUntil(
       sendAdminNotification(env.RESEND_API_KEY, {
+        category,
         title: title.trim(),
         price,
         year,
@@ -188,6 +216,7 @@ async function handlePost(context) {
         docPajak,
         docKepemilikan,
         minusDesc: minusDesc.trim(),
+        compatibility: compatibility.trim(),
         description: description.trim(),
         adminLink: "https://vespakita.com/marketplace/admin/",
       }).catch((err) => console.error("sendAdminNotification failed:", err))

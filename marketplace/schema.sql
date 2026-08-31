@@ -19,12 +19,14 @@ CREATE TABLE IF NOT EXISTS listings (
   minus_desc TEXT NOT NULL DEFAULT '', -- optional seller-disclosed defects
   description TEXT NOT NULL DEFAULT '',
   photos TEXT NOT NULL DEFAULT '[]', -- JSON array of Cloudinary {url, publicId} objects
-  video TEXT NOT NULL, -- JSON Cloudinary {url, publicId} object — required as of the doc/IG update
+  video TEXT, -- JSON Cloudinary {url, publicId} object — required for 'unit', optional for 'sparepart'
   submitted_at TEXT NOT NULL,
   reviewed_at TEXT,
   published_at TEXT,
   views INTEGER NOT NULL DEFAULT 0, -- incremented client-side on detail page load (avoids bot/crawler inflation)
-  clicks INTEGER NOT NULL DEFAULT 0 -- incremented client-side right before the WA redirect
+  clicks INTEGER NOT NULL DEFAULT 0, -- incremented client-side right before the WA redirect
+  category TEXT NOT NULL DEFAULT 'unit', -- 'unit' | 'sparepart'
+  compatibility TEXT NOT NULL DEFAULT '' -- sparepart only: which Vespa models it fits
 );
 
 CREATE INDEX IF NOT EXISTS idx_listings_status ON listings(status);

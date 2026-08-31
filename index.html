@@ -1428,6 +1428,53 @@
   </div>
 </section>
 
+
+<section class="light" id="sparepart-home-section" style="padding: 0 0 100px 0; display:none;">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin-bottom:24px; text-align: left; margin-left: 0;">
+      <div class="eyebrow" style="color:var(--merah);">Gaya & Perawatan</div>
+      <h2 style="color:var(--aspal);">Sparepart & Aksesoris</h2>
+      <p style="color:var(--aspal-2);">Koleksi perlengkapan Vespa dan suku cadang terbaru dari komunitas.</p>
+    </div>
+
+    <div class="reveal" id="sparepart-home-track" style="display:flex; gap:16px; overflow-x:auto; padding-bottom:16px; scroll-snap-type: x mandatory;"></div>
+  </div>
+</section>
+<script>
+  (async function loadHomeSpareparts(){
+    const section = document.getElementById('sparepart-home-section');
+    const track = document.getElementById('sparepart-home-track');
+    if(!section || !track) return;
+    let listings = [];
+    try{
+      const res = await fetch('/api/marketplace-listings');
+      listings = await res.json();
+    }catch(err){
+      console.error('Gagal memuat sparepart:', err);
+      return;
+    }
+    const parts = (listings || []).filter(l => l.category === 'sparepart').slice(0, 4);
+    if(parts.length === 0) return; // keep the section hidden — no fake placeholders
+
+    const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
+    track.innerHTML = parts.map(l => `
+      <a href="/marketplace/l/${l.id}" class="mp-card" style="min-width:260px; scroll-snap-align: start; text-decoration:none;">
+        <div class="mp-card-img" style="height:180px; background-color:#2a2a2a; background-image:url('${(l.photos && l.photos[0]) || ''}'); background-size:cover; background-position:center; border-radius:8px 8px 0 0;"></div>
+        <div style="padding:16px; background:#fff; border-radius:0 0 8px 8px; border:1px solid rgba(0,0,0,0.1); border-top:none;">
+          <h3 style="margin:0 0 8px; font-size:16px; color:#15171A; font-family:var(--body);">${l.title}</h3>
+          <div style="color:#C2272D; font-weight:700; font-family:var(--mono);">${fmtRupiah(l.price)}</div>
+        </div>
+      </a>
+    `).join('') + `
+      <div style="min-width:260px; display:flex; align-items:center; justify-content:center; scroll-snap-align: start;">
+        <a href="/marketplace/" class="btn" style="border: 1px solid rgba(0,0,0,0.2); color: var(--aspal); text-align:center; padding:16px 24px; border-radius:6px; font-family:var(--mono); text-transform:uppercase; font-weight:bold;">Lihat Semua <br>Aksesoris &rarr;</a>
+      </div>
+    `;
+    section.style.display = 'block';
+    section.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
+  })();
+</script>
+
 <!-- EVENT & KOLABORASI SPLIT -->
 <section class="dark" id="kolaborasi-info" style="padding:0;">
   <div class="split">

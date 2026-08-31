@@ -24,6 +24,7 @@ function rowToListing(row) {
   return {
     id: row.id,
     status: row.status,
+    category: row.category,
     title: row.title,
     price: row.price,
     year: row.year,
@@ -36,6 +37,7 @@ function rowToListing(row) {
     docPajak: row.doc_pajak,
     docKepemilikan: row.doc_kepemilikan,
     minusDesc: row.minus_desc,
+    compatibility: row.compatibility,
     description: row.description,
     photos: JSON.parse(row.photos || "[]").map((p) => p.url),
     video: row.video ? JSON.parse(row.video).url : null,

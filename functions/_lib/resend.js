@@ -7,26 +7,26 @@ const ADMIN_URL = "https://www.vespakita.com/marketplace/admin/";
 
 export async function sendAdminNotification(apiKey, listing) {
   const fmtRupiah = (n) => "Rp " + Number(n).toLocaleString("id-ID");
+  const isUnit = listing.category !== "sparepart";
 
   const text = `Ada listing baru masuk di Marketplace VespaKita, menunggu review.
 
-Model: ${listing.title}
+Kategori: ${isUnit ? "Unit Vespa" : "Sparepart / Aksesoris"}
+${isUnit ? "Model" : "Nama Barang"}: ${listing.title}
 Harga: ${fmtRupiah(listing.price)}
-Tahun: ${listing.year}
-Kondisi: ${listing.condition}
+${isUnit ? `Tahun: ${listing.year}\n` : ""}Kondisi: ${listing.condition}
 Lokasi: ${listing.location}
 
 Penjual: ${listing.sellerName}
 WhatsApp: ${listing.sellerPhone}
 Instagram: @${listing.sellerIg || "-"}
 
-Surat: ${listing.docSurat || "-"}
-Pajak: ${listing.docPajak || "-"}
-Kepemilikan: ${listing.docKepemilikan || "-"}
+${isUnit
+  ? `Surat: ${listing.docSurat || "-"}\nPajak: ${listing.docPajak || "-"}\nKepemilikan: ${listing.docKepemilikan || "-"}`
+  : `Kecocokan Tipe Vespa: ${listing.compatibility || "-"}`}
 
 Deskripsi: ${listing.description || "-"}
-Kekurangan/Minus: ${listing.minusDesc || "-"}
-
+${isUnit ? `Kekurangan/Minus: ${listing.minusDesc || "-"}\n` : ""}
 Review & approve di: ${listing.adminLink || ADMIN_URL}`;
 
   const res = await fetch("https://api.resend.com/emails", {

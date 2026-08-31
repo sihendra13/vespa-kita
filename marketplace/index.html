@@ -344,9 +344,9 @@
     <div class="navlinks">
       <a href="/">Beranda</a>
       <a href="#listings">Listing</a>
-      <a href="#jual" class="nav-mobile-cta">Jual Vespa Kamu</a>
+      <a href="#jual" class="nav-mobile-cta">Ajukan Listing</a>
     </div>
-    <a href="#jual" class="navcta">Jual Vespa Kamu</a>
+    <a href="#jual" class="navcta">Ajukan Listing</a>
     <button class="nav-toggle" aria-label="Buka Menu">
       <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-close" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -358,8 +358,8 @@
 <section class="dark mp-hero">
   <div class="wrap">
     <div class="eyebrow">Marketplace VespaKita</div>
-    <h1>JUAL BELI VESPA<br><span class="accent">TANPA TAKUT KENA TIPU</span></h1>
-    <p class="lede">Alternatif marketplace Vespa yang lebih aman dari grup jual-beli di media sosial. Setiap listing dicek manual oleh tim VespaKita sebelum tayang, jadi yang ada di sini benar-benar Vespa berkualitas. Kamu hubungi penjualnya langsung lewat WhatsApp, tanpa perantara.</p>
+    <h1>JUAL BELI VESPA & AKSESORIS<br><span class="accent">TANPA TAKUT KENA TIPU</span></h1>
+    <p class="lede">Alternatif marketplace Vespa yang lebih aman. Setiap listing unit maupun aksesoris/suku cadang dicek manual oleh tim VespaKita sebelum tayang. Hubungi penjualnya langsung lewat WhatsApp, tanpa perantara.</p>
     <div class="mp-trust-row">
       <div class="mp-trust-item">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z"></path></svg>
@@ -376,7 +376,7 @@
     </div>
     <div class="mp-hero-ctas">
       <a href="#listings" class="btn btn-primary">Lihat Listing</a>
-      <a href="#jual" class="btn btn-outline">Jual Vespa Kamu</a>
+      <a href="#jual" class="btn btn-outline">Ajukan Listing</a>
     </div>
   </div>
 </section>
@@ -387,12 +387,17 @@
 <section class="dark" id="listings">
   <div class="wrap">
     <div class="section-head reveal">
-      <div class="eyebrow">Listing Terkurasi</div>
-      <h2>Vespa Dijual</h2>
-      <p>Semua unit di bawah sudah dicek tim VespaKita. Klik untuk lihat detail dan hubungi penjual.</p>
+      <div class="eyebrow">Marketplace Terkurasi</div>
+      <h2 id="listing-title">Vespa Dijual</h2>
+      <p id="listing-desc">Semua unit dan aksesori di bawah sudah dicek tim VespaKita.</p>
+    </div>
+    <div class="segmented-control reveal" style="display:flex; max-width:400px; margin: 0 0 32px 0; background:rgba(255,255,255,0.05); padding:4px; border-radius:30px; position:relative; z-index:10;">
+        <button id="tab-unit" class="segment-btn active" style="flex:1; background:var(--merah); color:var(--krem); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">🛵 Unit Vespa</button>
+        <button id="tab-parts" class="segment-btn" style="flex:1; background:transparent; color:var(--chrome); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">⚙️ Sparepart</button>
     </div>
 
     <div id="listing-grid" class="listing-grid reveal"></div>
+    <div id="parts-grid" class="listing-grid reveal" style="display:none;"></div>
 
     <div id="listing-view-all" class="listing-view-all reveal" style="display:none;">
       <a href="/marketplace/semua/" class="btn btn-outline">Lihat Semua Listing</a>
@@ -401,7 +406,7 @@
     <div id="listing-empty" class="mp-empty reveal" style="display:none;">
       <h3>Belum Ada Listing Saat Ini</h3>
       <p>Marketplace ini baru saja dibuka. Jadi penjual pertama di sini — unitmu akan tampil di halaman ini setelah dicek tim kami.</p>
-      <a href="#jual" class="btn btn-primary">Jual Vespa Kamu</a>
+      <a href="#jual" class="btn btn-primary">Ajukan Listing</a>
     </div>
   </div>
 </section>
@@ -412,10 +417,16 @@
 <section class="dark" id="jual">
   <div class="wrap">
     <div class="section-head reveal" style="margin-left:auto; margin-right:auto; text-align:center;">
-      <div class="eyebrow" style="justify-content:center;">Jual Vespa Kamu</div>
+      <div class="eyebrow" style="justify-content:center;">Jual Barang Kamu</div>
       <h2 style="color:var(--krem);">Ajukan Listing</h2>
-      <p style="color:var(--chrome);">Isi form ini lengkap dengan foto. Listing kamu masuk antrian review tim kami sebelum tayang.</p>
+      <p style="color:var(--chrome);">Pilih jenis barang, isi form, dan masuk antrian review.</p>
     </div>
+    
+    <div class="segmented-control reveal" style="display:flex; max-width:400px; margin: 0 auto 24px; background:rgba(255,255,255,0.05); padding:4px; border-radius:30px;">
+        <button id="form-tab-unit" style="flex:1; background:var(--merah); color:var(--krem); border:none; padding:10px; border-radius:26px; cursor:pointer;">Unit Vespa</button>
+        <button id="form-tab-parts" style="flex:1; background:transparent; color:var(--chrome); border:none; padding:10px; border-radius:26px; cursor:pointer;">Sparepart</button>
+    </div>
+
 
     <div class="form-card reveal">
       <div class="form-note">
@@ -433,73 +444,114 @@
         <label>Username / Link Profil Instagram (Wajib)</label>
         <input type="text" id="j-ig" placeholder="Contoh: @username atau instagram.com/username">
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Model &amp; Tahun Vespa</label>
-          <input type="text" id="j-model" placeholder="Contoh: PX 150 Excel 1998">
-        </div>
-        <div class="field">
-          <label>Harga yang Diinginkan</label>
-          <input type="text" id="j-harga" placeholder="Contoh: 28000000 (angka penuh, bukan 28jt)" inputmode="numeric">
-        </div>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Kondisi</label>
-          <div class="type-toggle" style="display:flex; gap:10px;">
-            <button type="button" class="active" data-kondisi="Original" style="flex:1; padding:12px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:var(--merah); border-color:var(--merah); color:var(--krem); font-size:13px; font-family:var(--body);">Original</button>
-            <button type="button" data-kondisi="Restorasi" style="flex:1; padding:12px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:transparent; color:var(--chrome); font-size:13px; font-family:var(--body);">Restorasi</button>
+      
+      <!-- WRAPPER UNIT -->
+      <div id="form-unit-fields">
+          <div class="field-row">
+            <div class="field">
+              <label>Model &amp; Tahun Vespa</label>
+              <input type="text" id="j-model" placeholder="Contoh: PX 150 Excel 1998">
+            </div>
+            <div class="field">
+              <label>Harga yang Diinginkan</label>
+              <input type="text" id="j-harga-unit" placeholder="Contoh: 28000000 (angka penuh, bukan 28jt)" inputmode="numeric">
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label>Lokasi Unit</label>
-          <input type="text" id="j-lokasi" placeholder="Contoh: Yogyakarta">
-        </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Kondisi</label>
+              <div class="type-toggle" style="display:flex; gap:10px;">
+                <button type="button" class="active" data-kondisi="Original" style="flex:1; padding:12px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:var(--merah); border-color:var(--merah); color:var(--krem); font-size:13px; font-family:var(--body);">Original</button>
+                <button type="button" data-kondisi="Restorasi" style="flex:1; padding:12px; border-radius:2px; border:1px solid rgba(241,232,214,0.2); background:transparent; color:var(--chrome); font-size:13px; font-family:var(--body);">Restorasi</button>
+              </div>
+            </div>
+            <div class="field">
+              <label>Lokasi Unit</label>
+              <input type="text" id="j-lokasi-unit" placeholder="Contoh: Yogyakarta">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Status Surat</label>
+              <select id="j-doc-surat">
+                <option value="Lengkap (BPKB + STNK)">Lengkap (BPKB + STNK)</option>
+                <option value="BPKB Saja">BPKB Saja</option>
+                <option value="STNK Saja">STNK Saja</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Status Pajak</label>
+              <select id="j-doc-pajak">
+                <option value="Pajak Hidup">Pajak Hidup</option>
+                <option value="Pajak Mati">Pajak Mati</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Status Kepemilikan</label>
+            <select id="j-doc-kepemilikan">
+              <option value="Tangan Pertama dari Baru">Tangan Pertama dari Baru</option>
+              <option value="Milik Pribadi (Tangan Ke-2 dst)">Milik Pribadi (Tangan Ke-2 dst)</option>
+              <option value="Atas Nama Orang Lain">Atas Nama Orang Lain</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Deskripsi Tambahan</label>
+            <textarea id="j-deskripsi-unit" rows="3" placeholder="Kondisi mesin, kelengkapan, dll."></textarea>
+          </div>
+          <div class="field">
+            <label>Kekurangan / PR Motor (Kejujuran Penjual)</label>
+            <textarea id="j-minus" rows="3" placeholder="Contoh: Ban belakang perlu diganti, ada baret di bodi kiri, dll. Jujur di sini bikin pembeli lebih percaya."></textarea>
+          </div>
       </div>
-      <div class="field-row">
-        <div class="field">
-          <label>Status Surat</label>
-          <select id="j-doc-surat">
-            <option value="Lengkap (BPKB + STNK)">Lengkap (BPKB + STNK)</option>
-            <option value="BPKB Saja">BPKB Saja</option>
-            <option value="STNK Saja">STNK Saja</option>
-          </select>
-        </div>
-        <div class="field">
-          <label>Status Pajak</label>
-          <select id="j-doc-pajak">
-            <option value="Pajak Hidup">Pajak Hidup</option>
-            <option value="Pajak Mati">Pajak Mati</option>
-          </select>
-        </div>
+
+      <!-- WRAPPER SPAREPART -->
+      <div id="form-parts-fields" style="display:none;">
+          <div class="field-row">
+            <div class="field">
+              <label>Nama Barang</label>
+              <input type="text" id="j-nama-barang" placeholder="Contoh: Knalpot Polini 2-Tak">
+            </div>
+            <div class="field">
+              <label>Harga Barang</label>
+              <input type="text" id="j-harga-parts" placeholder="Contoh: 1500000" inputmode="numeric">
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>Kondisi Barang</label>
+              <select id="j-kondisi-parts" style="width:100%; padding:14px; background:#1e2124; border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px; font-family:var(--body);">
+                <option value="Baru">Baru (New)</option>
+                <option value="Bekas">Bekas (Second)</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Lokasi Penjual / Pengiriman</label>
+              <input type="text" id="j-lokasi-parts" placeholder="Contoh: Bandung">
+            </div>
+          </div>
+          <div class="field">
+            <label>Kecocokan / Kompatibilitas Tipe Vespa</label>
+            <input type="text" id="j-fit" placeholder="Contoh: Fit untuk Sprint, Primavera, dan GTS">
+          </div>
+          <div class="field">
+            <label>Deskripsi &amp; Kondisi Barang</label>
+            <textarea id="j-deskripsi-parts" rows="3" placeholder="Jelaskan kelengkapan, minus jika bekas, atau informasi spesifikasi lainnya..."></textarea>
+          </div>
       </div>
+
+      <!-- SHARED MEDIA FIELDS -->
       <div class="field">
-        <label>Status Kepemilikan</label>
-        <select id="j-doc-kepemilikan">
-          <option value="Tangan Pertama dari Baru">Tangan Pertama dari Baru</option>
-          <option value="Milik Pribadi (Tangan Ke-2 dst)">Milik Pribadi (Tangan Ke-2 dst)</option>
-          <option value="Atas Nama Orang Lain">Atas Nama Orang Lain</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Deskripsi Tambahan</label>
-        <textarea id="j-deskripsi" rows="3" placeholder="Kondisi mesin, kelengkapan, dll."></textarea>
-      </div>
-      <div class="field">
-        <label>Kekurangan / PR Motor (Kejujuran Penjual)</label>
-        <textarea id="j-minus" rows="3" placeholder="Contoh: Ban belakang perlu diganti, ada baret di bodi kiri, dll. Jujur di sini bikin pembeli lebih percaya."></textarea>
-      </div>
-      <div class="field">
-        <label>Foto Unit (maks. 5)</label>
+        <label id="lbl-foto">Foto Unit (maks. 5)</label>
         <input type="file" id="j-foto" accept="image/jpeg,image/png,image/webp" multiple>
         <div id="j-foto-preview" style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;"></div>
       </div>
       <div class="field">
-        <label>Video Unit (Wajib, maks. 60 detik &amp; 30MB)</label>
+        <label id="lbl-video">Video Unit (Wajib, maks. 60 detik &amp; 30MB)</label>
         <input type="file" id="j-video" accept="video/mp4,video/quicktime,video/webm">
         <div id="j-video-preview" style="margin-top:10px;"></div>
       </div>
-      <div id="j-form-msg" style="display:none; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:6px; margin-bottom:16px;"></div>
+      <div id="j-form-msg"  style="display:none; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:6px; margin-bottom:16px;"></div>
       <div class="submit-row">
         <button type="button" class="btn btn-primary" id="j-submit">Ajukan Listing</button>
       </div>
@@ -596,32 +648,11 @@
     return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
   }
 
-  async function loadListings(){
-    const grid = document.getElementById('listing-grid');
-    const empty = document.getElementById('listing-empty');
-    const viewAll = document.getElementById('listing-view-all');
-    let listings = [];
-    try{
-      const res = await fetch('/api/marketplace-listings');
-      listings = await res.json();
-    }catch(err){
-      console.error('Gagal memuat listing:', err);
-    }
-
-    if(!listings || listings.length === 0){
-      grid.style.display = 'none';
-      viewAll.style.display = 'none';
-      empty.style.display = 'block';
-      return;
-    }
-
-    grid.style.removeProperty('display'); // let CSS (grid on desktop, flex+scroll-snap on mobile) control this, not an inline override
-    empty.style.display = 'none';
-    viewAll.style.display = listings.length > MAX_FEATURED ? 'block' : 'none';
-
-    const featured = shuffle(listings).slice(0, MAX_FEATURED);
-
-    grid.innerHTML = featured.map(l => `
+  // Shared card markup for both the Unit grid and the Sparepart grid — a
+  // sparepart card just omits the year (not applicable) from the meta line.
+  function renderCard(l){
+    const metaBits = [l.location, l.category === 'sparepart' ? null : l.year].filter(Boolean);
+    return `
       <div class="listing-card">
         <a href="/marketplace/l/${l.id}" class="listing-card-link" aria-label="Lihat detail"></a>
         <div class="listing-photo" style="background-image:url('${cloudinaryThumb((l.photos && l.photos[0]) || '', 800)}')">
@@ -635,7 +666,7 @@
         </div>
         <div class="listing-body">
           <div class="listing-title">${l.title}</div>
-          <div class="listing-meta"><span class="meta-kondisi">${l.condition}</span>${l.location} &middot; ${l.year}</div>
+          <div class="listing-meta"><span class="meta-kondisi">${l.condition}</span>${metaBits.join(' &middot; ')}</div>
           <div class="listing-price">${fmtRupiah(l.price)}</div>
           <div class="listing-stats">
             <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg> ${l.views || 0} Views</span>
@@ -643,10 +674,90 @@
           </div>
         </div>
       </div>
-    `).join('');
+    `;
+  }
+
+  const PARTS_EMPTY_HTML = `
+    <div class="mp-empty" style="grid-column:1/-1;">
+      <h3 style="font-size:20px;">Belum Ada Sparepart</h3>
+      <p>Jadi penjual sparepart pertama di sini — barangmu akan tampil di sini setelah dicek tim kami.</p>
+      <a href="#jual" class="btn btn-primary">Ajukan Listing</a>
+    </div>
+  `;
+
+  async function loadListings(){
+    const grid = document.getElementById('listing-grid');
+    const partsGrid = document.getElementById('parts-grid');
+    const empty = document.getElementById('listing-empty');
+    const viewAll = document.getElementById('listing-view-all');
+    let listings = [];
+    try{
+      const res = await fetch('/api/marketplace-listings');
+      listings = await res.json();
+    }catch(err){
+      console.error('Gagal memuat listing:', err);
+    }
+
+    const unitListings = (listings || []).filter(l => l.category !== 'sparepart');
+    const partsListings = (listings || []).filter(l => l.category === 'sparepart');
+
+    if(unitListings.length === 0 && partsListings.length === 0){
+      grid.style.display = 'none';
+      partsGrid.style.display = 'none';
+      viewAll.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    empty.style.display = 'none';
+    viewAll.style.display = (unitListings.length > MAX_FEATURED || partsListings.length > MAX_FEATURED) ? 'block' : 'none';
+
+    grid.innerHTML = unitListings.length
+      ? shuffle(unitListings).slice(0, MAX_FEATURED).map(renderCard).join('')
+      : `<div class="mp-empty" style="grid-column:1/-1;"><h3 style="font-size:20px;">Belum Ada Unit Saat Ini</h3><p>Jadi penjual pertama di sini — unitmu akan tampil di sini setelah dicek tim kami.</p><a href="#jual" class="btn btn-primary">Ajukan Listing</a></div>`;
+    partsGrid.innerHTML = partsListings.length
+      ? shuffle(partsListings).slice(0, MAX_FEATURED).map(renderCard).join('')
+      : PARTS_EMPTY_HTML;
+
+    // Only the active tab's grid should actually be visible — see setListTab().
+    grid.style.removeProperty('display');
   }
 
   loadListings();
+
+  // ---------- LISTING TABS (Unit vs Sparepart) ----------
+  const tabUnit = document.getElementById('tab-unit');
+  const tabParts = document.getElementById('tab-parts');
+  const listingTitleEl = document.getElementById('listing-title');
+  const listingDescEl = document.getElementById('listing-desc');
+
+  function setListTab(cat){
+    const grid = document.getElementById('listing-grid');
+    const partsGrid = document.getElementById('parts-grid');
+    const isUnit = cat === 'unit';
+    tabUnit.style.background = isUnit ? 'var(--merah)' : 'transparent';
+    tabUnit.style.color = isUnit ? 'var(--krem)' : 'var(--chrome)';
+    tabParts.style.background = isUnit ? 'transparent' : 'var(--merah)';
+    tabParts.style.color = isUnit ? 'var(--chrome)' : 'var(--krem)';
+    if(isUnit){
+      grid.style.removeProperty('display');
+      partsGrid.style.display = 'none';
+    } else {
+      grid.style.display = 'none';
+      partsGrid.style.removeProperty('display');
+    }
+    listingTitleEl.textContent = isUnit ? 'Vespa Dijual' : 'Suku Cadang & Aksesoris';
+    listingDescEl.textContent = isUnit
+      ? 'Semua unit di bawah sudah dicek tim VespaKita.'
+      : 'Semua sparepart & aksesoris di bawah sudah dicek tim VespaKita.';
+    // Keep the "Ajukan Listing" form in sync with whichever tab the visitor is browsing —
+    // so clicking through from Sparepart lands them on the Sparepart form, not Unit.
+    setFormTab(cat);
+  }
+  if(tabUnit && tabParts){
+    tabUnit.addEventListener('click', () => setListTab('unit'));
+    tabParts.addEventListener('click', () => setListTab('sparepart'));
+  }
 
   // ---------- JUAL VESPA FORM ----------
   let kondisiJual = 'Original';
@@ -665,6 +776,32 @@
       kondisiJual = btn.dataset.kondisi;
     });
   });
+
+  // ---------- FORM TABS (Unit vs Sparepart) ----------
+  let activeFormCategory = 'unit';
+  const formTabUnit = document.getElementById('form-tab-unit');
+  const formTabParts = document.getElementById('form-tab-parts');
+  const formUnitFields = document.getElementById('form-unit-fields');
+  const formPartsFields = document.getElementById('form-parts-fields');
+  const lblFoto = document.getElementById('lbl-foto');
+  const lblVideo = document.getElementById('lbl-video');
+
+  function setFormTab(cat){
+    activeFormCategory = cat;
+    const isUnit = cat === 'unit';
+    formTabUnit.style.background = isUnit ? 'var(--merah)' : 'transparent';
+    formTabUnit.style.color = isUnit ? 'var(--krem)' : 'var(--chrome)';
+    formTabParts.style.background = isUnit ? 'transparent' : 'var(--merah)';
+    formTabParts.style.color = isUnit ? 'var(--chrome)' : 'var(--krem)';
+    formUnitFields.style.display = isUnit ? 'block' : 'none';
+    formPartsFields.style.display = isUnit ? 'none' : 'block';
+    lblFoto.textContent = isUnit ? 'Foto Unit (maks. 5)' : 'Foto Barang (maks. 5)';
+    lblVideo.textContent = isUnit ? 'Video Unit (Wajib, maks. 60 detik & 30MB)' : 'Video Barang (Opsional, maks. 60 detik & 30MB)';
+  }
+  if(formTabUnit && formTabParts){
+    formTabUnit.addEventListener('click', (e) => { e.preventDefault(); setFormTab('unit'); });
+    formTabParts.addEventListener('click', (e) => { e.preventDefault(); setFormTab('sparepart'); });
+  }
 
   // compress a File to a JPEG Blob capped at 1600px on the longest side
   function compressImage(file){
@@ -801,23 +938,41 @@
   }
 
   document.getElementById('j-submit').addEventListener('click', async ()=>{
+    const isUnit = activeFormCategory === 'unit';
     const nama = document.getElementById('j-nama').value.trim();
     const wa = document.getElementById('j-wa').value.trim();
     const ig = document.getElementById('j-ig').value.trim();
-    const model = document.getElementById('j-model').value.trim();
-    const hargaRaw = document.getElementById('j-harga').value.trim();
-    const lokasi = document.getElementById('j-lokasi').value.trim();
-    const docSurat = document.getElementById('j-doc-surat').value;
-    const docPajak = document.getElementById('j-doc-pajak').value;
-    const docKepemilikan = document.getElementById('j-doc-kepemilikan').value;
-    const deskripsi = document.getElementById('j-deskripsi').value.trim();
-    const minus = document.getElementById('j-minus').value.trim();
-    const harga = Number(hargaRaw.replace(/[^0-9]/g, ''));
-    const tahunMatch = model.match(/(19|20)\d{2}/);
-    const tahun = tahunMatch ? Number(tahunMatch[0]) : new Date().getFullYear();
 
-    if(!nama || !wa || !model || !harga){
-      showFormMsg('Mohon isi nama, no. WhatsApp, model & tahun, dan harga dulu ya.', true);
+    // Fields that differ between Unit and Sparepart forms.
+    let title, hargaRaw, lokasi, condition, deskripsi, minus, docSurat, docPajak, docKepemilikan, compatibility, tahun;
+    if(isUnit){
+      title = document.getElementById('j-model').value.trim();
+      hargaRaw = document.getElementById('j-harga-unit').value.trim();
+      lokasi = document.getElementById('j-lokasi-unit').value.trim();
+      condition = kondisiJual;
+      deskripsi = document.getElementById('j-deskripsi-unit').value.trim();
+      minus = document.getElementById('j-minus').value.trim();
+      docSurat = document.getElementById('j-doc-surat').value;
+      docPajak = document.getElementById('j-doc-pajak').value;
+      docKepemilikan = document.getElementById('j-doc-kepemilikan').value;
+      compatibility = '';
+      const tahunMatch = title.match(/(19|20)\d{2}/);
+      tahun = tahunMatch ? Number(tahunMatch[0]) : new Date().getFullYear();
+    } else {
+      title = document.getElementById('j-nama-barang').value.trim();
+      hargaRaw = document.getElementById('j-harga-parts').value.trim();
+      lokasi = document.getElementById('j-lokasi-parts').value.trim();
+      condition = document.getElementById('j-kondisi-parts').value;
+      deskripsi = document.getElementById('j-deskripsi-parts').value.trim();
+      minus = '';
+      docSurat = ''; docPajak = ''; docKepemilikan = '';
+      compatibility = document.getElementById('j-fit').value.trim();
+      tahun = 0;
+    }
+    const harga = Number(hargaRaw.replace(/[^0-9]/g, ''));
+
+    if(!nama || !wa || !title || !harga){
+      showFormMsg(isUnit ? 'Mohon isi nama, no. WhatsApp, model & tahun, dan harga dulu ya.' : 'Mohon isi nama, no. WhatsApp, nama barang, dan harga dulu ya.', true);
       return;
     }
     if(harga < 500000){
@@ -828,7 +983,7 @@
       showFormMsg('Mohon isi username/link Instagram kamu dulu ya.', true);
       return;
     }
-    if(!jualVideo){
+    if(isUnit && !jualVideo){
       showFormMsg('Video unit wajib diupload dulu ya.', true);
       return;
     }
@@ -843,10 +998,11 @@
 
     try{
       const fd = new FormData();
-      fd.append('title', model);
+      fd.append('category', activeFormCategory);
+      fd.append('title', title);
       fd.append('price', String(harga));
       fd.append('year', String(tahun));
-      fd.append('condition', kondisiJual);
+      fd.append('condition', condition);
       fd.append('location', lokasi || '-');
       fd.append('sellerName', nama);
       fd.append('sellerPhone', wa);
@@ -856,8 +1012,9 @@
       fd.append('docKepemilikan', docKepemilikan);
       fd.append('description', deskripsi);
       fd.append('minusDesc', minus);
+      fd.append('compatibility', compatibility);
       jualFotos.forEach((f, i) => fd.append('photos', f.blob, `photo-${i + 1}.jpg`));
-      fd.append('video', jualVideo.file, jualVideo.file.name);
+      if(jualVideo) fd.append('video', jualVideo.file, jualVideo.file.name);
 
       const data = await new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
@@ -886,22 +1043,27 @@
       });
 
       if (typeof gtag === 'function') {
-        gtag('event', 'generate_lead', { content_type: 'marketplace_jual', item_id: model });
+        gtag('event', 'generate_lead', { content_type: 'marketplace_jual', item_id: title });
       }
 
       showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
 
-      const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${model} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
+      const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${title} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
       window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
 
       document.getElementById('j-nama').value = '';
       document.getElementById('j-wa').value = '';
       document.getElementById('j-ig').value = '';
       document.getElementById('j-model').value = '';
-      document.getElementById('j-harga').value = '';
-      document.getElementById('j-lokasi').value = '';
-      document.getElementById('j-deskripsi').value = '';
+      document.getElementById('j-harga-unit').value = '';
+      document.getElementById('j-lokasi-unit').value = '';
+      document.getElementById('j-deskripsi-unit').value = '';
       document.getElementById('j-minus').value = '';
+      document.getElementById('j-nama-barang').value = '';
+      document.getElementById('j-harga-parts').value = '';
+      document.getElementById('j-lokasi-parts').value = '';
+      document.getElementById('j-fit').value = '';
+      document.getElementById('j-deskripsi-parts').value = '';
       jualFotos.forEach(f => URL.revokeObjectURL(f.previewUrl));
       jualFotos = [];
       renderFotoPreview();
