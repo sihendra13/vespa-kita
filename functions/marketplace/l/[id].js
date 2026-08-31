@@ -277,7 +277,7 @@ export async function onRequestGet(context) {
 
 <main>
   <div class="wrap">
-    <a href="/marketplace/" class="back-link">&larr; Kembali ke Listing</a>
+    <a href="/marketplace/semua/?category=${isUnit ? "unit" : "sparepart"}" class="back-link">&larr; Kembali ke Listing</a>
 
     <div class="main-photo-wrap">
       <img id="main-photo" src="${escapeHtml(photos[0] || "")}" alt="${escapeHtml(title)}">

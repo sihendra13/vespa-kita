@@ -176,7 +176,7 @@
     <a href="/marketplace/" class="back-link">&larr; Kembali ke Marketplace</a>
 
     <div class="eyebrow">Listing Terkurasi</div>
-    <h1>Semua Vespa Dijual</h1>
+    <h1 id="page-title">Semua Vespa Dijual</h1>
 
     <div id="listing-grid" class="listing-grid"></div>
 
@@ -206,6 +206,9 @@
     return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
   }
 
+  const params = new URLSearchParams(window.location.search);
+  const categoryParam = params.get('category'); // 'unit' | 'sparepart' | null (null = show everything)
+
   async function loadListings(){
     const grid = document.getElementById('listing-grid');
     const empty = document.getElementById('listing-empty');
@@ -215,6 +218,15 @@
       listings = await res.json();
     }catch(err){
       console.error('Gagal memuat listing:', err);
+    }
+
+    if(categoryParam === 'unit') listings = (listings || []).filter(l => l.category !== 'sparepart');
+    else if(categoryParam === 'sparepart') listings = (listings || []).filter(l => l.category === 'sparepart');
+
+    if(categoryParam === 'sparepart'){
+      document.getElementById('page-title').textContent = 'Semua Sparepart & Aksesoris Dijual';
+    } else if(categoryParam === 'unit'){
+      document.getElementById('page-title').textContent = 'Semua Unit Vespa Dijual';
     }
 
     if(!listings || listings.length === 0){
@@ -239,8 +251,8 @@
           </a>` : ''}
         </div>
         <div class="listing-body">
-          <div class="listing-title">${l.title}</div>
-          <div class="listing-meta"><span class="meta-kondisi">${l.condition}</span>${l.location} &middot; ${l.year}</div>
+          <div class="listing-title">${l.category === 'sparepart' ? '&#9881;&#65039; ' : ''}${l.title}</div>
+          <div class="listing-meta"><span class="meta-kondisi">${l.condition}</span>${l.location}${l.category === 'sparepart' ? '' : ' &middot; ' + l.year}</div>
           <div class="listing-price">${fmtRupiah(l.price)}</div>
           <div class="listing-stats">
             <span><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg> ${l.views || 0} Views</span>
