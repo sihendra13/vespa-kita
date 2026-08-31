@@ -40,3 +40,33 @@ CREATE TABLE IF NOT EXISTS community_events (
 
 CREATE INDEX IF NOT EXISTS idx_community_events_community_id ON community_events(community_id);
 CREATE INDEX IF NOT EXISTS idx_community_events_status ON community_events(status);
+
+-- ==========================================
+-- FITUR TONGKRONGAN (GLOBAL FEED)
+-- ==========================================
+
+CREATE TABLE IF NOT EXISTS tongkrongan_posts (
+  id TEXT PRIMARY KEY,
+  parent_id TEXT, -- NULL = post utama; diisi id post utama kalau ini reply (1 level saja)
+  author_name TEXT NOT NULL, -- payload.name || payload.email dari Google ID token, bukan input bebas
+  google_sub TEXT NOT NULL, -- Google account id (payload.sub) — identitas asli, dipakai buat moderasi/rate-limit
+  user_email TEXT NOT NULL,
+  user_avatar_url TEXT, -- payload.picture, nullable
+  content TEXT NOT NULL,
+  image_url TEXT, -- Cloudinary secure_url, nullable
+  image_public_id TEXT, -- Cloudinary public_id
+  likes_count INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'visible', -- 'visible' | 'hidden'
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_tongkrongan_google_sub ON tongkrongan_posts(google_sub);
+
+CREATE INDEX IF NOT EXISTS idx_tongkrongan_parent ON tongkrongan_posts(parent_id);
+CREATE INDEX IF NOT EXISTS idx_tongkrongan_created ON tongkrongan_posts(created_at);
+
+-- Rate limiting sederhana per-IP
+CREATE TABLE IF NOT EXISTS tongkrongan_rate_limit (
+  ip TEXT PRIMARY KEY,
+  last_post_at TEXT NOT NULL
+);
