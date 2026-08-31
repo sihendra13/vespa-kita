@@ -685,6 +685,17 @@
     </div>
   `;
 
+  // Counts from the last loadListings() — used by setListTab() to decide whether
+  // "Lihat Semua Listing" makes sense for whichever tab is currently active.
+  let unitCount = 0;
+  let partsCount = 0;
+
+  function updateViewAllVisibility(activeCat){
+    const viewAll = document.getElementById('listing-view-all');
+    const activeCount = activeCat === 'sparepart' ? partsCount : unitCount;
+    viewAll.style.display = activeCount > MAX_FEATURED ? 'block' : 'none';
+  }
+
   async function loadListings(){
     const grid = document.getElementById('listing-grid');
     const partsGrid = document.getElementById('parts-grid');
@@ -700,8 +711,10 @@
 
     const unitListings = (listings || []).filter(l => l.category !== 'sparepart');
     const partsListings = (listings || []).filter(l => l.category === 'sparepart');
+    unitCount = unitListings.length;
+    partsCount = partsListings.length;
 
-    if(unitListings.length === 0 && partsListings.length === 0){
+    if(unitCount === 0 && partsCount === 0){
       grid.style.display = 'none';
       partsGrid.style.display = 'none';
       viewAll.style.display = 'none';
@@ -710,7 +723,7 @@
     }
 
     empty.style.display = 'none';
-    viewAll.style.display = (unitListings.length > MAX_FEATURED || partsListings.length > MAX_FEATURED) ? 'block' : 'none';
+    updateViewAllVisibility('unit'); // page loads on the Unit tab by default
 
     grid.innerHTML = unitListings.length
       ? shuffle(unitListings).slice(0, MAX_FEATURED).map(renderCard).join('')
@@ -750,6 +763,7 @@
     listingDescEl.textContent = isUnit
       ? 'Semua unit di bawah sudah dicek tim VespaKita.'
       : 'Semua sparepart & aksesoris di bawah sudah dicek tim VespaKita.';
+    updateViewAllVisibility(cat);
     // Keep the "Ajukan Listing" form in sync with whichever tab the visitor is browsing —
     // so clicking through from Sparepart lands them on the Sparepart form, not Unit.
     setFormTab(cat);
