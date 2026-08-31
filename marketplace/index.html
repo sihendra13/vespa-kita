@@ -334,6 +334,12 @@
     body { padding-bottom: 70px; }
     .nav-toggle { display: none !important; }
   }
+
+  @media (max-width: 768px) {
+    section { padding: 48px 0; }
+    .mp-hero { padding-bottom: 32px; padding-top: 100px; }
+    .tearline { display: none; } /* Hide tearline on mobile to keep gap tight, or adjust height */
+  }
 </style>
 </head>
 <body>
@@ -392,8 +398,8 @@
       <p id="listing-desc">Semua unit dan aksesori di bawah sudah dicek tim VespaKita.</p>
     </div>
     <div class="segmented-control reveal" style="display:flex; max-width:400px; margin: 0 0 32px 0; background:rgba(255,255,255,0.05); padding:4px; border-radius:30px; position:relative; z-index:10;">
-        <button id="tab-unit" class="segment-btn active" style="flex:1; background:var(--merah); color:var(--krem); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">🛵 Unit Vespa</button>
-        <button id="tab-parts" class="segment-btn" style="flex:1; background:transparent; color:var(--chrome); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">⚙️ Sparepart</button>
+        <button id="tab-unit" class="segment-btn active" style="flex:1; background:var(--merah); color:var(--krem); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">Unit Vespa</button>
+        <button id="tab-parts" class="segment-btn" style="flex:1; background:transparent; color:var(--chrome); border:none; padding:10px 16px; border-radius:26px; font-family:var(--body); font-weight:600; cursor:pointer; transition:0.3s;">Sparepart</button>
     </div>
 
     <div id="listing-grid" class="listing-grid reveal"></div>
