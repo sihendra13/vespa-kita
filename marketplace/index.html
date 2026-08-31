@@ -617,6 +617,46 @@
 
   const WA_NUMBER = "6281227341300"; // Admin WA number for new-listing approval notifications
 
+  // Public VAPID key — not a secret, pairs with VAPID_PRIVATE_KEY in functions/_lib/push.js
+  const VAPID_PUBLIC_KEY = "BCsFAxSwFcOd07KOfY8bPOp5QihhEI3JUBEY6tsBnQeuI173ll39_hSp3aThAgSAa4vrlS7c4wq0vHM8tL2PT5E";
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = atob(base64);
+    return Uint8Array.from([...rawData].map(c => c.charCodeAt(0)));
+  }
+
+  // Best-effort opt-in: asks for notification permission and, if granted,
+  // subscribes and ties the subscription to this listing so the seller gets
+  // pinged the moment an admin approves it. Never blocks or breaks the submit
+  // flow — any failure (denied, unsupported, timeout) just skips silently.
+  async function trySubscribeToPush(listingId) {
+    try {
+      if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+      if (Notification.permission === 'denied') return;
+
+      const withTimeout = (p, ms) => Promise.race([p, new Promise((resolve) => setTimeout(() => resolve('timeout'), ms))]);
+
+      const reg = await navigator.serviceWorker.ready;
+      const permission = await withTimeout(Notification.requestPermission(), 15000);
+      if (permission !== 'granted') return;
+
+      const sub = await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+      });
+
+      await fetch('/api/marketplace-push-subscribe', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ listingId, subscription: sub.toJSON() }),
+      });
+    } catch (e) {
+      console.error('Push subscribe failed:', e);
+    }
+  }
+
   const fmtRupiah = (n) => 'Rp ' + Number(n).toLocaleString('id-ID');
 
   // ---------- LISTINGS ----------
@@ -1067,6 +1107,8 @@
       }
 
       showFormMsg('Berhasil! Listing kamu sudah terkirim.', false, 'Tim VespaKita akan review, biasanya 1x24 jam, lalu listingmu langsung tayang di halaman ini. Nggak perlu isi form lagi.');
+
+      if (data.id) await trySubscribeToPush(data.id);
 
       const notifyMsg = `Ada listing baru menunggu review di Marketplace: ${title} dari ${nama}.\n\nReview & approve: https://www.vespakita.com/marketplace/admin/`;
       window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;

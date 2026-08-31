@@ -30,3 +30,16 @@ CREATE TABLE IF NOT EXISTS listings (
 );
 
 CREATE INDEX IF NOT EXISTS idx_listings_status ON listings(status);
+
+-- Web Push subscription, captured right after a seller submits a listing (opt-in).
+-- One subscription per listing — used to notify the seller once an admin approves.
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id TEXT PRIMARY KEY,
+  listing_id TEXT NOT NULL UNIQUE,
+  endpoint TEXT NOT NULL,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_push_subscriptions_listing ON push_subscriptions(listing_id);

@@ -6,6 +6,7 @@
 // assets so approved-then-deleted listings don't leave orphaned media.
 
 import { cloudinaryDestroy, parseCloudinaryUrl } from "../_lib/cloudinary.js";
+import { sendPush } from "../_lib/push.js";
 
 function checkAuth(request, env) {
   const auth = request.headers.get("Authorization") || "";
@@ -62,7 +63,7 @@ export async function onRequestGet(context) {
 const VALID_ACTIONS = ["approve", "reject", "unpublish", "delete", "edit-price"];
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  const { request, env, waitUntil } = context;
   if (!checkAuth(request, env)) return unauthorized();
   if (!env.DB) return new Response(JSON.stringify({ error: "DB not bound" }), { status: 500 });
 
@@ -98,6 +99,22 @@ export async function onRequestPost(context) {
     await env.DB.prepare(`UPDATE listings SET status = 'published', reviewed_at = ?, published_at = ? WHERE id = ?`)
       .bind(now, now, id)
       .run();
+
+    const subscriptionRow = await env.DB.prepare(`SELECT * FROM push_subscriptions WHERE listing_id = ?`).bind(id).first();
+    if (subscriptionRow) {
+      waitUntil(
+        sendPush(env, subscriptionRow, {
+          title: "Listing kamu sudah tayang!",
+          body: `"${row.title}" sudah lolos review dan tayang di VespaKita.`,
+          url: `https://www.vespakita.com/marketplace/l/${id}`,
+        })
+          .then((delivered) => {
+            // false = push service reports this subscription is gone (404/410) — prune it.
+            if (!delivered) return env.DB.prepare(`DELETE FROM push_subscriptions WHERE id = ?`).bind(subscriptionRow.id).run();
+          })
+          .catch((err) => console.error("sendPush failed:", err))
+      );
+    }
   } else if (action === "reject") {
     await env.DB.prepare(`UPDATE listings SET status = 'rejected', reviewed_at = ? WHERE id = ?`).bind(now, id).run();
   } else if (action === "unpublish") {

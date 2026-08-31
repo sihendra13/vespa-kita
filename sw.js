@@ -57,3 +57,39 @@ self.addEventListener('fetch', (event) => {
       })
   );
 });
+
+// Push Event — shows a system notification when the server sends a push
+// (currently used for: seller notified when their marketplace listing is approved)
+self.addEventListener('push', (event) => {
+  let payload = { title: 'VespaKita', body: 'Ada update baru.', url: '/' };
+  try {
+    if (event.data) payload = { ...payload, ...event.data.json() };
+  } catch (e) {
+    // Non-JSON payload — fall back to defaults above
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(payload.title, {
+      body: payload.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      data: { url: payload.url },
+    })
+  );
+});
+
+// Notification Click — focuses an existing tab on the target URL if one is
+// open, otherwise opens a new one.
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const targetUrl = (event.notification.data && event.notification.data.url) || '/';
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === targetUrl && 'focus' in client) return client.focus();
+      }
+      if (self.clients.openWindow) return self.clients.openWindow(targetUrl);
+    })
+  );
+});
