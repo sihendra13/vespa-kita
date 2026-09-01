@@ -1,131 +1,178 @@
 #!/usr/bin/env node
-// Generates en/index.html from index.html so the two language versions never
-// drift apart in structure/logic again — only i18n/en.json needs upkeep.
-//
-// index.html is the only file anyone should hand-edit. Run this script (or let
-// the deploy pipeline run it) after every change to index.html, then commit
-// both files.
+// Generates every en/*.html page from its Indonesian source, so the language
+// versions never drift apart in structure/logic — only the i18n/*.json
+// dictionaries need upkeep. The .id source files are the only ones anyone
+// should hand-edit. Run this script (or let the deploy pipeline run it)
+// after every change, then commit both the source and the generated files.
 
 const fs = require("fs");
 const path = require("path");
 
 const ROOT = __dirname;
-const SRC = path.join(ROOT, "index.html");
-const OUT = path.join(ROOT, "en", "index.html");
-const DICT_PATH = path.join(ROOT, "i18n", "en.json");
-
-let html = fs.readFileSync(SRC, "utf8");
-
-// ---------- structural transforms specific to the /en/ page ----------
-
-// 1. <html lang="id"> -> <html lang="en">
-html = html.replace('<html lang="id">', '<html lang="en">');
-
-// 2. Drop the head language-redirect script entirely — /en/ doesn't redirect
-//    away from itself. Matches the exact block that lives in index.html's <head>.
-html = html.replace(
-  /<script>\s*\(function\(\) \{\s*\/\/ If user previously chose Indonesian manually, do not redirect[\s\S]*?<\/script>\n/,
-  ""
-);
-
-// 3. Meta tags: title, description, og:* — hardcoded per-language since these
-//    are structural (URLs, canonical paths), not plain text translations.
-const metaSwaps = [
-  [
-    '<title>VespaKita - Vespa Untuk Kita Semua</title>',
-    '<title>VespaKita - Vespa For Us All</title>',
-  ],
-  [
-    '<link rel="canonical" href="https://www.vespakita.com/" />',
-    '<link rel="canonical" href="https://www.vespakita.com/en/" />',
-  ],
-  [
-    '<meta property="og:url" content="https://www.vespakita.com/">',
-    '<meta property="og:url" content="https://www.vespakita.com/en/">',
-  ],
-  [
-    '<meta property="og:locale" content="id_ID">',
-    '<meta property="og:locale" content="en_US">',
-  ],
-  [
-    '<meta property="og:locale:alternate" content="en_US">',
-    '<meta property="og:locale:alternate" content="id_ID">',
-  ],
-  [
-    '<meta property="og:title" content="VespaKita - Vespa Untuk Kita Semua">',
-    '<meta property="og:title" content="VespaKita - Vespa For Us All">',
-  ],
-  [
-    '<meta name="twitter:title" content="VespaKita - Vespa Untuk Kita Semua">',
-    '<meta name="twitter:title" content="VespaKita - Vespa For Us All">',
-  ],
-];
-for (const [from, to] of metaSwaps) {
-  if (!html.includes(from)) {
-    console.warn(`WARN: meta swap source not found, skipping: ${from.slice(0, 60)}...`);
-    continue;
-  }
-  html = html.split(from).join(to);
-}
-
-// 4. Asset paths need a ../ prefix since en/index.html lives one directory deeper.
-const assetSwaps = [
-  ['src="logo.png"', 'src="../logo.png"'],
-  ['src="jsp_landscape.mp4"', 'src="../jsp_landscape.mp4"'],
-  ['href="vespakita-media-kit.pdf"', 'href="../vespakita-media-kit.pdf"'],
-];
-for (const [from, to] of assetSwaps) {
-  html = html.split(from).join(to);
-}
-
-// 5. Nav language switcher: swap which link is "active".
-html = html.replace(
-  '<a href="/" class="active" onclick="localStorage.setItem(\'lang_pref\', \'id\')">ID</a>',
-  '<a href="/" onclick="localStorage.setItem(\'lang_pref\', \'id\')">ID</a>'
-);
-html = html.replace(
-  '<a href="/en/" onclick="localStorage.setItem(\'lang_pref\', \'en\')">EN</a>',
-  '<a href="/en/" class="active" onclick="localStorage.setItem(\'lang_pref\', \'en\')">EN</a>'
-);
-
-// ---------- text translations ----------
-
-const dict = JSON.parse(fs.readFileSync(DICT_PATH, "utf8"));
-const entries = Object.entries(dict)
-  .filter(([k]) => !k.startsWith("_"))
-  // Longest keys first so a short string can't accidentally consume part of a
-  // longer one that contains it (e.g. "Nama" vs "Nama Brand / Organisasi").
-  .sort((a, b) => b[0].length - a[0].length);
 
 function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-let missing = [];
-for (const [id, en] of entries) {
-  // Single "word" keys (letters/digits only, no spaces/punctuation) are the
-  // dangerous case: a plain substring replace can corrupt unrelated code that
-  // happens to contain that word, e.g. "Event" inside "addEventListener".
-  // Require word boundaries for those. Multi-word phrases are specific enough
-  // that a plain replace is safe and simpler.
-  const isSingleWord = /^[A-Za-z0-9]+$/.test(id);
-  let matched = false;
-  if (isSingleWord) {
-    const re = new RegExp(`\\b${escapeRegExp(id)}\\b`, "g");
-    html = html.replace(re, () => {
-      matched = true;
-      return en;
-    });
-  } else {
-    matched = html.includes(id);
-    if (matched) html = html.split(id).join(en);
+// Applies every entry in one or more dictionaries to `html` (plain substring
+// replace for multi-word phrases, word-boundary regex for single "words" so
+// e.g. "Event" doesn't corrupt "addEventListener"). Longest keys first so a
+// short string can't consume part of a longer one that contains it.
+function applyDictionaries(html, dictPaths) {
+  const merged = {};
+  for (const dictPath of dictPaths) {
+    const dict = JSON.parse(fs.readFileSync(dictPath, "utf8"));
+    for (const [k, v] of Object.entries(dict)) {
+      if (k.startsWith("_")) continue;
+      merged[k] = v;
+    }
   }
-  if (!matched) missing.push(id);
+  const entries = Object.entries(merged).sort((a, b) => b[0].length - a[0].length);
+
+  let missing = [];
+  for (const [id, en] of entries) {
+    const isSingleWord = /^[A-Za-z0-9]+$/.test(id);
+    let matched = false;
+    if (isSingleWord) {
+      const re = new RegExp(`\\b${escapeRegExp(id)}\\b`, "g");
+      html = html.replace(re, () => {
+        matched = true;
+        return en;
+      });
+    } else {
+      matched = html.includes(id);
+      if (matched) html = html.split(id).join(en);
+    }
+    if (!matched) missing.push(id);
+  }
+  return { html, missing };
 }
 
-fs.writeFileSync(OUT, html);
-console.log(`Wrote ${OUT} (${html.length} bytes) from ${SRC}`);
-if (missing.length) {
-  console.warn(`WARN: ${missing.length} dictionary entries had no match in index.html (may be stale):`);
-  missing.forEach((m) => console.warn(`  - ${m.slice(0, 80)}`));
+function buildHomepage() {
+  const SRC = path.join(ROOT, "index.html");
+  const OUT = path.join(ROOT, "en", "index.html");
+  const DICT_PATH = path.join(ROOT, "i18n", "en.json");
+
+  let html = fs.readFileSync(SRC, "utf8");
+
+  html = html.replace('<html lang="id">', '<html lang="en">');
+  html = html.replace(
+    /<script>\s*\(function\(\) \{\s*\/\/ If user previously chose Indonesian manually, do not redirect[\s\S]*?<\/script>\n/,
+    ""
+  );
+
+  const metaSwaps = [
+    ['<title>VespaKita - Vespa Untuk Kita Semua</title>', '<title>VespaKita - Vespa For Us All</title>'],
+    ['<link rel="canonical" href="https://www.vespakita.com/" />', '<link rel="canonical" href="https://www.vespakita.com/en/" />'],
+    ['<meta property="og:url" content="https://www.vespakita.com/">', '<meta property="og:url" content="https://www.vespakita.com/en/">'],
+    ['<meta property="og:locale" content="id_ID">', '<meta property="og:locale" content="en_US">'],
+    ['<meta property="og:locale:alternate" content="en_US">', '<meta property="og:locale:alternate" content="id_ID">'],
+    ['<meta property="og:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta property="og:title" content="VespaKita - Vespa For Us All">'],
+    ['<meta name="twitter:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta name="twitter:title" content="VespaKita - Vespa For Us All">'],
+  ];
+  for (const [from, to] of metaSwaps) {
+    if (!html.includes(from)) { console.warn(`WARN: meta swap source not found, skipping: ${from.slice(0, 60)}...`); continue; }
+    html = html.split(from).join(to);
+  }
+
+  const assetSwaps = [
+    ['src="logo.png"', 'src="../logo.png"'],
+    ['src="jsp_landscape.mp4"', 'src="../jsp_landscape.mp4"'],
+    ['href="vespakita-media-kit.pdf"', 'href="../vespakita-media-kit.pdf"'],
+  ];
+  for (const [from, to] of assetSwaps) html = html.split(from).join(to);
+
+  html = html.replace(
+    '<a href="/" class="active" onclick="localStorage.setItem(\'lang_pref\', \'id\')">ID</a>',
+    '<a href="/" onclick="localStorage.setItem(\'lang_pref\', \'id\')">ID</a>'
+  );
+  html = html.replace(
+    '<a href="/en/" onclick="localStorage.setItem(\'lang_pref\', \'en\')">EN</a>',
+    '<a href="/en/" class="active" onclick="localStorage.setItem(\'lang_pref\', \'en\')">EN</a>'
+  );
+
+  const { html: translated, missing } = applyDictionaries(html, [DICT_PATH]);
+  fs.writeFileSync(OUT, translated);
+  console.log(`Wrote ${OUT} (${translated.length} bytes) from ${SRC}`);
+  if (missing.length) {
+    console.warn(`WARN: ${missing.length} dictionary entries had no match in index.html (may be stale):`);
+    missing.forEach((m) => console.warn(`  - ${m.slice(0, 80)}`));
+  }
 }
+
+// Generic builder for every other page: swaps lang attr + canonical/og URLs,
+// rewrites relative asset paths for the extra directory depth, applies the
+// dictionaries, writes the output.
+function buildPage({ src, out, dicts, canonicalPath, assetSwaps = [], metaSwaps = [] }) {
+  const SRC = path.join(ROOT, src);
+  const OUT = path.join(ROOT, "en", out);
+
+  let html = fs.readFileSync(SRC, "utf8");
+
+  html = html.replace('<html lang="id">', '<html lang="en">');
+  html = html.replace('<meta property="og:locale" content="id_ID">', '<meta property="og:locale" content="en_US">');
+
+  const canonicalFrom = `https://www.vespakita.com${canonicalPath}`;
+  const canonicalTo = `https://www.vespakita.com/en${canonicalPath}`;
+  html = html.split(`href="${canonicalFrom}"`).join(`href="${canonicalTo}"`);
+  html = html.split(`content="${canonicalFrom}"`).join(`content="${canonicalTo}"`);
+
+  for (const [from, to] of metaSwaps) {
+    if (!html.includes(from)) { console.warn(`WARN: meta swap source not found in ${src}, skipping: ${from.slice(0, 60)}...`); continue; }
+    html = html.split(from).join(to);
+  }
+
+  // Nav language switcher: swap which link is "active" (mirrors buildHomepage()).
+  html = html.replace(
+    `<a href="${canonicalPath}" class="active" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>`,
+    `<a href="${canonicalPath}" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>`
+  );
+  html = html.replace(
+    `<a href="/en${canonicalPath}" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>`,
+    `<a href="/en${canonicalPath}" class="active" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>`
+  );
+
+  // Every en/ page lives one directory deeper than its .id counterpart, so
+  // relative asset paths need one extra ../ — explicit list (like the
+  // homepage's own assetSwaps) rather than a generic regex, since a handful
+  // of paths (JS template vars, absolute /... paths) must NOT be touched.
+  for (const [from, to] of assetSwaps) {
+    if (!html.includes(from)) { console.warn(`WARN: asset swap source not found in ${src}, skipping: ${from}`); continue; }
+    html = html.split(from).join(to);
+  }
+
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+
+  const { html: translated, missing } = applyDictionaries(html, dicts);
+  fs.writeFileSync(OUT, translated);
+  console.log(`Wrote ${OUT} (${translated.length} bytes) from ${SRC}`);
+  if (missing.length) {
+    console.warn(`WARN: ${missing.length} dictionary entries had no match in ${src} (may be stale):`);
+    missing.forEach((m) => console.warn(`  - ${m.slice(0, 80)}`));
+  }
+}
+
+buildHomepage();
+
+buildPage({
+  src: "marketplace/index.html",
+  out: "marketplace/index.html",
+  dicts: [path.join(ROOT, "i18n", "marketplace-en.json")],
+  canonicalPath: "/marketplace/",
+  assetSwaps: [
+    ['href="../favicon.png"', 'href="../../favicon.png"'],
+    ['src="../logo.png"', 'src="../../logo.png"'],
+  ],
+  metaSwaps: [
+    ['<title>Marketplace Vespa Terkurasi | VespaKita</title>', '<title>Curated Vespa Marketplace | VespaKita</title>'],
+    [
+      '<meta name="description" content="Jual beli Vespa tanpa takut kena tipu. Setiap listing di Marketplace VespaKita dicek manual oleh tim kami sebelum tayang, hubungi penjual langsung lewat WhatsApp.">',
+      '<meta name="description" content="Buy and sell Vespas without fear of scams. Every listing on the VespaKita Marketplace is manually checked by our team before going live — contact sellers directly via WhatsApp.">',
+    ],
+    ['<meta property="og:title" content="Marketplace Vespa Terkurasi | VespaKita">', '<meta property="og:title" content="Curated Vespa Marketplace | VespaKita">'],
+    [
+      '<meta property="og:description" content="Jual beli Vespa tanpa takut kena tipu. Setiap listing dicek manual oleh tim VespaKita sebelum tayang, hubungi penjual langsung lewat WhatsApp.">',
+      '<meta property="og:description" content="Buy and sell Vespas without fear of scams. Every listing is manually checked by the VespaKita team before going live — contact sellers directly via WhatsApp.">',
+    ],
+  ],
+});
