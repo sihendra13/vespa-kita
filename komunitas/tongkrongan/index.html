@@ -446,22 +446,59 @@
     }, 100);
   }
 
+  
+  function handleReplyPhotoChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Ukuran foto maksimal 5MB');
+        e.target.value = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        document.getElementById('reply-photo-img').src = ev.target.result;
+        document.getElementById('reply-photo-preview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  function removeReplyPhoto() {
+    const input = document.getElementById('reply-photo-input');
+    input.value = '';
+    document.getElementById('reply-photo-img').src = '';
+    document.getElementById('reply-photo-preview').style.display = 'none';
+  }
+
   function closeReplySheet() {
     document.getElementById('reply-bottom-sheet').classList.remove('active');
     currentReplyParentId = null;
+    removeReplyPhoto(); // Clear photo on close
   }
 
   async function submitGlobalReply() {
     if (!currentReplyParentId) return;
     const input = document.getElementById('global-reply-input');
+    const photoInput = document.getElementById('reply-photo-input');
+    
     const content = input.value.trim();
-    if (!content) return;
+    const hasPhoto = photoInput.files && photoInput.files.length > 0;
+    
+    if (!content && !hasPhoto) return;
     
     input.disabled = true;
+    const submitBtn = input.nextElementSibling;
+    if (submitBtn) submitBtn.disabled = true;
+
     try {
       const fd = new FormData();
       fd.append('content', content);
       fd.append('parent_id', currentReplyParentId);
+      
+      if (hasPhoto) {
+        fd.append('photo', photoInput.files[0]);
+      }
       
       const token = localStorage.getItem(STORAGE_KEY);
       if (token) fd.append('idToken', token);
@@ -471,17 +508,20 @@
         const err = await res.json();
         alert(err.error || 'Gagal memposting balasan');
         input.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
         return;
       }
       
       input.value = '';
       input.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
       closeReplySheet();
       await loadFeed();
     } catch(e) {
       alert("Localhost mock: Balasan pura-pura terkirim.");
       input.value = '';
       input.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
       closeReplySheet();
     }
   }
@@ -500,7 +540,16 @@
       <span>Membalas @<span id="reply-target-name">User</span></span>
       <button class="close-sheet" onclick="closeReplySheet()">&times;</button>
     </div>
+    
+    <div id="reply-photo-preview" style="display:none; margin-bottom:12px; position:relative; max-width:120px; border-radius:8px; overflow:hidden;">
+      <img src="" id="reply-photo-img" style="width:100%; height:auto; display:block;">
+      <button onclick="removeReplyPhoto()" style="position:absolute; top:4px; right:4px; background:rgba(0,0,0,0.6); color:white; border:none; width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size: 16px; line-height:1;">&times;</button>
+    </div>
     <div class="reply-input-wrapper">
+       <input type="file" id="reply-photo-input" accept="image/jpeg, image/png, image/webp" style="display:none" onchange="handleReplyPhotoChange(event)">
+       <button class="attach-reply-btn" onclick="document.getElementById('reply-photo-input').click()" style="background:transparent; border:none; color:var(--chrome); padding:8px 0; cursor:pointer;" title="Lampirkan Foto">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:22px;height:22px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+       </button>
        <textarea id="global-reply-input" placeholder="Tulis balasan..." rows="1" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea>
        <button onclick="submitGlobalReply()">Kirim</button>
     </div>

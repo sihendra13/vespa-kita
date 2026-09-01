@@ -1,14 +1,14 @@
 export const BOT_TOPICS = [
-  { author: "Rizky_PX", content: "Suhu, numpang nanya. Kalau buat persiapan touring jarak jauh, mending mesin standaran atau bore-up tipis ya biar aman di tanjakan?" },
-  { author: "Kang_VBB", content: "Ada yang pernah nyobain rute Pantai Selatan Jabar pake klasik baru-baru ini? Aman gak tuh aspalnya buat Vespa tua?" },
-  { author: "BimaSprint", content: "Tim ban tubeless atau ban dalem nih kalau buat harian? Kemaren bocor di jalan lumayan PR juga dorongnya." },
-  { author: "Deni_Excel", content: "Minta saran oli samping yang wanginya asik tapi gak bikin kerak numpuk di ruang bakar dong ngab." },
-  { author: "Agus_Super", content: "Menurut kalian, modifikasi apa sih yang paling 'mubazir' atau gak kerasa banget efeknya buat Vespa klasik?" },
-  { author: "VespaBoy99", content: "Lagi nyari helm half face yang cocok buat gaya retro tapi tetep SNI/DOT. Ada rekomendasi merk yang harganya masuk akal?" },
-  { author: "Tyo_Exclusive", content: "Tanya dong, wajar gak sih kalau mesin cepet panas pas dipake macet-macetan jam pulang kerja? Atau ada settingan karbu yang kurang pas?" },
-  { author: "Rangga_Pts", content: "Spill dong aksesoris pertama yang kalian pasang waktu baru angkat Vespa! Buat referensi nih baru angkat PTS." },
-  { author: "Yoga_Strada", content: "Mending mana nih suhu: ngecat ulang full body (siramin) atau biarin cat ori tapi belel (patina look)? Lagi galau." },
-  { author: "Fajar_Spartan", content: "Saran busi yang awet buat harian dong. Pake merk X kok gampang mati ya kalau sering kena macet." }
+  { author: "Rizky_PX", content: "Suhu-suhu Jakarta Raya, kalau weekend pagi enaknya sunmori ke mana ya yang aspalnya mulus dan parkirannya aman buat Vespa tua?" },
+  { author: "BimaSprint", content: "Warga Depok merapat! Kasih info dong tempat ngopi di daerah Margonda atau GDC yang enak buat kopdar Vespa klasik." },
+  { author: "Kang_VBB", content: "Dulur Jogja, ada yang sering riding ke arah Kaliurang? Share dong spot foto yang keren dan sepi buat Vespa." },
+  { author: "Deni_Excel", content: "Jalur Depok - Bogor kalau sore macet parah gak sih? Mau bawa Excel harian tapi takut overheat nyiksa kopling." },
+  { author: "Tyo_Exclusive", content: "Nyuwun info bengkel spesialis mesin Vespa di area Jogja kota atau Bantul yang pengerjaannya cepet dan jujur dong suhu." },
+  { author: "Rangga_Pts", content: "Ada rekomendasi bengkel cat body Vespa di area Jakarta Selatan/Timur yang hasilnya rapi tapi harga bersahabat?" },
+  { author: "Agus_Super", content: "Menurut kalian, aksesoris apa sih yang wajib banget dipasang pertama kali waktu baru angkat Vespa klasik?" },
+  { author: "Yoga_Strada", content: "Tim ban tubeless atau ban dalem nih kalau buat harian di Jakarta yang banyak lubang? Kemaren bocor PR banget dorongnya." },
+  { author: "VespaBoy99", content: "Suhu, minta saran dong. Kalau buat persiapan touring lintas pantura, mending mesin standaran atau bore-up tipis ya?" },
+  { author: "Fajar_Spartan", content: "Share tempat beli sparepart ori yang lengkap di Jakarta dong, lagi nyari printilan body buat restorasi nih." }
 ];
 
 export async function checkAndRunBot(env) {
