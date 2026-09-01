@@ -123,37 +123,20 @@
   }
   .reply-avatar { width:32px; height:32px; font-size:16px; margin-left:4px; margin-top:4px; flex-shrink:0; }
   
-  /* Reply Input (Inline) */
-  .inline-reply { display:none; gap:16px; margin-top:16px; position:relative; }
-  .inline-reply.active { display:flex; }
-  .reply-input-wrapper { flex:1; display:flex; flex-direction:column; gap:8px; }
-  .reply-input-wrapper textarea { 
-    background:rgba(255,255,255,0.05); 
-    border:1px solid rgba(255,255,255,0.1); 
-    color:white; 
-    padding:12px 16px; 
-    border-radius:12px; 
-    font-family:var(--body); 
-    font-size:14.5px;
-    outline:none; 
-    resize:none;
-    overflow:hidden;
-    min-height:20px;
-    line-height:1.5;
-    transition: border-color 0.2s;
-  }
-  .reply-input-wrapper textarea:focus { border-color: rgba(255,255,255,0.3); }
-  .reply-input-wrapper button { 
-    align-self:flex-end;
-    background:var(--krem); 
-    color:var(--ink); 
-    border:none; 
-    padding:6px 16px; 
-    border-radius:20px; 
-    font-weight:600; 
-    cursor:pointer; 
-  }
-</style>
+  /* Reply Bottom Sheet */
+  .bottom-sheet { position:fixed; top:0; left:0; right:0; bottom:0; z-index:9999; display:none; flex-direction:column; justify-content:flex-end; }
+  .bottom-sheet.active { display:flex; }
+  .bottom-sheet-overlay { position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); }
+  .bottom-sheet-content { position:relative; background:var(--aspal); border-top-left-radius:16px; border-top-right-radius:16px; padding:16px; border-top:1px solid rgba(255,255,255,0.1); }
+  .replying-to { font-size:13px; color:var(--chrome); margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+  .replying-to span { color:var(--krem); font-weight:600; }
+  .close-sheet { background:transparent; border:none; color:var(--chrome); font-size:24px; cursor:pointer; line-height:1; }
+  .bottom-sheet-content .reply-input-wrapper { display:flex; gap:12px; align-items:flex-end; }
+  .bottom-sheet-content textarea { flex:1; background:var(--aspal-2); border:1px solid rgba(255,255,255,0.1); color:white; padding:10px 16px; border-radius:20px; font-family:var(--body); font-size:14.5px; outline:none; resize:none; overflow:hidden; min-height:20px; max-height:120px; line-height:1.5; }
+  .bottom-sheet-content textarea:focus { border-color: rgba(255,255,255,0.3); }
+  .bottom-sheet-content button { background:var(--krem); color:var(--ink); border:none; padding:10px 20px; border-radius:20px; font-weight:600; cursor:pointer; margin-bottom: 2px; }
+
+  </style>
 </head>
 <body>
 
@@ -408,7 +391,7 @@
                 <svg viewBox="0 0 24 24" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                 <span class="like-count">${p.likes_count}</span>
               </button>
-              <button class="action-btn" onclick="toggleReplyBox('${escapeHtml(p.id)}')">
+              <button class="action-btn" onclick="toggleReplyBox('${escapeHtml(p.id)}', '${escapeHtml(p.author_name)}')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
                 Balas
               </button>
@@ -441,116 +424,65 @@
           }).join('')}
         </div>
         
-        <div class="inline-reply" id="reply-box-${p.id}">
-          <div class="avatar reply-avatar" id="reply-avatar-${p.id}">?</div>
-          <div class="reply-input-wrapper">
-            <textarea id="reply-input-${p.id}" placeholder="Balas ke ${escapeHtml(p.author_name)}..." rows="1" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea>
-            <button onclick="submitReply('${p.id}')">Kirim</button>
-          </div>
-        </div>
+        
       </div>`;
       container.innerHTML += threadHtml;
     });
   }
   
-  function toggleReplyBox(id) {
-    const box = document.getElementById(`reply-box-${id}`);
-    box.classList.toggle('active');
-    if(box.classList.contains('active')) document.getElementById(`reply-input-${id}`).focus();
-  }
-  
-  async function likePost(id, btn) {
-    if(localStorage.getItem('tongkrongan_liked_' + id)) return;
-    localStorage.setItem('tongkrongan_liked_' + id, '1');
-    btn.classList.add('liked');
-    btn.querySelector('svg').setAttribute('fill', 'currentColor');
-    const span = btn.querySelector('.like-count');
-    span.textContent = parseInt(span.textContent) + 1;
+  let currentReplyParentId = null;
+
+  function toggleReplyBox(id, authorName) {
+    currentReplyParentId = id;
+    document.getElementById('reply-target-name').innerText = authorName;
+    const sheet = document.getElementById('reply-bottom-sheet');
+    sheet.classList.add('active');
     
-    // Fire & forget
-    fetch('/api/tongkrongan-like', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id })
-    }).catch(e => console.error("Localhost API not available"));
-  }
-  
-  async function submitPost() {
-    const content = document.getElementById('post-content').value;
-    const sessionToken = localStorage.getItem(STORAGE_KEY);
-
-    if(!content.trim()) return alert("Tulis sesuatu dulu!");
-    if(!sessionToken) {
-      showLoggedOut();
-      return alert("Login dulu pakai Google ya!");
-    }
-
-    const btn = document.getElementById('submit-btn');
-    btn.disabled = true;
-    btn.textContent = "Mengirim...";
-
-    const fd = new FormData();
-    fd.append('content', content.trim());
-    fd.append('sessionToken', sessionToken);
-    if(selectedFile) fd.append('photo', selectedFile);
-
-    try {
-      const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
-      if(!res.ok) {
-        if(res.status === 429) { alert("Tunggu 10 detik sebelum post lagi ya."); return; }
-        if(res.status === 401) { showLoggedOut(); alert("Sesi login habis, silakan login lagi."); return; }
-        throw new Error("Gagal kirim, coba lagi.");
-      }
-
-      document.getElementById('post-content').value = '';
-      document.getElementById('remove-photo').click();
-      await loadFeed();
-    } catch(e) {
-      // Mock success in localhost (plain static preview, no Functions/D1 available)
-      alert("Karena di localhost python, API tidak diproses. Tampilan direfresh.");
-      document.getElementById('post-content').value = '';
-      document.getElementById('remove-photo').click();
-    } finally {
-      btn.disabled = false;
-      btn.textContent = "Post";
-    }
+    const input = document.getElementById('global-reply-input');
+    input.value = '';
+    setTimeout(() => {
+      input.focus();
+      input.style.height = 'auto';
+    }, 100);
   }
 
-  async function submitReply(parentId) {
-    const input = document.getElementById(`reply-input-${parentId}`);
-    const content = input.value;
-    const sessionToken = localStorage.getItem(STORAGE_KEY);
+  function closeReplySheet() {
+    document.getElementById('reply-bottom-sheet').classList.remove('active');
+    currentReplyParentId = null;
+  }
 
-    if(!content.trim()) return;
-    if(!sessionToken) {
-      alert("Login dulu pakai Google di bagian atas ya!");
-      document.querySelector('.composer').scrollIntoView({ behavior: 'smooth' });
-      return;
-    }
-
+  async function submitGlobalReply() {
+    if (!currentReplyParentId) return;
+    const input = document.getElementById('global-reply-input');
+    const content = input.value.trim();
+    if (!content) return;
+    
     input.disabled = true;
-
-    const fd = new FormData();
-    fd.append('content', content.trim());
-    fd.append('sessionToken', sessionToken);
-    fd.append('parent_id', parentId);
-
     try {
+      const fd = new FormData();
+      fd.append('content', content);
+      fd.append('parent_id', currentReplyParentId);
+      
+      const token = localStorage.getItem(STORAGE_KEY);
+      if (token) fd.append('idToken', token);
+      
       const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
-      if(!res.ok) {
-        if(res.status === 429) { alert("Tunggu 10 detik sebelum post lagi ya."); input.disabled = false; return; }
-        if(res.status === 401) { showLoggedOut(); alert("Sesi login habis, silakan login lagi."); input.disabled = false; return; }
-        throw new Error("Gagal kirim");
+      if (!res.ok) {
+        const err = await res.json();
+        alert(err.error || 'Gagal memposting balasan');
+        input.disabled = false;
+        return;
       }
+      
       input.value = '';
       input.disabled = false;
-      document.getElementById(`reply-box-${parentId}`).classList.remove('active');
+      closeReplySheet();
       await loadFeed();
     } catch(e) {
-      alert("Localhost python mock: Balasan pura-pura terkirim.");
+      alert("Localhost mock: Balasan pura-pura terkirim.");
       input.value = '';
       input.disabled = false;
-      document.getElementById(`reply-box-${parentId}`).classList.remove('active');
+      closeReplySheet();
     }
   }
   
@@ -559,5 +491,21 @@
   
   loadFeed();
 </script>
+
+<!-- Global Reply Bottom Sheet -->
+<div id="reply-bottom-sheet" class="bottom-sheet">
+  <div class="bottom-sheet-overlay" onclick="closeReplySheet()"></div>
+  <div class="bottom-sheet-content">
+    <div class="replying-to">
+      <span>Membalas @<span id="reply-target-name">User</span></span>
+      <button class="close-sheet" onclick="closeReplySheet()">&times;</button>
+    </div>
+    <div class="reply-input-wrapper">
+       <textarea id="global-reply-input" placeholder="Tulis balasan..." rows="1" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea>
+       <button onclick="submitGlobalReply()">Kirim</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
