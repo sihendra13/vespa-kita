@@ -43,3 +43,54 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_push_subscriptions_listing ON push_subscriptions(listing_id);
+
+-- Checkout orders — sparepart/aksesoris only, paid via Xendit (QRIS only, see
+-- functions/_lib/xendit.js), shipped/tracked via Biteship (functions/_lib/biteship.js).
+-- No login system exists, so buyer/seller each interact with their order only
+-- through an unguessable order_token link (sent via WA), never by browsing a list.
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  listing_id TEXT NOT NULL,
+  order_token TEXT NOT NULL UNIQUE, -- unguessable id for the no-login buyer/seller links
+
+  buyer_name TEXT NOT NULL,
+  buyer_phone TEXT NOT NULL,
+  buyer_address TEXT NOT NULL,
+  buyer_area_id TEXT NOT NULL, -- Biteship area id for the destination, needed for rates + AWB
+
+  shipping_courier_code TEXT, -- e.g. 'jne' — set once buyer picks a courier at checkout
+  shipping_courier_service TEXT, -- e.g. 'reg'
+  shipping_courier_name TEXT, -- display name, e.g. "JNE Reguler"
+  shipping_cost INTEGER NOT NULL DEFAULT 0,
+
+  item_price INTEGER NOT NULL, -- snapshot of listings.price at order time (listing price can change later)
+  app_fee INTEGER NOT NULL DEFAULT 2000, -- flat "biaya aplikasi", paid by buyer, on top of item_price + shipping_cost
+  total_amount INTEGER NOT NULL, -- item_price + shipping_cost + app_fee — what the buyer pays via Xendit
+  payout_amount INTEGER NOT NULL, -- = item_price, in full — the seller is never charged the app_fee
+
+  status TEXT NOT NULL DEFAULT 'pending_payment',
+  -- pending_payment -> paid -> shipped -> released -> completed
+  --                                          \-> disputed
+
+  xendit_invoice_id TEXT,
+  xendit_invoice_url TEXT,
+
+  tracking_number TEXT,
+  courier_delivered_at TEXT, -- set once Biteship tracking reports the package delivered
+  auto_release_at TEXT, -- courier_delivered_at + buffer; past this, "delivered" is treated as confirmed
+
+  buyer_acknowledged_risk_at TEXT, -- buyer ticked the pre-payment liability disclaimer
+  released_at TEXT,
+  disputed_at TEXT,
+  dispute_reason TEXT,
+  payout_completed_at TEXT, -- admin manually marked the seller as paid out
+
+  created_at TEXT NOT NULL,
+  paid_at TEXT,
+  shipped_at TEXT,
+  updated_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_listing ON orders(listing_id);
+CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
+CREATE INDEX IF NOT EXISTS idx_orders_token ON orders(order_token);
