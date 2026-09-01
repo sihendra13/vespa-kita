@@ -11,7 +11,7 @@
   "<span>Event</span>": "<span>Events</span>",
   "<span>Kolaborasi</span>": "<span>Collaborate</span>",
   "EVENT MENDATANG": "UPCOMING EVENTS",
-  "Dukung dan berkolaborasi bersama event-event kreatif komunitas otomotif terbesar di Yogyakarta tahun 2026.": "Support and collaborate with the biggest creative automotive community events in Yogyakarta 2026.",
+  "Dukung dan berkolaborasi bersama event-event komunitas Vespa yang sedang berjalan.": "Support and collaborate with ongoing Vespa community events.",
   "Rangkaian kegiatan berkumpul dan silaturahmi akbar komunitas Vespa klasik 60-an di Yogyakarta dengan agenda ride, workshop, dan charity.": "A series of gathering and grand reunion activities for the classic 60s Vespa community in Yogyakarta, featuring rides, workshops, and charity.",
   "Swingin' Summer VDUB 2026 — silaturahmi akbar para pecinta Volkswagen klasik se-Jawa &amp; Bali di Bojong Asri &amp; Pantai Depok, Bantul.": "Swingin' Summer VDUB 2026 — a grand reunion for classic Volkswagen enthusiasts across Java &amp; Bali at Bojong Asri &amp; Pantai Depok, Bantul.",
   "Lihat Detail": "View Details",
@@ -148,5 +148,11 @@
   "Halo VespaKita! Kami dari ${encodeURIComponent(brand)} ingin mengajukan VespaKita jadi media partner.": "Hello VespaKita! We from ${encodeURIComponent(brand)} would like to propose VespaKita as a media partner.",
   "Nama: ${encodeURIComponent(nama)}": "Name: ${encodeURIComponent(nama)}",
   "Organisasi/Event: ${encodeURIComponent(brand)}": "Organization/Event: ${encodeURIComponent(brand)}",
-  "Pesan: ${encodeURIComponent(pesan || '-')}": "Message: ${encodeURIComponent(pesan || '-')}"
+  "Pesan: ${encodeURIComponent(pesan || '-')}": "Message: ${encodeURIComponent(pesan || '-')}",
+
+  "Marketplace VespaKita": "VespaKita Marketplace",
+  "JUAL BELI VESPA AMAN <br><span class=\"accent\">TANPA TIPU-TIPU</span>": "SAFE VESPA BUYING & SELLING <br><span class=\"accent\">NO SCAMS</span>",
+  "Semua unit telah dikurasi ketat oleh tim VespaKita. Cari Vespa impianmu atau pasang iklan dengan tenang.": "Every unit is strictly curated by the VespaKita team. Find your dream Vespa or list yours with peace of mind.",
+  "Cari Vespa": "Find a Vespa",
+  "Pasang Iklan": "List Your Vespa"
 }

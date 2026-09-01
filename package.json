@@ -1,7 +1,6 @@
 {
   "name": "vespakita",
   "private": true,
-  "type": "module",
   "dependencies": {
     "@mmmike/web-push": "^1.3.0"
   }
