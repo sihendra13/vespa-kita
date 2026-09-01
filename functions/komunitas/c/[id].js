@@ -450,7 +450,7 @@ ${eventsSection}
     }
 
     function handleCredentialResponse(response){
-      sessionStorage.setItem(STORAGE_KEY, response.credential);
+      localStorage.setItem(STORAGE_KEY, response.credential);
       var payload = decodeJwtPayload(response.credential);
       if(payload) showLoggedIn(payload);
     }
@@ -467,20 +467,20 @@ ${eventsSection}
       });
     }
 
-    var existingToken = sessionStorage.getItem(STORAGE_KEY);
+    var existingToken = localStorage.getItem(STORAGE_KEY);
     if(existingToken){
       var existingPayload = decodeJwtPayload(existingToken);
       if(existingPayload && existingPayload.exp * 1000 > Date.now()){
         showLoggedIn(existingPayload);
       } else {
-        sessionStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(STORAGE_KEY);
       }
     }
 
     postBtn.addEventListener('click', function(){
       var text = commentInput.value.trim();
       if(!text) return;
-      var idToken = sessionStorage.getItem(STORAGE_KEY);
+      var idToken = localStorage.getItem(STORAGE_KEY);
       if(!idToken){
         composerMsg.textContent = IS_EN ? 'Your login session has expired, please log in again.' : 'Sesi login habis, silakan login lagi.';
         return;
@@ -497,7 +497,7 @@ ${eventsSection}
           postBtn.disabled = false;
           if(!res.ok){
             if(res.status === 401){
-              sessionStorage.removeItem(STORAGE_KEY);
+              localStorage.removeItem(STORAGE_KEY);
               loginGate.style.display = 'flex';
               composer.classList.remove('active');
             }

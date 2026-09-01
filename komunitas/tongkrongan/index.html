@@ -256,7 +256,7 @@
   }
 
   function showLoggedOut() {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
     identityBox.classList.add('active');
     identityBox.style.display = 'block';
     composerActions.style.display = 'none';
@@ -266,7 +266,7 @@
   }
 
   function handleCredentialResponse(response) {
-    sessionStorage.setItem(STORAGE_KEY, response.credential);
+    localStorage.setItem(STORAGE_KEY, response.credential);
     const payload = decodeJwtPayload(response.credential);
     if (payload) showLoggedIn(payload);
   }
@@ -280,13 +280,13 @@
   initGoogleButton();
   window.addEventListener('load', initGoogleButton);
 
-  const existingToken = sessionStorage.getItem(STORAGE_KEY);
+  const existingToken = localStorage.getItem(STORAGE_KEY);
   if (existingToken) {
     const existingPayload = decodeJwtPayload(existingToken);
     if (existingPayload && existingPayload.exp * 1000 > Date.now()) {
       showLoggedIn(existingPayload);
     } else {
-      sessionStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEY);
     }
   }
   
@@ -436,7 +436,7 @@
   
   async function submitPost() {
     const content = document.getElementById('post-content').value;
-    const idToken = sessionStorage.getItem(STORAGE_KEY);
+    const idToken = localStorage.getItem(STORAGE_KEY);
 
     if(!content.trim()) return alert("Tulis sesuatu dulu!");
     if(!idToken) {
@@ -478,7 +478,7 @@
   async function submitReply(parentId) {
     const input = document.getElementById(`reply-input-${parentId}`);
     const content = input.value;
-    const idToken = sessionStorage.getItem(STORAGE_KEY);
+    const idToken = localStorage.getItem(STORAGE_KEY);
 
     if(!content.trim()) return;
     if(!idToken) {
