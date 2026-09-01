@@ -1,3 +1,5 @@
+import { checkAndRunBot } from "../_lib/seeding-bot.js";
+
 export async function onRequestGet(context) {
   const { request, env } = context;
   if (!env.DB) return new Response("DB not bound", { status: 500 });
@@ -11,7 +13,14 @@ export async function onRequestGet(context) {
     `SELECT COUNT(*) as count FROM tongkrongan_posts WHERE status = 'visible' AND created_at > ?`
   ).bind(since).first();
 
-  const hasUpdates = (countRow?.count || 0) > 0;
+  let hasUpdates = (countRow?.count || 0) > 0;
+  
+  // --- BOT SEEDING HOOK ---
+  // Lazy cron check: runs every time the client polls (every 15s)
+  const botPosted = await checkAndRunBot(env);
+  if (botPosted) {
+    hasUpdates = true;
+  }
   
   return new Response(JSON.stringify({ hasUpdates }), { headers: { "content-type": "application/json" } });
 }
