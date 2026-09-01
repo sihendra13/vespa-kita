@@ -1,25 +1,61 @@
-// Cloudflare Pages Function — GET /marketplace/l/:id
+// Cloudflare Pages Function — GET /marketplace/l/:id (and, via the thin
+// wrapper at functions/en/marketplace/l/[id].js, GET /en/marketplace/l/:id)
 // Full, shareable, SEO-indexable detail page for one published listing —
 // replaces the old JS modal so photos get native pinch-zoom (<img>, not a
 // CSS background) and the URL carries real per-listing OG tags for link
 // previews (WhatsApp, etc). Visual language (gold seal badge, IG row,
 // white price) mirrors marketplace/index.html's card/modal styling.
+//
+// Listing content (title, description, minus_desc, location, seller name,
+// compatibility) is whatever the seller typed and is never translated on
+// the /en/ route — only this file's own UI chrome (labels, buttons, nav)
+// and the small fixed-enum fields (condition/document status) are.
 
 import { escapeHtml } from "../../_lib/html.js";
 
 const SITE_URL = "https://www.vespakita.com";
 
+// UI chrome strings. t(lang, id, en) picks the right one — every other
+// static label in the template below goes through this instead of being
+// hardcoded, so the /en/ wrapper doesn't need its own copy of the file.
+function t(lang, id, en) {
+  return lang === "en" ? en : id;
+}
+
+// Fixed-enum field values (condition, document status) — a small, known set
+// coming from marketplace-submit.js's own option lists, not free text, so
+// translating them is safe and cheap. Unrecognized values (old data, future
+// options) fall back to the raw Indonesian value rather than disappearing.
+const VALUE_MAP = {
+  "Original": "Original",
+  "Restorasi": "Restored",
+  "Baru (New)": "New",
+  "Bekas (Second)": "Used",
+  "Lengkap (BPKB + STNK)": "Complete (BPKB + STNK)",
+  "BPKB Saja": "BPKB Only",
+  "STNK Saja": "STNK Only",
+  "Hidup": "Active",
+  "Mati": "Expired",
+  "Tangan Pertama dari Baru": "First Owner (Bought New)",
+  "Milik Pribadi (Tangan Ke-2 dst)": "Personal Property (2nd Owner+)",
+  "Atas Nama Orang Lain": "Registered Under Someone Else",
+};
+function tv(lang, value) {
+  if (lang !== "en" || !value) return value;
+  return VALUE_MAP[value] || value;
+}
+
 function fmtRupiah(n) {
   return "Rp " + Number(n).toLocaleString("id-ID");
 }
 
-function notFoundPage() {
+function notFoundPage(lang) {
   const html = `<!DOCTYPE html>
-<html lang="id">
+<html lang="${lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Listing Tidak Ditemukan | VespaKita Marketplace</title>
+<title>${t(lang, "Listing Tidak Ditemukan", "Listing Not Found")} | VespaKita Marketplace</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="/favicon.png">
 <style>
@@ -29,60 +65,65 @@ function notFoundPage() {
 </head>
 <body>
   <div>
-    <h1 style="font-size:24px; margin-bottom:12px;">Listing tidak ditemukan</h1>
-    <p style="opacity:0.75; margin-bottom:20px;">Mungkin sudah dihapus, belum di-approve, atau linknya salah.</p>
-    <a href="/marketplace/">&larr; Kembali ke Marketplace</a>
+    <h1 style="font-size:24px; margin-bottom:12px;">${t(lang, "Listing tidak ditemukan", "Listing not found")}</h1>
+    <p style="opacity:0.75; margin-bottom:20px;">${t(lang, "Mungkin sudah dihapus, belum di-approve, atau linknya salah.", "It may have been removed, not yet approved, or the link is wrong.")}</p>
+    <a href="${lang === "en" ? "/en/marketplace/" : "/marketplace/"}">&larr; ${t(lang, "Kembali ke Marketplace", "Back to Marketplace")}</a>
   </div>
 </body>
 </html>`;
   return new Response(html, { status: 404, headers: { "content-type": "text/html; charset=UTF-8" } });
 }
 
-export async function onRequestGet(context) {
+export async function renderListingPage(context, lang) {
   const { env, params } = context;
   if (!env.DB) return new Response("DB not bound", { status: 500 });
 
   const id = params.id;
   const row = await env.DB.prepare(`SELECT * FROM listings WHERE id = ? AND status = 'published'`).bind(id).first();
-  if (!row) return notFoundPage();
+  if (!row) return notFoundPage(lang);
 
   const photos = JSON.parse(row.photos || "[]").map((p) => p.url);
   const video = row.video ? JSON.parse(row.video).url : null;
   const title = row.title;
   const price = row.price;
   const isUnit = row.category !== "sparepart";
-  const canonicalUrl = `${SITE_URL}/marketplace/l/${id}`;
+  const langPrefix = lang === "en" ? "/en" : "";
+  const canonicalUrl = `${SITE_URL}${langPrefix}/marketplace/l/${id}`;
   const ogImage = photos[0] || `${SITE_URL}/logo-share.png`;
   const ogDescription = isUnit
-    ? `${row.condition} · ${row.year} · ${row.location}. ${fmtRupiah(price)}. Dicek manual oleh tim VespaKita.`
-    : `${row.condition} · ${row.location}. ${fmtRupiah(price)}. Dicek manual oleh tim VespaKita.`;
+    ? `${tv(lang, row.condition)} · ${row.year} · ${row.location}. ${fmtRupiah(price)}. ${t(lang, "Dicek manual oleh tim VespaKita.", "Manually checked by the VespaKita team.")}`
+    : `${tv(lang, row.condition)} · ${row.location}. ${fmtRupiah(price)}. ${t(lang, "Dicek manual oleh tim VespaKita.", "Manually checked by the VespaKita team.")}`;
 
+  // Sent to the (Indonesian-speaking) seller regardless of which language
+  // page the buyer is on — same policy as every other seller-facing
+  // notification on this site (WA/email messages always stay Indonesian).
   const waMsg = `Halo, saya lihat listing ${title} di Marketplace VespaKita (${canonicalUrl}). Apakah ${isUnit ? "unit" : "barang"} ini masih tersedia?`;
   const waHref = `https://wa.me/${row.seller_phone}?text=${encodeURIComponent(waMsg)}`;
 
+  const docPajakBadge = row.doc_pajak ? `${t(lang, "Pajak", "Tax")} ${tv(lang, row.doc_pajak)}` : "";
   const badges = (isUnit
-    ? [row.doc_surat, row.doc_pajak ? `Pajak ${row.doc_pajak}` : "", row.doc_kepemilikan]
-    : [row.compatibility ? `Fit: ${row.compatibility}` : ""])
+    ? [tv(lang, row.doc_surat), docPajakBadge, tv(lang, row.doc_kepemilikan)]
+    : [row.compatibility ? `${t(lang, "Fit", "Fit")}: ${row.compatibility}` : ""])
     .filter(Boolean)
     .map((b) => `<span class="doc-badge">${escapeHtml(b)}</span>`)
     .join("");
 
   const thumbs = photos.length > 1
     ? `<div class="thumbs">${photos
-        .map((p, i) => `<img src="${escapeHtml(p)}" class="thumb${i === 0 ? " active" : ""}" data-src="${escapeHtml(p)}" alt="Foto ${i + 1}">`)
+        .map((p, i) => `<img src="${escapeHtml(p)}" class="thumb${i === 0 ? " active" : ""}" data-src="${escapeHtml(p)}" alt="${t(lang, "Foto", "Photo")} ${i + 1}">`)
         .join("")}</div>`
     : "";
 
   const igRow = row.seller_ig
     ? `<div class="ig-row">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--mint)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        IG Penjual: <a href="https://instagram.com/${escapeHtml(row.seller_ig)}" target="_blank" rel="noopener">@${escapeHtml(row.seller_ig)}</a>
+        ${t(lang, "IG Penjual", "Seller IG")}: <a href="https://instagram.com/${escapeHtml(row.seller_ig)}" target="_blank" rel="noopener">@${escapeHtml(row.seller_ig)}</a>
       </div>`
     : "";
 
   const minusBlock = row.minus_desc
     ? `<div class="minus-box">
-        <div class="minus-label">Minus / Kekurangan (Info dari Penjual)</div>
+        <div class="minus-label">${t(lang, "Minus / Kekurangan (Info dari Penjual)", "Flaws / Issues (Seller-disclosed)")}</div>
         <div class="minus-text">${escapeHtml(row.minus_desc)}</div>
       </div>`
     : "";
@@ -96,7 +137,7 @@ export async function onRequestGet(context) {
     : "";
 
   const html = `<!DOCTYPE html>
-<html lang="id">
+<html lang="${lang}">
 <head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6LLXWQ6MMM"></script>
 <script>
@@ -119,7 +160,7 @@ export async function onRequestGet(context) {
 <meta property="og:type" content="product">
 <meta property="og:url" content="${canonicalUrl}">
 <meta property="og:site_name" content="VespaKita Marketplace">
-<meta property="og:locale" content="id_ID">
+<meta property="og:locale" content="${lang === "en" ? "en_US" : "id_ID"}">
 <meta property="og:title" content="${escapeHtml(title)} - ${escapeHtml(fmtRupiah(price))}">
 <meta property="og:description" content="${escapeHtml(ogDescription)}">
 <meta property="og:image" content="${escapeHtml(ogImage)}">
@@ -200,9 +241,9 @@ export async function onRequestGet(context) {
   .bottom-nav {
     display: none;
     position: fixed;
-    top: auto; 
-    bottom: 0; 
-    left: 0; 
+    top: auto;
+    bottom: 0;
+    left: 0;
     right: 0;
     background: rgba(23, 25, 27, 0.85);
     backdrop-filter: blur(20px);
@@ -270,14 +311,14 @@ export async function onRequestGet(context) {
 
 <nav>
   <div class="wrap">
-    <a href="/" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
-    <a href="/marketplace/#jual" class="navcta">Jual Vespa Kamu</a>
+    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
+    <a href="${lang === "en" ? "/en/marketplace/#jual" : "/marketplace/#jual"}" class="navcta">${t(lang, "Jual Vespa Kamu", "Sell Your Vespa")}</a>
   </div>
 </nav>
 
 <main>
   <div class="wrap">
-    <a href="/marketplace/semua/?category=${isUnit ? "unit" : "sparepart"}" class="back-link">&larr; Kembali ke Listing</a>
+    <a href="${lang === "en" ? "/en" : ""}/marketplace/semua/?category=${isUnit ? "unit" : "sparepart"}" class="back-link">&larr; ${t(lang, "Kembali ke Listing", "Back to Listings")}</a>
 
     <div class="main-photo-wrap">
       <img id="main-photo" src="${escapeHtml(photos[0] || "")}" alt="${escapeHtml(title)}">
@@ -289,21 +330,21 @@ export async function onRequestGet(context) {
     <div class="price">${escapeHtml(fmtRupiah(price))}</div>
     <div class="stats-row">
       <span><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"></path></svg> <span id="views-count">${row.views}</span> Views</span>
-      <span><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.84.5 3.56 1.35 5.04L2 22l5.13-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3.03.79.81-2.95-.19-.3A7.96 7.96 0 1 1 20 12a8 8 0 0 1-8 8Zm4.34-5.98c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.62-1.18-1.39-1.31-1.63-.14-.24-.02-.36.1-.48.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.75-1.79-.2-.47-.4-.41-.54-.42-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"></path></svg> <span id="clicks-count">${row.clicks}</span> Chat WA</span>
+      <span><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.84.5 3.56 1.35 5.04L2 22l5.13-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3.03.79.81-2.95-.19-.3A7.96 7.96 0 1 1 20 12a8 8 0 0 1-8 8Zm4.34-5.98c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.62-1.18-1.39-1.31-1.63-.14-.24-.02-.36.1-.48.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.75-1.79-.2-.47-.4-.41-.54-.42-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"></path></svg> <span id="clicks-count">${row.clicks}</span> ${t(lang, "Chat WA", "WA Chats")}</span>
     </div>
 
     <div class="spec-grid">
-      ${isUnit ? `<div class="spec-item"><div class="k">Tahun</div><div class="v">${escapeHtml(row.year)}</div></div>` : ""}
-      <div class="spec-item"><div class="k">Kondisi</div><div class="v">${escapeHtml(row.condition)}</div></div>
-      <div class="spec-item"><div class="k">Lokasi</div><div class="v">${escapeHtml(row.location)}</div></div>
-      <div class="spec-item"><div class="k">Penjual</div><div class="v">${escapeHtml(row.seller_name)}</div></div>
-      ${!isUnit && row.compatibility ? `<div class="spec-item"><div class="k">Kecocokan Tipe Vespa</div><div class="v">${escapeHtml(row.compatibility)}</div></div>` : ""}
+      ${isUnit ? `<div class="spec-item"><div class="k">${t(lang, "Tahun", "Year")}</div><div class="v">${escapeHtml(row.year)}</div></div>` : ""}
+      <div class="spec-item"><div class="k">${t(lang, "Kondisi", "Condition")}</div><div class="v">${escapeHtml(tv(lang, row.condition))}</div></div>
+      <div class="spec-item"><div class="k">${t(lang, "Lokasi", "Location")}</div><div class="v">${escapeHtml(row.location)}</div></div>
+      <div class="spec-item"><div class="k">${t(lang, "Penjual", "Seller")}</div><div class="v">${escapeHtml(row.seller_name)}</div></div>
+      ${!isUnit && row.compatibility ? `<div class="spec-item"><div class="k">${t(lang, "Kecocokan Tipe Vespa", "Vespa Model Compatibility")}</div><div class="v">${escapeHtml(row.compatibility)}</div></div>` : ""}
     </div>
 
     <div class="curation-box">
       <div class="curation-row">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
-        Dikurasi oleh Admin VespaKita
+        ${t(lang, "Dikurasi oleh Admin VespaKita", "Curated by VespaKita Admin")}
       </div>
       ${igRow}
     </div>
@@ -315,7 +356,7 @@ export async function onRequestGet(context) {
     <div style="display: flex; gap: 12px; margin-top: 24px;">
       <a href="${waHref}" target="_blank" rel="noopener" class="btn" id="wa-cta" style="flex: 1;">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 1.84.5 3.56 1.35 5.04L2 22l5.13-1.34A9.94 9.94 0 0 0 12 22c5.52 0 10-4.48 10-10S17.52 2 12 2Zm0 18a7.94 7.94 0 0 1-4.06-1.11l-.29-.17-3.03.79.81-2.95-.19-.3A7.96 7.96 0 1 1 20 12a8 8 0 0 1-8 8Zm4.34-5.98c-.24-.12-1.4-.69-1.62-.77-.22-.08-.38-.12-.54.12-.16.24-.62.77-.76.93-.14.16-.28.18-.52.06-.24-.12-1-.37-1.9-1.17-.7-.62-1.18-1.39-1.31-1.63-.14-.24-.02-.36.1-.48.11-.11.24-.28.36-.42.12-.14.16-.24.24-.4.08-.16.04-.3-.02-.42-.06-.12-.54-1.31-.75-1.79-.2-.47-.4-.41-.54-.42-.14-.01-.3-.01-.46-.01-.16 0-.42.06-.64.3-.22.24-.84.82-.84 2s.86 2.32.98 2.48c.12.16 1.7 2.6 4.12 3.64.58.25 1.03.4 1.38.51.58.18 1.11.16 1.53.1.47-.07 1.4-.57 1.6-1.12.2-.55.2-1.02.14-1.12-.06-.1-.22-.16-.46-.28Z"></path></svg>
-        Hubungi Penjual via WhatsApp
+        ${t(lang, "Hubungi Penjual via WhatsApp", "Contact Seller via WhatsApp")}
       </a>
       <button class="btn" id="share-btn" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); width: 48px; padding: 0; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #fff;">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
@@ -331,7 +372,7 @@ export async function onRequestGet(context) {
 <div id="image-modal" style="display:none; position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.95); padding:20px; align-items:center; justify-content:center; flex-direction:column; backdrop-filter: blur(5px);">
   <button id="close-modal" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#fff; cursor:pointer; font-size:42px; line-height:1; width:50px; height:50px; display:flex; align-items:center; justify-content:center;">&times;</button>
   <img id="modal-img" src="" style="max-width:100%; max-height:85vh; object-fit:contain; border-radius:4px;">
-  <p style="color:var(--chrome); font-size:12px; margin-top:16px; font-family:var(--mono); text-transform:uppercase;">Bisa di-zoom (Cubit Layar)</p>
+  <p style="color:var(--chrome); font-size:12px; margin-top:16px; font-family:var(--mono); text-transform:uppercase;">${t(lang, "Bisa di-zoom (Cubit Layar)", "Pinch to zoom")}</p>
 </div>
 
 <script>
@@ -397,7 +438,7 @@ export async function onRequestGet(context) {
         });
       } else {
         await navigator.clipboard.writeText(window.location.href);
-        alert('Tautan berhasil disalin ke papan klip!');
+        alert(${JSON.stringify(t(lang, "Tautan berhasil disalin ke papan klip!", "Link copied to clipboard!"))});
       }
     } catch (err) {
       console.log('Share error:', err);
@@ -415,25 +456,25 @@ export async function onRequestGet(context) {
 <script src="/pwa-install.js"></script>
 <!-- BOTTOM NAVIGATION (MOBILE) -->
 <nav class="bottom-nav">
-  <a href="/" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-    <span>Beranda</span>
+    <span>${t(lang, "Beranda", "Home")}</span>
   </a>
-  <a href="/marketplace/" class="bnav-item active">
+  <a href="${lang === "en" ? "/en" : ""}/marketplace/" class="bnav-item active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-    <span>Jual Beli</span>
+    <span>${t(lang, "Jual Beli", "Marketplace")}</span>
   </a>
-  <a href="/#next-events" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}#next-events" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-    <span>Event</span>
+    <span>${t(lang, "Event", "Events")}</span>
   </a>
-  <a href="/komunitas/" class="bnav-item">
+  <a href="${lang === "en" ? "/en" : ""}/komunitas/" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M12 3.5a4 4 0 0 1 0 7"></path></svg>
-    <span>Komunitas</span>
+    <span>${t(lang, "Komunitas", "Community")}</span>
   </a>
-  <a href="/#kolaborasi" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}#kolaborasi" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-    <span>Kolaborasi</span>
+    <span>${t(lang, "Kolaborasi", "Collaborate")}</span>
   </a>
 </nav>
 
@@ -457,4 +498,8 @@ export async function onRequestGet(context) {
 </html>`;
 
   return new Response(html, { headers: { "content-type": "text/html; charset=UTF-8" } });
+}
+
+export async function onRequestGet(context) {
+  return renderListingPage(context, "id");
 }
