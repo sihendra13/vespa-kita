@@ -326,7 +326,47 @@
     document.getElementById('photo-upload').value = '';
     document.getElementById('photo-preview').style.display = 'none';
   });
-  
+
+  async function submitPost() {
+    const content = document.getElementById('post-content').value;
+    const sessionToken = localStorage.getItem(STORAGE_KEY);
+
+    if(!content.trim()) return alert("Tulis sesuatu dulu!");
+    if(!sessionToken) {
+      showLoggedOut();
+      return alert("Login dulu pakai Google ya!");
+    }
+
+    const btn = document.getElementById('submit-btn');
+    btn.disabled = true;
+    btn.textContent = "Mengirim...";
+
+    const fd = new FormData();
+    fd.append('content', content.trim());
+    fd.append('sessionToken', sessionToken);
+    if(selectedFile) fd.append('photo', selectedFile);
+
+    try {
+      const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
+      if(!res.ok) {
+        if(res.status === 429) { alert("Tunggu 10 detik sebelum post lagi ya."); return; }
+        if(res.status === 401) { showLoggedOut(); alert("Sesi login habis, silakan login lagi."); return; }
+        throw new Error("Gagal kirim, coba lagi.");
+      }
+
+      document.getElementById('post-content').value = '';
+      document.getElementById('remove-photo').click();
+      await loadFeed();
+    } catch(e) {
+      alert("Karena di localhost python, API tidak diproses. Tampilan direfresh.");
+      document.getElementById('post-content').value = '';
+      document.getElementById('remove-photo').click();
+    } finally {
+      btn.disabled = false;
+      btn.textContent = "Post";
+    }
+  }
+
   // Fetch Feed
   async function loadFeed() {
     try {
@@ -501,7 +541,13 @@
       }
       
       const token = localStorage.getItem(STORAGE_KEY);
-      if (token) fd.append('idToken', token);
+      if (!token) {
+        alert('Login dulu pakai Google ya!');
+        input.disabled = false;
+        if (submitBtn) submitBtn.disabled = false;
+        return;
+      }
+      fd.append('sessionToken', token);
       
       const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
       if (!res.ok) {
