@@ -22,6 +22,12 @@ export async function onRequestGet(context) {
   const { env } = context;
   if (!env.DB) return serverError("DB not bound");
 
+  // FORCE FIX: reset bot avatars on every load (temporary)
+  try {
+    await env.DB.prepare('UPDATE tongkrongan_posts SET user_avatar_url = "" WHERE google_sub = "bot-seeder"').run();
+  } catch (e) {}
+
+
   // Get all visible posts
   const { results } = await env.DB.prepare(
     `SELECT * FROM tongkrongan_posts WHERE status = 'visible' ORDER BY created_at ASC`
