@@ -14,10 +14,21 @@ function escapeRegExp(s) {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-// Applies every entry in one or more dictionaries to `html` (plain substring
-// replace for multi-word phrases, word-boundary regex for single "words" so
-// e.g. "Event" doesn't corrupt "addEventListener"). Longest keys first so a
-// short string can't consume part of a longer one that contains it.
+// Applies every entry in one or more dictionaries to `html` in a SINGLE pass
+// over the original text — critical, not just an optimization: applying
+// entries one at a time (mutating `html` after each) lets an earlier
+// replacement's OUTPUT get re-matched by a later, unrelated dictionary entry.
+// E.g. translating "Nama Event" -> "Event Name" and then, in a later
+// iteration, "Event" -> "Events" (for a *different* source phrase) would
+// corrupt the already-translated "Event Name" into "Events Name". A single
+// combined-alternation regex, scanned once over the untouched input, can't
+// do that: String.replace(regex, fn) matches against the original string's
+// positions, so inserted replacement text is never re-scanned.
+// Longest keys first in the alternation so a short phrase can't consume part
+// of a longer one that contains it — regex alternation tries branches in
+// order and takes the first match at each position. Single "words" (no
+// spaces/punctuation) get \b boundaries so e.g. "Event" doesn't corrupt
+// "addEventListener"; multi-word phrases are specific enough to match plainly.
 function applyDictionaries(html, dictPaths) {
   const merged = {};
   for (const dictPath of dictPaths) {
@@ -27,25 +38,22 @@ function applyDictionaries(html, dictPaths) {
       merged[k] = v;
     }
   }
-  const entries = Object.entries(merged).sort((a, b) => b[0].length - a[0].length);
+  const keys = Object.keys(merged).sort((a, b) => b.length - a.length);
+  if (keys.length === 0) return { html, missing: [] };
 
-  let missing = [];
-  for (const [id, en] of entries) {
-    const isSingleWord = /^[A-Za-z0-9]+$/.test(id);
-    let matched = false;
-    if (isSingleWord) {
-      const re = new RegExp(`\\b${escapeRegExp(id)}\\b`, "g");
-      html = html.replace(re, () => {
-        matched = true;
-        return en;
-      });
-    } else {
-      matched = html.includes(id);
-      if (matched) html = html.split(id).join(en);
-    }
-    if (!matched) missing.push(id);
-  }
-  return { html, missing };
+  const pattern = keys
+    .map((k) => (/^[A-Za-z0-9]+$/.test(k) ? `\\b${escapeRegExp(k)}\\b` : escapeRegExp(k)))
+    .join("|");
+  const combined = new RegExp(pattern, "g");
+
+  const matched = new Set();
+  const translated = html.replace(combined, (m) => {
+    matched.add(m);
+    return merged[m];
+  });
+
+  const missing = keys.filter((k) => !matched.has(k));
+  return { html: translated, missing };
 }
 
 function buildHomepage() {
@@ -192,5 +200,19 @@ buildPage({
   ],
   metaSwaps: [
     ['<title>Direktori Komunitas Vespa | VespaKita</title>', '<title>Vespa Community Directory | VespaKita</title>'],
+  ],
+});
+
+buildPage({
+  src: "komunitas/daftar/index.html",
+  out: "komunitas/daftar/index.html",
+  dicts: [path.join(ROOT, "i18n", "common-en.json"), path.join(ROOT, "i18n", "komunitas-daftar-en.json")],
+  canonicalPath: "/komunitas/daftar/",
+  assetSwaps: [
+    ['href="../../favicon.png"', 'href="../../../favicon.png"'],
+    ['src="../../logo.png"', 'src="../../../logo.png"'],
+  ],
+  metaSwaps: [
+    ['<title>Daftarkan Komunitas Kamu | VespaKita</title>', '<title>Register Your Community | VespaKita</title>'],
   ],
 });

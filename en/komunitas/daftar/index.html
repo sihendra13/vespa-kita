@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Daftarkan Komunitas Kamu | VespaKita</title>
+<title>Register Your Community | VespaKita</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="icon" type="image/png" href="../../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -99,16 +99,16 @@
 
 <nav>
   <div class="wrap">
-    <a href="/" class="logo"><img src="../../logo.png" alt="VespaKita Logo"></a>
+    <a href="/" class="logo"><img src="../../../logo.png" alt="VespaKita Logo"></a>
     <div class="navlinks">
-      <a href="/">Beranda</a>
+      <a href="/">Home</a>
       <a href="/marketplace/">Marketplace</a>
-      <a href="../">Komunitas</a>
+      <a href="../">Community</a>
     </div>
     <div class="lang-selector">
-      <a href="/komunitas/daftar/" class="active" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
+      <a href="/komunitas/daftar/" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
       <span>|</span>
-      <a href="/en/komunitas/daftar/" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
+      <a href="/en/komunitas/daftar/" class="active" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
     </div>
   </div>
 </nav>
@@ -116,103 +116,103 @@
 <section class="dark">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Daftarkan Komunitas Kamu</div>
-      <h2>Gabung Jadi Partner Komunitas VespaKita</h2>
-      <p>Daftarkan komunitas kamu dan dapat halaman profil resmi di direktori — gratis, gampang, nggak perlu punya event dulu. Punya event yang butuh sponsor? Isi juga bagian "Detail Event" di bawah, tim kami bantu carikan brand lewat jaringan yang sudah kami bangun — seperti yang kami lakukan untuk Road to Jakarta (Vespa 60's Yogyakarta).</p>
+      <div class="eyebrow">Register Your Community</div>
+      <h2>Join as a VespaKita Partner Community</h2>
+      <p>Register your community and get an official profile page in the directory — free, easy, no need to have an event first. Have an event that needs a sponsor? Fill in the "Event Details" section below too — our team will help find a brand through the network we have built, like we did for Road to Jakarta (Vespa 60's Yogyakarta).</p>
     </div>
 
     <div class="form-card" id="form-wrap">
       <div class="form-note">
-        Cara kerjanya: isi form ini → komunitas kamu masuk antrian review tim VespaKita → begitu di-approve, komunitas kamu langsung dapat halaman profil di direktori. Kalau kamu juga isi bagian "Detail Event", tim kami akan hubungi buat diskusi kebutuhan sponsorship dan carikan brand yang cocok.
+        How it works: fill in this form → your community joins the VespaKita team's review queue → once approved, your community gets a profile page in the directory right away. If you also fill in the "Event Details" section, our team will contact you to discuss sponsorship needs and find a matching brand.
       </div>
 
       <form id="daftar-form" novalidate>
         <div class="field">
-          <label for="k-nama">Nama Komunitas <span class="req">*</span></label>
-          <input type="text" id="k-nama" placeholder="Contoh: Vespa 60's Yogyakarta" required>
+          <label for="k-nama">Community Name <span class="req">*</span></label>
+          <input type="text" id="k-nama" placeholder="Example: Vespa 60's Yogyakarta" required>
         </div>
         <div class="field-row">
           <div class="field">
-            <label for="k-kota">Kota Basis <span class="req">*</span></label>
-            <input type="text" id="k-kota" placeholder="Contoh: Yogyakarta" required>
+            <label for="k-kota">Home City <span class="req">*</span></label>
+            <input type="text" id="k-kota" placeholder="Example: Yogyakarta" required>
           </div>
           <div class="field">
-            <label for="k-anggota">Perkiraan Jumlah Anggota</label>
-            <input type="number" id="k-anggota" placeholder="Contoh: 150" min="1">
+            <label for="k-anggota">Estimated Number of Members</label>
+            <input type="number" id="k-anggota" placeholder="Example: 150" min="1">
           </div>
         </div>
         <div class="field">
-          <label for="k-deskripsi">Deskripsi Komunitas <span class="req">*</span></label>
-          <textarea id="k-deskripsi" rows="3" placeholder="Ceritakan sejarah singkat, kegiatan rutin, dan hal yang membuat komunitas kamu unik." required></textarea>
+          <label for="k-deskripsi">Community Description <span class="req">*</span></label>
+          <textarea id="k-deskripsi" rows="3" placeholder="Tell us a brief history, regular activities, and what makes your community unique." required></textarea>
         </div>
 
         <div class="field" style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(241,232,214,0.12);">
-          <label style="font-size:13px; color:var(--krem);">Detail Event yang Butuh Sponsor (Opsional — bisa diisi belakangan)</label>
+          <label style="font-size:13px; color:var(--krem);">Event Details Needing Sponsorship (Optional — can be filled in later)</label>
         </div>
         <div class="field">
-          <label for="k-event-nama">Nama Event</label>
-          <input type="text" id="k-event-nama" placeholder="Contoh: Touring Akbar Yogyakarta-Jakarta">
+          <label for="k-event-nama">Event Name</label>
+          <input type="text" id="k-event-nama" placeholder="Example: Grand Touring Yogyakarta-Jakarta">
         </div>
         <div class="field-row">
           <div class="field">
-            <label for="k-event-tanggal">Tanggal Event</label>
-            <input type="text" id="k-event-tanggal" placeholder="Contoh: 20-23 Agustus 2026">
+            <label for="k-event-tanggal">Event Date</label>
+            <input type="text" id="k-event-tanggal" placeholder="Example: 20-23 August 2026">
           </div>
           <div class="field">
-            <label for="k-event-peserta">Estimasi Jumlah Peserta</label>
-            <input type="number" id="k-event-peserta" placeholder="Contoh: 300" min="1">
+            <label for="k-event-peserta">Estimated Number of Participants</label>
+            <input type="number" id="k-event-peserta" placeholder="Example: 300" min="1">
           </div>
         </div>
         <div class="field">
-          <label for="k-event-dukungan">Jenis Dukungan yang Dibutuhkan</label>
+          <label for="k-event-dukungan">Type of Support Needed</label>
           <select id="k-event-dukungan">
-            <option>Sponsor Dana</option>
-            <option>Sponsor Barang / Merchandise</option>
-            <option>Media Coverage / Dokumentasi</option>
-            <option>Kombinasi</option>
+            <option>Funding Sponsorship</option>
+            <option>Goods / Merchandise Sponsorship</option>
+            <option>Media Coverage / Documentation</option>
+            <option>Combination</option>
           </select>
         </div>
         <div class="field">
-          <label for="k-event-deskripsi">Ceritakan Rencana Event Kamu</label>
-          <textarea id="k-event-deskripsi" rows="3" placeholder="Rute, rangkaian acara, target peserta, dan hal lain yang perlu diketahui tim kami."></textarea>
+          <label for="k-event-deskripsi">Tell Us About Your Event Plan</label>
+          <textarea id="k-event-deskripsi" rows="3" placeholder="Route, event schedule, target participants, and anything else our team should know."></textarea>
         </div>
 
         <div class="field" style="margin-top:32px; padding-top:24px; border-top:1px solid rgba(241,232,214,0.12);">
-          <label style="font-size:13px; color:var(--krem);">Kontak</label>
+          <label style="font-size:13px; color:var(--krem);">Contact</label>
         </div>
         <div class="field-row">
           <div class="field">
-            <label for="k-ig">Instagram Komunitas <span class="req">*</span></label>
+            <label for="k-ig">Community Instagram <span class="req">*</span></label>
             <input type="text" id="k-ig" placeholder="@namakomunitas" required>
           </div>
           <div class="field">
-            <label for="k-wa">No. WhatsApp Admin <span class="req">*</span></label>
-            <input type="text" id="k-wa" placeholder="Contoh: 081234567890" required>
+            <label for="k-wa">Admin WhatsApp Number <span class="req">*</span></label>
+            <input type="text" id="k-wa" placeholder="Example: 081234567890" required>
           </div>
         </div>
         <div class="field">
-          <label for="k-admin-email">Email Google Pengurus <span class="req">*</span></label>
-          <input type="email" id="k-admin-email" placeholder="Contoh: pengurus@gmail.com" required>
-          <div class="form-note" style="margin-top:10px; margin-bottom:0;">Waktu pengurus login pakai email ini untuk berkomentar di halaman komunitas, komentarnya otomatis dapat tanda "Admin Komunitas".</div>
+          <label for="k-admin-email">Organizer Google Email <span class="req">*</span></label>
+          <input type="email" id="k-admin-email" placeholder="Example: organizer@gmail.com" required>
+          <div class="form-note" style="margin-top:10px; margin-bottom:0;">When the organizer logs in with this email to comment on the community page, their comment automatically gets an "Admin Komunitas" badge.</div>
         </div>
         <div class="field">
-          <label for="k-logo">Logo Komunitas</label>
+          <label for="k-logo">Community Logo</label>
           <input type="file" id="k-logo" accept="image/jpeg,image/png,image/webp">
         </div>
         <div class="field">
-          <label for="k-foto">Foto Kegiatan (maks. 5)</label>
+          <label for="k-foto">Activity Photos (max. 5)</label>
           <input type="file" id="k-foto" accept="image/jpeg,image/png,image/webp" multiple>
         </div>
         <div id="k-form-msg" class="field-error"></div>
         <div class="submit-row">
-          <button type="submit" class="btn btn-primary" id="k-submit">Daftarkan Komunitas</button>
+          <button type="submit" class="btn btn-primary" id="k-submit">Register Community</button>
         </div>
       </form>
 
       <div class="form-success" id="form-success">
         <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="m9 12 2 2 4-4"></path></svg>
-        <h3>Pendaftaran Terkirim</h3>
-        <p>Terima kasih! Tim VespaKita akan meninjau pendaftaran komunitas kamu, biasanya 1x24 jam. Kalau kamu juga isi detail event, kami akan hubungi lewat WhatsApp untuk diskusi kebutuhan sponsorship.</p>
+        <h3>Registration Submitted</h3>
+        <p>Thank you! The VespaKita team will review your community registration, usually within 24 hours. If you also filled in event details, we will contact you via WhatsApp to discuss sponsorship needs.</p>
       </div>
     </div>
   </div>
@@ -221,12 +221,12 @@
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <div class="logo" style="font-size:18px;"><img src="../../logo.png" alt="VespaKita Logo" style="height:48px;"></div>
+      <div class="logo" style="font-size:18px;"><img src="../../../logo.png" alt="VespaKita Logo" style="height:48px;"></div>
       <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
     </div>
     <div class="foot-links">
-      <a href="/">Beranda</a>
-      <a href="../">Komunitas</a>
+      <a href="/">Home</a>
+      <a href="../">Community</a>
     </div>
   </div>
 </footer>
@@ -235,30 +235,30 @@
 <nav class="bottom-nav">
   <a href="/" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-    <span>Beranda</span>
+    <span>Home</span>
   </a>
   <a href="/marketplace/" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-    <span>Jual Beli</span>
+    <span>Marketplace</span>
   </a>
   <a href="/#next-events" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-    <span>Event</span>
+    <span>Events</span>
   </a>
   <a href="../" class="bnav-item active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M12 3.5a4 4 0 0 1 0 7"></path></svg>
-    <span>Komunitas</span>
+    <span>Community</span>
   </a>
   <a href="/#kolaborasi" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-    <span>Kolaborasi</span>
+    <span>Collaborate</span>
   </a>
 </nav>
 
 <script>
   const form = document.getElementById('daftar-form');
   const msg = document.getElementById('k-form-msg');
-  // Event fields are intentionally not in this list — a community can join without
+  // Events fields are intentionally not in this list — a community can join without
   // one and add it later. See the eventName/eventDesc check below for the
   // "fill one, must fill both" rule when someone does start the event section.
   const requiredIds = ['k-nama','k-kota','k-deskripsi','k-ig','k-wa','k-admin-email'];
@@ -269,7 +269,7 @@
     e.preventDefault();
     const missing = requiredIds.filter(id => !document.getElementById(id).value.trim());
     if(missing.length){
-      msg.textContent = 'Lengkapi dulu kolom yang wajib diisi (tanda *) sebelum mengirim.';
+      msg.textContent = 'Please fill in all required fields (marked *) before submitting.';
       msg.classList.add('show');
       document.getElementById(missing[0]).focus();
       return;
@@ -279,7 +279,7 @@
     const eventName = document.getElementById('k-event-nama').value.trim();
     const eventDesc = document.getElementById('k-event-deskripsi').value.trim();
     if((eventName && !eventDesc) || (!eventName && eventDesc)){
-      msg.textContent = 'Kalau mau isi detail event, "Nama Event" dan "Ceritakan Rencana Event" dua-duanya wajib diisi ya — atau kosongkan semua dan isi belakangan.';
+      msg.textContent = 'If you fill in event details, both "Event Name" and "Tell Us About Your Event Plan" are required — or leave them all blank and fill them in later.';
       msg.classList.add('show');
       document.getElementById(eventName ? 'k-event-deskripsi' : 'k-event-nama').focus();
       return;
@@ -288,7 +288,7 @@
 
     const submitBtn = document.getElementById('k-submit');
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Mengirim...';
+    submitBtn.textContent = 'Submitting...';
 
     const fd = new FormData();
     fd.append('name', document.getElementById('k-nama').value);
@@ -323,10 +323,10 @@
         : `Ada komunitas baru daftar, menunggu review: ${communityName}.\n\nReview & approve: https://www.vespakita.com/komunitas/admin/`;
       window.location.href = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(notifyMsg)}`;
     }catch(err){
-      msg.textContent = err.message || 'Gagal mengirim, coba lagi.';
+      msg.textContent = err.message || 'Failed to submit, please try again.';
       msg.classList.add('show');
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Daftarkan Komunitas';
+      submitBtn.textContent = 'Register Community';
     }
   });
 </script>

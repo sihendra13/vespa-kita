@@ -357,14 +357,14 @@
     <div class="navlinks">
       <a href="/">Home</a>
       <a href="#listings">Listings</a>
-      <a href="#jual" class="nav-mobile-cta">Submit Listings</a>
+      <a href="#jual" class="nav-mobile-cta">Submit Listing</a>
     </div>
     <div class="lang-selector">
       <a href="/marketplace/" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
       <span>|</span>
       <a href="/en/marketplace/" class="active" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
     </div>
-    <a href="#jual" class="navcta">Submit Listings</a>
+    <a href="#jual" class="navcta">Submit Listing</a>
     <button class="nav-toggle" aria-label="Buka Menu">
       <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-menu"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
       <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" class="icon-close" style="display:none;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -394,7 +394,7 @@
     </div>
     <div class="mp-hero-ctas">
       <a href="#listings" class="btn btn-primary">View Listings</a>
-      <a href="#jual" class="btn btn-outline">Submit Listings</a>
+      <a href="#jual" class="btn btn-outline">Submit Listing</a>
     </div>
   </div>
 </section>
@@ -424,7 +424,7 @@
     <div id="listing-empty" class="mp-empty reveal" style="display:none;">
       <h3>No Listings Yet</h3>
       <p>This marketplace just opened. Be the first seller here — your unit will appear on this page once checked by our team.</p>
-      <a href="#jual" class="btn btn-primary">Submit Listings</a>
+      <a href="#jual" class="btn btn-primary">Submit Listing</a>
     </div>
   </div>
 </section>
@@ -434,7 +434,7 @@
   <div class="wrap">
     <div class="section-head reveal" style="margin-left:auto; margin-right:auto; text-align:center;">
       <div class="eyebrow" style="justify-content:center;">Sell Your Item</div>
-      <h2 style="color:var(--krem);">Submit Listings</h2>
+      <h2 style="color:var(--krem);">Submit Listing</h2>
       <p style="color:var(--chrome);">Choose the item type, fill out the form, and join the review queue.</p>
     </div>
     
@@ -569,7 +569,7 @@
       </div>
       <div id="j-form-msg"  style="display:none; align-items:flex-start; gap:12px; padding:16px 18px; border-radius:6px; margin-bottom:16px;"></div>
       <div class="submit-row">
-        <button type="button" class="btn btn-primary" id="j-submit">Submit Listings</button>
+        <button type="button" class="btn btn-primary" id="j-submit">Submit Listing</button>
       </div>
     </div>
   </div>
@@ -747,7 +747,7 @@
     <div class="mp-empty" style="grid-column:1/-1;">
       <h3 style="font-size:20px;">No Parts Yet</h3>
       <p>Be the first parts seller here — your item will appear here once checked by our team.</p>
-      <a href="#jual" class="btn btn-primary">Submit Listings</a>
+      <a href="#jual" class="btn btn-primary">Submit Listing</a>
     </div>
   `;
 
@@ -794,7 +794,7 @@
 
     grid.innerHTML = unitListings.length
       ? shuffle(unitListings).slice(0, MAX_FEATURED).map(renderCard).join('')
-      : `<div class="mp-empty" style="grid-column:1/-1;"><h3 style="font-size:20px;">No Units Yet</h3><p>Be the first seller here — your unit will appear here once checked by our team.</p><a href="#jual" class="btn btn-primary">Submit Listings</a></div>`;
+      : `<div class="mp-empty" style="grid-column:1/-1;"><h3 style="font-size:20px;">No Units Yet</h3><p>Be the first seller here — your unit will appear here once checked by our team.</p><a href="#jual" class="btn btn-primary">Submit Listing</a></div>`;
     partsGrid.innerHTML = partsListings.length
       ? shuffle(partsListings).slice(0, MAX_FEATURED).map(renderCard).join('')
       : PARTS_EMPTY_HTML;
@@ -831,7 +831,7 @@
       ? 'Semua unit di bawah sudah dicek tim VespaKita.'
       : 'Semua sparepart & aksesoris di bawah sudah dicek tim VespaKita.';
     updateViewAllVisibility(cat);
-    // Keep the "Submit Listings" form in sync with whichever tab the visitor is browsing —
+    // Keep the "Submit Listing" form in sync with whichever tab the visitor is browsing —
     // so clicking through from Sparepart lands them on the Sparepart form, not Unit.
     setFormTab(cat);
   }
@@ -1167,7 +1167,7 @@
       showFormMsg(err.message || 'Failed to submit the listing, please try again.', true);
     }finally{
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Submit Listings';
+      submitBtn.textContent = 'Submit Listing';
     }
   });
 </script>
