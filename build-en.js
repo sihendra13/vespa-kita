@@ -216,3 +216,21 @@ buildPage({
     ['<title>Daftarkan Komunitas Kamu | VespaKita</title>', '<title>Register Your Community | VespaKita</title>'],
   ],
 });
+
+buildPage({
+  src: "komunitas/tongkrongan/index.html",
+  out: "komunitas/tongkrongan/index.html",
+  dicts: [
+    path.join(ROOT, "i18n", "common-en.json"),
+    path.join(ROOT, "i18n", "komunitas-en.json"),
+    path.join(ROOT, "i18n", "tongkrongan-en.json"),
+  ],
+  canonicalPath: "/komunitas/tongkrongan/",
+  assetSwaps: [
+    ['href="../../favicon.png"', 'href="../../../favicon.png"'],
+    ['src="../../logo.png"', 'src="../../../logo.png"'],
+  ],
+  metaSwaps: [
+    ['<title>Tongkrongan VespaKita</title>', '<title>VespaKita Chat Room</title>'],
+  ],
+});

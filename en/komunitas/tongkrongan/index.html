@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tongkrongan VespaKita</title>
+<title>VespaKita Chat Room</title>
 <meta name="robots" content="noindex, nofollow">
-<link rel="icon" type="image/png" href="../../favicon.png">
+<link rel="icon" type="image/png" href="../../../favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -134,25 +134,25 @@
 
 <nav>
   <div class="wrap-nav">
-    <a href="/" class="logo"><img src="../../logo.png" alt="VespaKita Logo"></a>
+    <a href="/" class="logo"><img src="../../../logo.png" alt="VespaKita Logo"></a>
     <div class="navlinks">
-      <a href="/">Beranda</a>
+      <a href="/">Home</a>
       <a href="/marketplace/">Marketplace</a>
-      <a href="/komunitas/" class="active">Komunitas</a>
+      <a href="/komunitas/" class="active">Community</a>
     </div>
     <div class="lang-selector">
-      <a href="/komunitas/tongkrongan/" class="active" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
+      <a href="/komunitas/tongkrongan/" onclick="localStorage.setItem('lang_pref', 'id')">ID</a>
       <span>|</span>
-      <a href="/en/komunitas/tongkrongan/" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
+      <a href="/en/komunitas/tongkrongan/" class="active" onclick="localStorage.setItem('lang_pref', 'en')">EN</a>
     </div>
-    <a href="../daftar/" class="navcta" style="visibility:hidden;">Daftar Komunitas</a>
+    <a href="../daftar/" class="navcta" style="visibility:hidden;">Join Community</a>
   </div>
 </nav>
 
 <div class="wrap-wide" style="max-width:1120px; margin:0 auto; padding:0 24px;">
   <div style="display:flex; gap:32px; border-bottom:1px solid rgba(255,255,255,0.1); margin-bottom:24px; padding-top:12px;">
-    <a href="../" style="padding-bottom:12px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--chrome); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--krem)'" onmouseout="this.style.color='var(--chrome)'">Ruang Komunitas</a>
-    <a href="#" style="padding-bottom:12px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--krem); border-bottom:2px solid var(--merah); text-decoration:none;">Ruang Obrolan</a>
+    <a href="../" style="padding-bottom:12px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--chrome); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--krem)'" onmouseout="this.style.color='var(--chrome)'">Community Space</a>
+    <a href="#" style="padding-bottom:12px; font-family:var(--mono); font-size:13px; text-transform:uppercase; letter-spacing:0.08em; font-weight:700; color:var(--krem); border-bottom:2px solid var(--merah); text-decoration:none;">Chat Room</a>
   </div>
 </div>
 
@@ -162,7 +162,7 @@
     <div class="composer-top">
       <div class="avatar" id="my-avatar">?</div>
       <div class="composer-input">
-        <textarea id="post-content" placeholder="Ada topik seru anak Vespa hari ini?"></textarea>
+        <textarea id="post-content" placeholder="Got an interesting Vespa topic today?"></textarea>
         
         <div id="photo-preview">
           <img src="" id="photo-img">
@@ -173,7 +173,7 @@
           <div id="google-signin-btn"></div>
           <div class="disclaimer">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-            Silakan login terlebih dahulu untuk bergabung dalam obrolan. Nama & foto akan otomatis mengikuti profil Google kamu.
+            Please log in first to join the chat. Your name & photo will automatically follow your Google profile.
           </div>
         </div>
 
@@ -181,7 +181,7 @@
           <input type="file" id="photo-upload" accept="image/jpeg,image/png,image/webp" style="display:none">
           <button class="attach-btn" onclick="document.getElementById('photo-upload').click()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>
-            Lampirkan Foto
+            Attach Photo
           </button>
           <button class="post-btn" id="submit-btn" onclick="submitPost()">Post</button>
         </div>
@@ -192,7 +192,7 @@
   <div class="feed" id="feed-container">
     <!-- Threads will be injected here -->
     <div style="text-align:center; padding:40px; color:var(--chrome); font-family:var(--mono);">
-      Memuat obrolan...
+      Loading chat...
     </div>
   </div>
 </div>
@@ -207,12 +207,12 @@
   // Time Ago Formatter
   function timeAgo(dateStr) {
     const seconds = Math.floor((new Date() - new Date(dateStr)) / 1000);
-    if (seconds < 60) return "Baru saja";
+    if (seconds < 60) return "Just now";
     const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m yang lalu`;
+    if (minutes < 60) return `${minutes}m ago`;
     const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}j yang lalu`;
-    return `${Math.floor(hours / 24)}h yang lalu`;
+    if (hours < 24) return `${hours}h ago`;
+    return `${Math.floor(hours / 24)}d ago`;
   }
   
   // Hash string to color for Avatar
@@ -316,7 +316,7 @@
     } catch(e) {
       document.getElementById('feed-container').innerHTML = `
         <div style="text-align:center; padding:40px; color:var(--merah); background:rgba(194,39,45,0.1); border-radius:12px;">
-          (Mocking View) API tidak tersedia di Python HTTP Server. Tampilan lokal ini hanya untuk preview desain.
+          (Mocking View) API not available on Python HTTP Server. This local view is for design preview only.
         </div>`;
         
       // Render fake mock data for localhost preview
@@ -372,7 +372,7 @@
               </button>
               <button class="action-btn" onclick="toggleReplyBox('${escapeHtml(p.id)}')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                Balas
+                Reply
               </button>
             </div>
           </div>
@@ -404,7 +404,7 @@
         </div>
         
         <div class="inline-reply" id="reply-box-${p.id}">
-          <input type="text" id="reply-input-${p.id}" placeholder="Balas obrolan ini...">
+          <input type="text" id="reply-input-${p.id}" placeholder="Reply to this chat...">
           <button onclick="submitReply('${p.id}')">Kirim</button>
         </div>
       </div>`;
@@ -438,15 +438,15 @@
     const content = document.getElementById('post-content').value;
     const idToken = sessionStorage.getItem(STORAGE_KEY);
 
-    if(!content.trim()) return alert("Tulis sesuatu dulu!");
+    if(!content.trim()) return alert("Write something first!");
     if(!idToken) {
       showLoggedOut();
-      return alert("Login dulu pakai Google ya!");
+      return alert("Please log in with Google first!");
     }
 
     const btn = document.getElementById('submit-btn');
     btn.disabled = true;
-    btn.textContent = "Mengirim...";
+    btn.textContent = "Sending...";
 
     const fd = new FormData();
     fd.append('content', content.trim());
@@ -456,9 +456,9 @@
     try {
       const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
       if(!res.ok) {
-        if(res.status === 429) { alert("Tunggu 10 detik sebelum post lagi ya."); return; }
-        if(res.status === 401) { showLoggedOut(); alert("Sesi login habis, silakan login lagi."); return; }
-        throw new Error("Gagal kirim, coba lagi.");
+        if(res.status === 429) { alert("Please wait 10 seconds before posting again."); return; }
+        if(res.status === 401) { showLoggedOut(); alert("Your login session has expired, please log in again."); return; }
+        throw new Error("Failed to send, please try again.");
       }
 
       document.getElementById('post-content').value = '';
@@ -466,7 +466,7 @@
       await loadFeed();
     } catch(e) {
       // Mock success in localhost (plain static preview, no Functions/D1 available)
-      alert("Karena di localhost python, API tidak diproses. Tampilan direfresh.");
+      alert("Since this is localhost python, the API was not processed. View refreshed.");
       document.getElementById('post-content').value = '';
       document.getElementById('remove-photo').click();
     } finally {
@@ -482,7 +482,7 @@
 
     if(!content.trim()) return;
     if(!idToken) {
-      alert("Login dulu pakai Google di bagian atas ya!");
+      alert("Please log in with Google at the top first!");
       document.querySelector('.composer').scrollIntoView({ behavior: 'smooth' });
       return;
     }
@@ -497,16 +497,16 @@
     try {
       const res = await fetch('/api/tongkrongan', { method: 'POST', body: fd });
       if(!res.ok) {
-        if(res.status === 429) { alert("Tunggu 10 detik sebelum post lagi ya."); input.disabled = false; return; }
-        if(res.status === 401) { showLoggedOut(); alert("Sesi login habis, silakan login lagi."); input.disabled = false; return; }
-        throw new Error("Gagal kirim");
+        if(res.status === 429) { alert("Please wait 10 seconds before posting again."); input.disabled = false; return; }
+        if(res.status === 401) { showLoggedOut(); alert("Your login session has expired, please log in again."); input.disabled = false; return; }
+        throw new Error("Failed to send");
       }
       input.value = '';
       input.disabled = false;
       document.getElementById(`reply-box-${parentId}`).classList.remove('active');
       await loadFeed();
     } catch(e) {
-      alert("Localhost python mock: Balasan pura-pura terkirim.");
+      alert("Localhost python mock: Reply pretend-sent.");
       input.value = '';
       input.disabled = false;
       document.getElementById(`reply-box-${parentId}`).classList.remove('active');

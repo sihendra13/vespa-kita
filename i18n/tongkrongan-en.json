@@ -1,0 +1,28 @@
+{
+  "_comment": "id -> en text pairs for komunitas/tongkrongan/index.html, used by build-en.js. Actual chat posts/replies are live user-generated content and are never translated — this is UI chrome only. Dev-only local-mock-fallback strings are included too for completeness even though real users never see them.",
+
+  "Silakan login terlebih dahulu untuk bergabung dalam obrolan. Nama & foto akan otomatis mengikuti profil Google kamu.": "Please log in first to join the chat. Your name & photo will automatically follow your Google profile.",
+  "Lampirkan Foto": "Attach Photo",
+  "Memuat obrolan...": "Loading chat...",
+  "Ada topik seru anak Vespa hari ini?": "Got an interesting Vespa topic today?",
+  "Balas obrolan ini...": "Reply to this chat...",
+  "Balas": "Reply",
+
+  "Baru saja": "Just now",
+  "${minutes}m yang lalu": "${minutes}m ago",
+  "${hours}j yang lalu": "${hours}h ago",
+  "${Math.floor(hours / 24)}h yang lalu": "${Math.floor(hours / 24)}d ago",
+
+  "Tulis sesuatu dulu!": "Write something first!",
+  "Login dulu pakai Google ya!": "Please log in with Google first!",
+  "Login dulu pakai Google di bagian atas ya!": "Please log in with Google at the top first!",
+  "Mengirim...": "Sending...",
+  "Tunggu 10 detik sebelum post lagi ya.": "Please wait 10 seconds before posting again.",
+  "Sesi login habis, silakan login lagi.": "Your login session has expired, please log in again.",
+  "Gagal kirim, coba lagi.": "Failed to send, please try again.",
+  "Gagal kirim": "Failed to send",
+
+  "(Mocking View) API tidak tersedia di Python HTTP Server. Tampilan lokal ini hanya untuk preview desain.": "(Mocking View) API not available on Python HTTP Server. This local view is for design preview only.",
+  "Karena di localhost python, API tidak diproses. Tampilan direfresh.": "Since this is localhost python, the API was not processed. View refreshed.",
+  "Localhost python mock: Balasan pura-pura terkirim.": "Localhost python mock: Reply pretend-sent."
+}
