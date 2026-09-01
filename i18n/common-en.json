@@ -1,0 +1,9 @@
+{
+  "_comment": "Shared id -> en pairs reused across every /en/ page's nav, bottom-nav, and footer (marketplace-en.json, komunitas-en.json, etc. all include this).",
+
+  "Beranda": "Home",
+  "Jual Beli": "Marketplace",
+  "Event": "Events",
+  "Komunitas": "Community",
+  "Kolaborasi": "Collaborate"
+}

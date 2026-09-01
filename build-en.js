@@ -157,7 +157,7 @@ buildHomepage();
 buildPage({
   src: "marketplace/index.html",
   out: "marketplace/index.html",
-  dicts: [path.join(ROOT, "i18n", "marketplace-en.json")],
+  dicts: [path.join(ROOT, "i18n", "common-en.json"), path.join(ROOT, "i18n", "marketplace-en.json")],
   canonicalPath: "/marketplace/",
   assetSwaps: [
     ['href="../favicon.png"', 'href="../../favicon.png"'],
@@ -174,5 +174,23 @@ buildPage({
       '<meta property="og:description" content="Jual beli Vespa tanpa takut kena tipu. Setiap listing dicek manual oleh tim VespaKita sebelum tayang, hubungi penjual langsung lewat WhatsApp.">',
       '<meta property="og:description" content="Buy and sell Vespas without fear of scams. Every listing is manually checked by the VespaKita team before going live — contact sellers directly via WhatsApp.">',
     ],
+  ],
+});
+
+buildPage({
+  src: "komunitas/index.html",
+  out: "komunitas/index.html",
+  dicts: [path.join(ROOT, "i18n", "common-en.json"), path.join(ROOT, "i18n", "komunitas-en.json")],
+  canonicalPath: "/komunitas/",
+  assetSwaps: [
+    ['href="../favicon.png"', 'href="../../favicon.png"'],
+    ['src="../logo.png"', 'src="../../logo.png"'],
+    ['src="../60s-yogyakarta/sponsor-hs.jpg"', 'src="../../60s-yogyakarta/sponsor-hs.jpg"'],
+    ['src="../60s-yogyakarta/sponsor-kenanga.jpg"', 'src="../../60s-yogyakarta/sponsor-kenanga.jpg"'],
+    ['src="../60s-yogyakarta/sponsor-unlock.png"', 'src="../../60s-yogyakarta/sponsor-unlock.png"'],
+    ['src="../60s-yogyakarta/sponsor-northy.png"', 'src="../../60s-yogyakarta/sponsor-northy.png"'],
+  ],
+  metaSwaps: [
+    ['<title>Direktori Komunitas Vespa | VespaKita</title>', '<title>Vespa Community Directory | VespaKita</title>'],
   ],
 });

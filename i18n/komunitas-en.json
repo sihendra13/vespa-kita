@@ -1,0 +1,26 @@
+{
+  "_comment": "id -> en text pairs for komunitas/index.html, used by build-en.js. Community names/descriptions (user-generated) are intentionally NOT translated.",
+
+  "Daftar Komunitas": "Join Community",
+  "Ruang Komunitas": "Community Space",
+  "Ruang Obrolan": "Chat Room",
+  "Untuk Komunitas Vespa Indonesia": "For Vespa Communities in Indonesia",
+  "PUNYA EVENT?": "HAVE AN EVENT?",
+  "DAPATKAN DUKUNGAN SPONSOR": "GET SPONSOR SUPPORT",
+  "VespaKita siap membantu komunitas kamu mendapatkan dukungan sponsor untuk kegiatan touring, gathering, atau jambore melalui jaringan brand yang telah kami bangun. Terbukti:": "VespaKita is ready to help your community get sponsor support for touring, gathering, or jamboree events through the brand network we have built. Proven:",
+  "(Vespa 60's Yogyakarta) sukses bersinergi dengan 4 brand nasional.": "(Vespa 60's Yogyakarta) successfully partnered with 4 national brands.",
+  "Daftarkan Komunitas": "Register Your Community",
+  "Lihat Jejaring Komunitas": "View Community Network",
+  "Partner Komunitas": "Partner Communities",
+  "Mitra Brand": "Brand Partners",
+  "Total Anggota": "Total Members",
+  "Sinergi yang Menghidupkan Skena": "A Synergy That Brings the Scene to Life",
+  "Perjalanan Vespa 60's Yogyakarta menuju ajang bergengsi Jamnas Vespa 60's Indonesia 2026 menjadi portofolio kebanggaan kami dalam menjembatani semangat komunitas dengan dukungan penuh dari berbagai brand terkemuka.": "The journey of Vespa 60's Yogyakarta to the prestigious Jamnas Vespa 60's Indonesia 2026 event is a portfolio we are proud of, bridging community spirit with full support from leading brands.",
+  "Jejaring Komunitas & Event": "Community & Event Network",
+
+  "' Anggota'": "' Members'",
+  "'Anggota aktif'": "'Active members'",
+  "Belum ada komunitas yang tayang.": "No communities live yet.",
+  "Lihat profil ${c.name}": "View profile: ${c.name}",
+  "Terverifikasi": "Verified"
+}
