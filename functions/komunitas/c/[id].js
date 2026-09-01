@@ -1,19 +1,32 @@
-// Cloudflare Pages Function — GET /komunitas/c/:id
+// Cloudflare Pages Function — GET /komunitas/c/:id (and, via the thin
+// wrapper at functions/en/komunitas/c/[id].js, GET /en/komunitas/c/:id)
 // Full, shareable, SEO-indexable profile page for one published community —
 // same pattern as functions/marketplace/l/[id].js: server-rendered HTML with
 // real OG tags, sourced from D1 instead of a hand-written file per community.
+//
+// Community content (name, description, event titles/descriptions, member
+// comments) is whatever the organizer/members typed and is never translated
+// on the /en/ route — only this file's own UI chrome (labels, buttons, nav)
+// is.
 
 import { escapeHtml } from "../../_lib/html.js";
 
 const SITE_URL = "https://www.vespakita.com";
 
-function notFoundPage() {
+// UI chrome strings. t(lang, id, en) picks the right one — every other
+// static label in the template below goes through this instead of being
+// hardcoded, so the /en/ wrapper doesn't need its own copy of the file.
+function t(lang, id, en) {
+  return lang === "en" ? en : id;
+}
+
+function notFoundPage(lang) {
   const html = `<!DOCTYPE html>
-<html lang="id">
+<html lang="${lang}">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Komunitas Tidak Ditemukan | VespaKita</title>
+<title>${t(lang, "Komunitas Tidak Ditemukan", "Community Not Found")} | VespaKita</title>
 <meta name="robots" content="noindex">
 <link rel="icon" type="image/png" href="/favicon.png">
 <style>
@@ -23,33 +36,34 @@ function notFoundPage() {
 </head>
 <body>
   <div>
-    <h1 style="font-size:24px; margin-bottom:12px;">Komunitas tidak ditemukan</h1>
-    <p style="opacity:0.75; margin-bottom:20px;">Mungkin belum di-approve, sudah dihapus, atau linknya salah.</p>
-    <a href="/komunitas/">&larr; Kembali ke Direktori Komunitas</a>
+    <h1 style="font-size:24px; margin-bottom:12px;">${t(lang, "Komunitas tidak ditemukan", "Community not found")}</h1>
+    <p style="opacity:0.75; margin-bottom:20px;">${t(lang, "Mungkin belum di-approve, sudah dihapus, atau linknya salah.", "It may not be approved yet, was removed, or the link is wrong.")}</p>
+    <a href="${lang === "en" ? "/en/komunitas/" : "/komunitas/"}">&larr; ${t(lang, "Kembali ke Direktori Komunitas", "Back to Community Directory")}</a>
   </div>
 </body>
 </html>`;
   return new Response(html, { status: 404, headers: { "content-type": "text/html; charset=UTF-8" } });
 }
 
-export async function onRequestGet(context) {
+export async function renderCommunityPage(context, lang) {
   const { env, params } = context;
   if (!env.DB) return new Response("DB not bound", { status: 500 });
 
   const id = params.id;
   const community = await env.DB.prepare(`SELECT * FROM communities WHERE id = ? AND status = 'published'`).bind(id).first();
-  if (!community) return notFoundPage();
+  if (!community) return notFoundPage(lang);
 
   const { results: eventRows } = await env.DB
     .prepare(`SELECT * FROM community_events WHERE community_id = ? AND status = 'published' ORDER BY submitted_at DESC`)
     .bind(id)
     .all();
 
-  const canonicalUrl = `${SITE_URL}/komunitas/c/${id}`;
+  const langPrefix = lang === "en" ? "/en" : "";
+  const canonicalUrl = `${SITE_URL}${langPrefix}/komunitas/c/${id}`;
   const ogImage = community.cover_photo_url || community.logo_url || `${SITE_URL}/logo-share.png`;
   const ogDescription = community.description
     ? community.description.slice(0, 160)
-    : `Profil komunitas ${community.name} di VespaKita.`;
+    : t(lang, `Profil komunitas ${community.name} di VespaKita.`, `${community.name}'s community profile on VespaKita.`);
 
   const waHref = `https://wa.me/${community.wa}`;
   const igHref = `https://instagram.com/${community.ig}`;
@@ -61,7 +75,7 @@ export async function onRequestGet(context) {
       const apparelSponsors = sponsorLogos.filter(url => url.toLowerCase().includes("northy"));
       const sponsorBlock = sponsorLogos.length
         ? `<div style="margin-top:24px; padding:24px; background:rgba(0,0,0,0.25); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); border-radius:16px; border:1px solid rgba(255,255,255,0.06); box-shadow:0 8px 32px rgba(0,0,0,0.3);">
-            ${mainSponsors.length ? 
+            ${mainSponsors.length ?
               `<div style="font-family:var(--mono); font-size:13px; letter-spacing:0.15em; color:#f1e8d6; text-transform:uppercase; font-weight:600; margin-bottom:16px;">
                 SUPPORTED BY
                 <div style="width:60px; height:1px; background:rgba(255,255,255,0.2); margin-top:8px;"></div>
@@ -72,28 +86,28 @@ export async function onRequestGet(context) {
                   const imgStyle = isUnlock ? "height:44px; width:auto; object-fit:contain; mix-blend-mode:multiply; transform:scale(1.2);" : "height:44px; width:auto; object-fit:contain; mix-blend-mode:multiply;";
                   return `<div style="background:#ffffff; border-radius:12px; padding:10px 14px; height:68px; min-width:80px; display:flex; align-items:center; justify-content:center; overflow:hidden;"><img src="${escapeHtml(url)}" style="${imgStyle}"></div>`;
                 }).join("")}
-              </div>` 
+              </div>`
             : ""}
-            ${apparelSponsors.length ? 
+            ${apparelSponsors.length ?
               `<div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                 <span style="font-family:var(--mono); font-size:11.5px; letter-spacing:0.1em; color:#4ade80; text-transform:uppercase; font-weight:600;">Apparel Partner:</span>
                 ${apparelSponsors.map(url => `<img src="${escapeHtml(url)}" style="height:24px; width:auto; object-fit:contain; filter:brightness(0) invert(1) drop-shadow(0 0 6px rgba(255,255,255,0.5));">`).join("")}
-              </div>` 
+              </div>`
             : ""}
           </div>`
         : "";
       const statusBadge = sponsorLogos.length
-        ? `<div class="event-status" style="background:rgba(212,175,55,0.12); color:var(--emas); border:1px solid rgba(212,175,55,0.35);">&#10003; Sponsor Berhasil Didapat VespaKita</div>`
-        : `<div class="event-status open">Terbuka Kolaborasi</div>`;
+        ? `<div class="event-status" style="background:rgba(212,175,55,0.12); color:var(--emas); border:1px solid rgba(212,175,55,0.35);">&#10003; ${t(lang, "Sponsor Berhasil Didapat VespaKita", "Sponsorship Secured via VespaKita")}</div>`
+        : `<div class="event-status open">${t(lang, "Terbuka Kolaborasi", "Open for Collaboration")}</div>`;
       const detailLink = e.detail_url
-        ? `<a href="${escapeHtml(e.detail_url)}" class="btn btn-outline btn-sm" style="margin-top:16px;">Lihat Detail Lengkap</a>`
+        ? `<a href="${escapeHtml(e.detail_url)}" class="btn btn-outline btn-sm" style="margin-top:16px;">${t(lang, "Lihat Detail Lengkap", "View Full Details")}</a>`
         : "";
       return `
       <div class="event-card">
         <div class="event-body" style="flex:1;">
           ${statusBadge}
           <div class="event-title">${escapeHtml(e.title)}</div>
-          <div class="event-meta">${escapeHtml(e.event_date_text || "-")} &middot; ~${e.participant_estimate || "?"} peserta</div>
+          <div class="event-meta">${escapeHtml(e.event_date_text || "-")} &middot; ~${e.participant_estimate || "?"} ${t(lang, "peserta", "participants")}</div>
           ${e.description ? `<div class="event-desc" style="margin-top:8px;">${escapeHtml(e.description)}</div>` : ""}
           ${sponsorBlock}
           ${detailLink}
@@ -107,8 +121,8 @@ export async function onRequestGet(context) {
        <section class="dark" id="kegiatan">
          <div class="wrap">
            <div class="section-head">
-             <div class="eyebrow">Event &amp; Kegiatan</div>
-             <h2>Kegiatan</h2>
+             <div class="eyebrow">${t(lang, "Event &amp; Kegiatan", "Events &amp; Activities")}</div>
+             <h2>${t(lang, "Kegiatan", "Activities")}</h2>
            </div>
            <div class="event-grid">${eventsHtml}</div>
          </div>
@@ -116,7 +130,7 @@ export async function onRequestGet(context) {
     : "";
 
   const html = `<!DOCTYPE html>
-<html lang="id">
+<html lang="${lang}">
 <head>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6LLXWQ6MMM"></script>
 <script>
@@ -127,7 +141,7 @@ export async function onRequestGet(context) {
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(community.name)} | Komunitas VespaKita</title>
+<title>${escapeHtml(community.name)} | ${t(lang, "Komunitas VespaKita", "VespaKita Community")}</title>
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#15171A">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -139,13 +153,13 @@ export async function onRequestGet(context) {
 <meta property="og:type" content="profile">
 <meta property="og:url" content="${canonicalUrl}">
 <meta property="og:site_name" content="VespaKita">
-<meta property="og:locale" content="id_ID">
-<meta property="og:title" content="${escapeHtml(community.name)} | Komunitas VespaKita">
+<meta property="og:locale" content="${lang === "en" ? "en_US" : "id_ID"}">
+<meta property="og:title" content="${escapeHtml(community.name)} | ${t(lang, "Komunitas VespaKita", "VespaKita Community")}">
 <meta property="og:description" content="${escapeHtml(ogDescription)}">
 <meta property="og:image" content="${escapeHtml(ogImage)}">
 
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${escapeHtml(community.name)} | Komunitas VespaKita">
+<meta name="twitter:title" content="${escapeHtml(community.name)} | ${t(lang, "Komunitas VespaKita", "VespaKita Community")}">
 <meta name="twitter:description" content="${escapeHtml(ogDescription)}">
 <meta name="twitter:image" content="${escapeHtml(ogImage)}">
 
@@ -252,11 +266,11 @@ export async function onRequestGet(context) {
 
 <nav class="top">
   <div class="wrap">
-    <a href="/" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
+    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
     <div class="navlinks">
-      <a href="/">Beranda</a>
-      <a href="/marketplace/">Marketplace</a>
-      <a href="/komunitas/">Komunitas</a>
+      <a href="${lang === "en" ? "/en/" : "/"}">${t(lang, "Beranda", "Home")}</a>
+      <a href="${langPrefix}/marketplace/">Marketplace</a>
+      <a href="${langPrefix}/komunitas/">${t(lang, "Komunitas", "Community")}</a>
     </div>
   </div>
 </nav>
@@ -270,16 +284,16 @@ export async function onRequestGet(context) {
       <div class="profile-info">
         <div class="profile-name">
           ${escapeHtml(community.name)}
-          <svg class="profile-badge" viewBox="0 0 24 24" fill="currentColor" title="Terverifikasi"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
+          <svg class="profile-badge" viewBox="0 0 24 24" fill="currentColor" title="${t(lang, "Terverifikasi", "Verified")}"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
         </div>
         <div class="profile-meta">
           <span>&#128205; ${escapeHtml(community.city)}</span>
-          ${community.member_estimate ? `<span>${escapeHtml(community.member_estimate)} Anggota</span>` : ""}
+          ${community.member_estimate ? `<span>${escapeHtml(community.member_estimate)} ${t(lang, "Anggota", "Members")}</span>` : ""}
         </div>
       </div>
       <div class="profile-actions">
         ${community.ig ? `<a href="${escapeHtml(igHref)}" target="_blank" rel="noopener" class="btn btn-outline" style="display:flex; align-items:center; gap:8px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg> Instagram</a>` : ""}
-        ${community.wa ? `<a href="${escapeHtml(waHref)}" target="_blank" rel="noopener" class="btn btn-primary">Hubungi via WA</a>` : ""}
+        ${community.wa ? `<a href="${escapeHtml(waHref)}" target="_blank" rel="noopener" class="btn btn-primary">${t(lang, "Hubungi via WA", "Contact via WA")}</a>` : ""}
       </div>
     </div>
 
@@ -294,28 +308,28 @@ ${eventsSection}
 <section class="dark" id="komentar">
   <div class="wrap narrow">
     <div class="section-head">
-      <div class="eyebrow">Komentar</div>
-      <h2>Diskusi</h2>
-      <p style="margin-top:10px; color:var(--chrome); font-size:14px;">Tanya soal event, ajak gabung, atau kasih testimoni. Login diperlukan supaya komentar bukan dari akun palsu.</p>
+      <div class="eyebrow">${t(lang, "Komentar", "Comments")}</div>
+      <h2>${t(lang, "Diskusi", "Discussion")}</h2>
+      <p style="margin-top:10px; color:var(--chrome); font-size:14px;">${t(lang, "Tanya soal event, ajak gabung, atau kasih testimoni. Login diperlukan supaya komentar bukan dari akun palsu.", "Ask about events, invite others to join, or leave a testimonial. Login is required so comments can't come from fake accounts.")}</p>
     </div>
     <div class="comment-box">
       <div class="login-gate" id="login-gate">
-        <p>Login untuk ikut berkomentar di halaman komunitas ini.</p>
+        <p>${t(lang, "Login untuk ikut berkomentar di halaman komunitas ini.", "Log in to join the discussion on this community page.")}</p>
         <div id="google-signin-btn"></div>
       </div>
 
       <div class="comment-composer" id="composer">
         <div class="avatar" id="my-avatar"></div>
         <div class="composer-input">
-          <textarea id="comment-input" placeholder="Tulis komentar..." maxlength="500"></textarea>
+          <textarea id="comment-input" placeholder="${t(lang, "Tulis komentar...", "Write a comment...")}" maxlength="500"></textarea>
           <div class="composer-actions">
             <span class="composer-msg" id="composer-msg"></span>
-            <button class="btn btn-primary btn-sm" id="btn-post-comment">Kirim</button>
+            <button class="btn btn-primary btn-sm" id="btn-post-comment">${t(lang, "Kirim", "Send")}</button>
           </div>
         </div>
       </div>
 
-      <div class="comment-list" id="comment-list"><div class="comment-empty">Memuat komentar...</div></div>
+      <div class="comment-list" id="comment-list"><div class="comment-empty">${t(lang, "Memuat komentar...", "Loading comments...")}</div></div>
     </div>
   </div>
 </section>
@@ -327,32 +341,32 @@ ${eventsSection}
       <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
     </div>
     <div class="foot-links">
-      <a href="/">Beranda</a>
-      <a href="/komunitas/">Komunitas</a>
+      <a href="${lang === "en" ? "/en/" : "/"}">${t(lang, "Beranda", "Home")}</a>
+      <a href="${langPrefix}/komunitas/">${t(lang, "Komunitas", "Community")}</a>
     </div>
   </div>
 </footer>
 
 <nav class="bottom-nav">
-  <a href="/" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-    <span>Beranda</span>
+    <span>${t(lang, "Beranda", "Home")}</span>
   </a>
-  <a href="/marketplace/" class="bnav-item">
+  <a href="${langPrefix}/marketplace/" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-    <span>Jual Beli</span>
+    <span>${t(lang, "Jual Beli", "Marketplace")}</span>
   </a>
-  <a href="/#next-events" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}#next-events" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-    <span>Event</span>
+    <span>${t(lang, "Event", "Events")}</span>
   </a>
-  <a href="/komunitas/" class="bnav-item active">
+  <a href="${langPrefix}/komunitas/" class="bnav-item active">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path><path d="M12 3.5a4 4 0 0 1 0 7"></path></svg>
-    <span>Komunitas</span>
+    <span>${t(lang, "Komunitas", "Community")}</span>
   </a>
-  <a href="/#kolaborasi" class="bnav-item">
+  <a href="${lang === "en" ? "/en/" : "/"}#kolaborasi" class="bnav-item">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-    <span>Kolaborasi</span>
+    <span>${t(lang, "Kolaborasi", "Collaborate")}</span>
   </a>
 </nav>
 
@@ -372,6 +386,7 @@ ${eventsSection}
     var COMMUNITY_ID = ${JSON.stringify(id)};
     var GOOGLE_CLIENT_ID = '214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.googleusercontent.com';
     var STORAGE_KEY = 'vk_google_id_token';
+    var IS_EN = ${JSON.stringify(lang === "en")};
 
     function escapeHtml(s){
       return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
@@ -379,7 +394,7 @@ ${eventsSection}
       });
     }
     function fmtTime(iso){
-      try{ return new Date(iso).toLocaleString('id-ID', {dateStyle:'medium', timeStyle:'short'}); }catch(e){ return ''; }
+      try{ return new Date(iso).toLocaleString(IS_EN ? 'en-US' : 'id-ID', {dateStyle:'medium', timeStyle:'short'}); }catch(e){ return ''; }
     }
     function decodeJwtPayload(token){
       try{
@@ -400,7 +415,7 @@ ${eventsSection}
 
     function renderComments(comments){
       if(!comments || comments.length === 0){
-        commentList.innerHTML = '<div class="comment-empty">Belum ada komentar. Jadi yang pertama!</div>';
+        commentList.innerHTML = '<div class="comment-empty">' + (IS_EN ? 'No comments yet. Be the first!' : 'Belum ada komentar. Jadi yang pertama!') + '</div>';
         return;
       }
       commentList.innerHTML = comments.map(function(c){
@@ -408,7 +423,7 @@ ${eventsSection}
           ? '<div class="avatar" style="background-image:url(\\'' + escapeHtml(c.userAvatarUrl) + '\\')"></div>'
           : '<div class="avatar">' + escapeHtml((c.userName || '?').charAt(0)) + '</div>';
         var adminBadge = c.isAdminReply
-          ? '<span class="admin-badge">Admin Komunitas</span>'
+          ? '<span class="admin-badge">' + (IS_EN ? 'Community Admin' : 'Admin Komunitas') + '</span>'
           : '';
         return '<div class="comment-item">' + avatar +
           '<div class="comment-content">' +
@@ -423,7 +438,7 @@ ${eventsSection}
       fetch('/api/comments?targetType=community&targetId=' + encodeURIComponent(COMMUNITY_ID))
         .then(function(r){ return r.json(); })
         .then(renderComments)
-        .catch(function(){ commentList.innerHTML = '<div class="comment-empty">Gagal memuat komentar.</div>'; });
+        .catch(function(){ commentList.innerHTML = '<div class="comment-empty">' + (IS_EN ? 'Failed to load comments.' : 'Gagal memuat komentar.') + '</div>'; });
     }
     loadComments();
 
@@ -467,7 +482,7 @@ ${eventsSection}
       if(!text) return;
       var idToken = sessionStorage.getItem(STORAGE_KEY);
       if(!idToken){
-        composerMsg.textContent = 'Sesi login habis, silakan login lagi.';
+        composerMsg.textContent = IS_EN ? 'Your login session has expired, please log in again.' : 'Sesi login habis, silakan login lagi.';
         return;
       }
       postBtn.disabled = true;
@@ -486,7 +501,7 @@ ${eventsSection}
               loginGate.style.display = 'flex';
               composer.classList.remove('active');
             }
-            composerMsg.textContent = res.data.error || 'Gagal mengirim komentar.';
+            composerMsg.textContent = res.data.error || (IS_EN ? 'Failed to submit comment.' : 'Gagal mengirim komentar.');
             return;
           }
           commentInput.value = '';
@@ -494,7 +509,7 @@ ${eventsSection}
         })
         .catch(function(){
           postBtn.disabled = false;
-          composerMsg.textContent = 'Gagal mengirim komentar, coba lagi.';
+          composerMsg.textContent = IS_EN ? 'Failed to submit comment, please try again.' : 'Gagal mengirim komentar, coba lagi.';
         });
     });
   })();
@@ -503,4 +518,8 @@ ${eventsSection}
 </html>`;
 
   return new Response(html, { headers: { "content-type": "text/html; charset=UTF-8" } });
+}
+
+export async function onRequestGet(context) {
+  return renderCommunityPage(context, "id");
 }
