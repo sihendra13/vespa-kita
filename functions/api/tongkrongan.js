@@ -1,5 +1,6 @@
 import { parseCloudinaryUrl, cloudinaryUpload } from "../_lib/cloudinary.js";
 import { verifyGoogleIdToken } from "../_lib/google-auth.js";
+import { verifySessionToken } from "../_lib/session.js";
 
 // Same client ID used by the community comments login (functions/api/comments.js)
 // — not a secret, Google OAuth Client IDs are meant to be embedded in frontend code.
@@ -83,6 +84,7 @@ export async function onRequestPost(context) {
 
   const content = fd.get("content");
   const idToken = fd.get("idToken");
+  const sessionToken = fd.get("sessionToken");
   const parentId = fd.get("parent_id") || null;
   const photo = fd.get("photo");
 
@@ -90,7 +92,9 @@ export async function onRequestPost(context) {
 
   let payload;
   try {
-    payload = await verifyGoogleIdToken(idToken, GOOGLE_CLIENT_ID);
+    payload = sessionToken
+      ? await verifySessionToken(env, sessionToken)
+      : await verifyGoogleIdToken(idToken, GOOGLE_CLIENT_ID);
   } catch (err) {
     return new Response(JSON.stringify({ error: "Login sudah kedaluwarsa, silakan login lagi." }), {
       status: 401,

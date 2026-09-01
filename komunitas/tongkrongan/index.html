@@ -224,8 +224,11 @@
   }
   
   // ---------- Login Google (sama seperti kolom komentar komunitas) ----------
+  // Token Google cuma dipakai sekali buat login — langsung ditukar ke session
+  // token milik VespaKita sendiri (masa berlaku ~180 hari) lewat /api/auth-session,
+  // supaya user gak perlu login ulang tiap jam kayak batas token Google.
   const GOOGLE_CLIENT_ID = '214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.googleusercontent.com';
-  const STORAGE_KEY = 'vk_google_id_token';
+  const STORAGE_KEY = 'vk_session_token';
 
   const identityBox = document.getElementById('identity-box');
   const composerActions = document.getElementById('composer-actions');
@@ -265,10 +268,20 @@
     myAvatar.style.background = '';
   }
 
-  function handleCredentialResponse(response) {
-    localStorage.setItem(STORAGE_KEY, response.credential);
-    const payload = decodeJwtPayload(response.credential);
-    if (payload) showLoggedIn(payload);
+  async function handleCredentialResponse(response) {
+    try {
+      const res = await fetch('/api/auth-session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ idToken: response.credential })
+      });
+      if (!res.ok) throw new Error('auth-session failed');
+      const profile = await res.json();
+      localStorage.setItem(STORAGE_KEY, profile.sessionToken);
+      showLoggedIn(profile);
+    } catch (e) {
+      alert('Gagal login, coba lagi.');
+    }
   }
 
   function initGoogleButton() {
@@ -436,10 +449,10 @@
   
   async function submitPost() {
     const content = document.getElementById('post-content').value;
-    const idToken = localStorage.getItem(STORAGE_KEY);
+    const sessionToken = localStorage.getItem(STORAGE_KEY);
 
     if(!content.trim()) return alert("Tulis sesuatu dulu!");
-    if(!idToken) {
+    if(!sessionToken) {
       showLoggedOut();
       return alert("Login dulu pakai Google ya!");
     }
@@ -450,7 +463,7 @@
 
     const fd = new FormData();
     fd.append('content', content.trim());
-    fd.append('idToken', idToken);
+    fd.append('sessionToken', sessionToken);
     if(selectedFile) fd.append('photo', selectedFile);
 
     try {
@@ -478,10 +491,10 @@
   async function submitReply(parentId) {
     const input = document.getElementById(`reply-input-${parentId}`);
     const content = input.value;
-    const idToken = localStorage.getItem(STORAGE_KEY);
+    const sessionToken = localStorage.getItem(STORAGE_KEY);
 
     if(!content.trim()) return;
-    if(!idToken) {
+    if(!sessionToken) {
       alert("Login dulu pakai Google di bagian atas ya!");
       document.querySelector('.composer').scrollIntoView({ behavior: 'smooth' });
       return;
@@ -491,7 +504,7 @@
 
     const fd = new FormData();
     fd.append('content', content.trim());
-    fd.append('idToken', idToken);
+    fd.append('sessionToken', sessionToken);
     fd.append('parent_id', parentId);
 
     try {

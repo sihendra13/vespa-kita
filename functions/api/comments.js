@@ -6,6 +6,7 @@
 // be posted under someone else's name.
 
 import { verifyGoogleIdToken } from "../_lib/google-auth.js";
+import { verifySessionToken } from "../_lib/session.js";
 
 // Not a secret — Google OAuth Client IDs are meant to be embedded in frontend code.
 const GOOGLE_CLIENT_ID = "214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.googleusercontent.com";
@@ -75,7 +76,7 @@ async function handlePost(request, env) {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
   }
 
-  const { idToken, targetType, targetId, text } = body || {};
+  const { idToken, sessionToken, targetType, targetId, text } = body || {};
   if (targetType !== "community") {
     return new Response(JSON.stringify({ error: "Invalid target" }), { status: 400 });
   }
@@ -88,7 +89,9 @@ async function handlePost(request, env) {
 
   let payload;
   try {
-    payload = await verifyGoogleIdToken(idToken, GOOGLE_CLIENT_ID);
+    payload = sessionToken
+      ? await verifySessionToken(env, sessionToken)
+      : await verifyGoogleIdToken(idToken, GOOGLE_CLIENT_ID);
   } catch (err) {
     return new Response(JSON.stringify({ error: "Login sudah kedaluwarsa, silakan login lagi." }), { status: 401 });
   }

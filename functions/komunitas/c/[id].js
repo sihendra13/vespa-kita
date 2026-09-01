@@ -385,7 +385,11 @@ ${eventsSection}
   (function(){
     var COMMUNITY_ID = ${JSON.stringify(id)};
     var GOOGLE_CLIENT_ID = '214234294300-esr7idh546oipvt66hs8nti9b7oi476s.apps.googleusercontent.com';
-    var STORAGE_KEY = 'vk_google_id_token';
+    // Token Google cuma dipakai sekali buat login — langsung ditukar ke
+    // session token milik VespaKita sendiri (masa berlaku ~180 hari) lewat
+    // /api/auth-session, supaya user gak perlu login ulang tiap jam kayak
+    // batas token Google.
+    var STORAGE_KEY = 'vk_session_token';
     var IS_EN = ${JSON.stringify(lang === "en")};
 
     function escapeHtml(s){
@@ -450,9 +454,17 @@ ${eventsSection}
     }
 
     function handleCredentialResponse(response){
-      localStorage.setItem(STORAGE_KEY, response.credential);
-      var payload = decodeJwtPayload(response.credential);
-      if(payload) showLoggedIn(payload);
+      fetch('/api/auth-session', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ idToken: response.credential })
+      })
+        .then(function(r){ if(!r.ok) throw new Error('auth-session failed'); return r.json(); })
+        .then(function(profile){
+          localStorage.setItem(STORAGE_KEY, profile.sessionToken);
+          showLoggedIn(profile);
+        })
+        .catch(function(){ alert(IS_EN ? 'Login failed, please try again.' : 'Gagal login, coba lagi.'); });
     }
 
     if(window.google && google.accounts && google.accounts.id){
@@ -480,8 +492,8 @@ ${eventsSection}
     postBtn.addEventListener('click', function(){
       var text = commentInput.value.trim();
       if(!text) return;
-      var idToken = localStorage.getItem(STORAGE_KEY);
-      if(!idToken){
+      var sessionToken = localStorage.getItem(STORAGE_KEY);
+      if(!sessionToken){
         composerMsg.textContent = IS_EN ? 'Your login session has expired, please log in again.' : 'Sesi login habis, silakan login lagi.';
         return;
       }
@@ -490,7 +502,7 @@ ${eventsSection}
       fetch('/api/comments', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ idToken: idToken, targetType: 'community', targetId: COMMUNITY_ID, text: text })
+        body: JSON.stringify({ sessionToken: sessionToken, targetType: 'community', targetId: COMMUNITY_ID, text: text })
       })
         .then(function(r){ return r.json().then(function(data){ return { ok: r.ok, status: r.status, data: data }; }); })
         .then(function(res){
