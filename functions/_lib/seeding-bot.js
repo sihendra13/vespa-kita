@@ -68,8 +68,8 @@ export async function checkAndRunBot(env) {
     await env.DB.prepare(`
       INSERT INTO tongkrongan_posts 
       (id, parent_id, author_name, google_sub, user_email, user_avatar_url, content, status, created_at, likes_count)
-      VALUES (?, NULL, ?, 'bot-seeder', 'bot@vespakita.com', '', ?, 'visible', ?, 0)
-    `).bind(postId, topic.author, topic.content, nowISO).run();
+      VALUES (?, NULL, ?, 'bot-seeder', 'bot@vespakita.com', ?, ?, 'visible', ?, 0)
+    `).bind(postId, topic.author, `https://i.pravatar.cc/150?u=${topic.author}`, topic.content, nowISO).run();
 
     return true; // Bot just posted
   } catch (err) {
