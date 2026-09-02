@@ -96,7 +96,7 @@ export async function checkAndReplyBot(env) {
       JOIN tongkrongan_posts AS bot_thread ON user_reply.parent_id = bot_thread.id
       WHERE bot_thread.google_sub = 'bot-seeder'
         AND user_reply.google_sub != 'bot-seeder'
-        AND datetime(user_reply.created_at) <= datetime('now', '-2 minutes')
+        AND user_reply.created_at <= ?
         AND NOT EXISTS (
           SELECT 1 FROM tongkrongan_posts AS bot_response
           WHERE bot_response.parent_id = bot_thread.id
@@ -107,7 +107,8 @@ export async function checkAndReplyBot(env) {
       LIMIT 1
     `;
     
-    const candidate = await env.DB.prepare(query).first();
+    const twoMinsAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+    const candidate = await env.DB.prepare(query).bind(twoMinsAgo).first();
     if (!candidate) return { error: "No candidates found matching query" };
 
     // Meracik perintah ke Gemini
