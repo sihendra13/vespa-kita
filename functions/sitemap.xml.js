@@ -44,6 +44,8 @@ export async function onRequestGet(context) {
     urlBlock({ loc: `${SITE_URL}/vw-yogyakarta/`, changefreq: "monthly", priority: "0.6" })
   );
   urls.push(...bilingualPair("/marketplace/", "/en/marketplace/", { changefreq: "daily", idPriority: "0.9", enPriority: "0.7" }));
+  // No EN build exists for this one yet, unlike the pages above.
+  urls.push(urlBlock({ loc: `${SITE_URL}/marketplace/semua/`, changefreq: "daily", priority: "0.7" }));
   urls.push(...bilingualPair("/komunitas/", "/en/komunitas/", { changefreq: "weekly", idPriority: "0.8", enPriority: "0.6" }));
   urls.push(...bilingualPair("/komunitas/tongkrongan/", "/en/komunitas/tongkrongan/", { changefreq: "hourly", idPriority: "0.8", enPriority: "0.6" }));
   urls.push(...bilingualPair("/komunitas/daftar/", "/en/komunitas/daftar/", { changefreq: "monthly", idPriority: "0.4", enPriority: "0.3" }));
