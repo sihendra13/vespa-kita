@@ -81,7 +81,7 @@ export async function checkAndRunBot(env) {
 // Fitur AI Auto-Reply menggunakan Gemini
 export async function checkAndReplyBot(env) {
   try {
-    if (!env.GEMINI_API_KEY) return false; // Pastikan API Key ada
+    if (!env.GEMINI_API_KEY) return { error: "No GEMINI_API_KEY found" }; // Pastikan API Key ada
     
     // Cari 1 komentar user (minimal 2 menit lalu) yang belum dibalas bot
     const query = `
@@ -108,7 +108,7 @@ export async function checkAndReplyBot(env) {
     `;
     
     const candidate = await env.DB.prepare(query).first();
-    if (!candidate) return false; // Tidak ada yang perlu dibalas
+    if (!candidate) return { error: "No candidates found matching query" };
 
     // Meracik perintah ke Gemini
     const prompt = `Kamu adalah cowok anak Vespa bernama ${candidate.bot_name}.
@@ -131,12 +131,11 @@ Tuliskan langsung balasanmu tanpa tanda kutip.`;
     });
 
     if (!aiResponse.ok) {
-      console.error("Gemini Error:", await aiResponse.text());
-      return false;
+      const errText = await aiResponse.text(); console.error("Gemini Error:", errText); return { error: "Gemini API Error", details: errText };
     }
     
     const aiData = await aiResponse.json();
-    if (!aiData.candidates || aiData.candidates.length === 0) return false;
+    if (!aiData.candidates || aiData.candidates.length === 0) return { error: "No candidates in Gemini response", data: aiData };
     
     let replyContent = aiData.candidates[0].content.parts[0].text.trim();
     // Bersihkan kutipan kalau AI nambahin
@@ -154,7 +153,7 @@ Tuliskan langsung balasanmu tanpa tanda kutip.`;
       VALUES (?, ?, ?, 'bot-seeder', 'bot@vespakita.com', '', ?, 'visible', ?, 0)
     `).bind(replyId, candidate.thread_id, candidate.bot_name, replyContent, nowISO).run();
     
-    return true; // Berhasil membalas
+    return { success: true, replyContent };
   } catch (err) {
     console.error("AI Reply Bot Error:", err);
     return false;
