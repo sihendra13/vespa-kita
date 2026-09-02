@@ -222,7 +222,11 @@ buildPage({
     ['src="../../logo.png"', 'src="../../../logo.png"'],
   ],
   metaSwaps: [
-    ['<title>Daftarkan Komunitas Kamu | VespaKita</title>', '<title>Register Your Community | VespaKita</title>'],
+    ['Daftarkan Komunitas Kamu | VespaKita', 'Register Your Community | VespaKita'],
+    [
+      'Daftarkan komunitas Vespa kamu dan dapat halaman profil resmi di direktori — gratis, gampang, nggak perlu punya event dulu.',
+      'Register your Vespa community and get an official profile page in the directory — free, easy, no need to have an event first.',
+    ],
   ],
 });
 
