@@ -60,6 +60,8 @@ export async function renderCommunityPage(context, lang) {
 
   const langPrefix = lang === "en" ? "/en" : "";
   const canonicalUrl = `${SITE_URL}${langPrefix}/komunitas/c/${id}`;
+  const idUrl = `${SITE_URL}/komunitas/c/${id}`;
+  const enUrl = `${SITE_URL}/en/komunitas/c/${id}`;
   const ogImage = community.cover_photo_url || community.logo_url || `${SITE_URL}/logo-share.png`;
   const ogDescription = community.description
     ? community.description.slice(0, 160)
@@ -149,6 +151,9 @@ export async function renderCommunityPage(context, lang) {
 <meta name="description" content="${escapeHtml(ogDescription)}">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" hreflang="id" href="${idUrl}" />
+<link rel="alternate" hreflang="en" href="${enUrl}" />
+<link rel="alternate" hreflang="x-default" href="${idUrl}" />
 
 <meta property="og:type" content="profile">
 <meta property="og:url" content="${canonicalUrl}">

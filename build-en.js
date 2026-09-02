@@ -120,10 +120,15 @@ function buildPage({ src, out, dicts, canonicalPath, assetSwaps = [], metaSwaps 
   html = html.replace('<html lang="id">', '<html lang="en">');
   html = html.replace('<meta property="og:locale" content="id_ID">', '<meta property="og:locale" content="en_US">');
 
+  // Scoped to exactly the canonical <link> and og:url <meta> tags — NOT a
+  // bare href="X"/content="X" match, which would also catch (and wrongly
+  // rewrite) hreflang="id"/"x-default" <link> tags that happen to share the
+  // same ID-language URL string but must keep pointing at the ID version
+  // regardless of which language build is being generated.
   const canonicalFrom = `https://www.vespakita.com${canonicalPath}`;
   const canonicalTo = `https://www.vespakita.com/en${canonicalPath}`;
-  html = html.split(`href="${canonicalFrom}"`).join(`href="${canonicalTo}"`);
-  html = html.split(`content="${canonicalFrom}"`).join(`content="${canonicalTo}"`);
+  html = html.split(`<link rel="canonical" href="${canonicalFrom}" />`).join(`<link rel="canonical" href="${canonicalTo}" />`);
+  html = html.split(`<meta property="og:url" content="${canonicalFrom}">`).join(`<meta property="og:url" content="${canonicalTo}">`);
 
   for (const [from, to] of metaSwaps) {
     if (!html.includes(from)) { console.warn(`WARN: meta swap source not found in ${src}, skipping: ${from.slice(0, 60)}...`); continue; }
@@ -199,7 +204,11 @@ buildPage({
     ['src="../60s-yogyakarta/sponsor-northy.png"', 'src="../../60s-yogyakarta/sponsor-northy.png"'],
   ],
   metaSwaps: [
-    ['<title>Direktori Komunitas Vespa | VespaKita</title>', '<title>Vespa Community Directory | VespaKita</title>'],
+    ['Direktori Komunitas Vespa | VespaKita', 'Vespa Community Directory | VespaKita'],
+    [
+      'Direktori komunitas Vespa di seluruh Indonesia — cari komunitas sesuai kotamu, lihat event & kegiatan mereka, atau daftarkan komunitasmu sendiri gratis.',
+      'A directory of Vespa communities across Indonesia — find one in your city, see their events and activities, or register your own community for free.',
+    ],
   ],
 });
 
@@ -231,6 +240,10 @@ buildPage({
     ['src="../../logo.png"', 'src="../../../logo.png"'],
   ],
   metaSwaps: [
-    ['<title>Tongkrongan VespaKita</title>', '<title>VespaKita Chat Room</title>'],
+    ['Tongkrongan - Ruang Obrolan Vespa | VespaKita', 'Tongkrongan - Vespa Chat Room | VespaKita'],
+    [
+      'Ruang obrolan komunitas Vespa se-Indonesia. Ngobrol soal touring, sparepart, modifikasi, sampai info bengkel — langsung dari sesama anak Vespa.',
+      'A chat room for Vespa communities across Indonesia. Talk touring, spare parts, mods, or find a trusted workshop — straight from fellow Vespa riders.',
+    ],
   ],
 });

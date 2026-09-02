@@ -89,10 +89,36 @@ export async function renderListingPage(context, lang) {
   const isUnit = row.category !== "sparepart";
   const langPrefix = lang === "en" ? "/en" : "";
   const canonicalUrl = `${SITE_URL}${langPrefix}/marketplace/l/${id}`;
+  const idUrl = `${SITE_URL}/marketplace/l/${id}`;
+  const enUrl = `${SITE_URL}/en/marketplace/l/${id}`;
   const ogImage = photos[0] || `${SITE_URL}/logo-share.png`;
   const ogDescription = isUnit
     ? `${tv(lang, row.condition)} · ${row.year} · ${row.location}. ${fmtRupiah(price)}. ${t(lang, "Dicek manual oleh tim VespaKita.", "Manually checked by the VespaKita team.")}`
     : `${tv(lang, row.condition)} · ${row.location}. ${fmtRupiah(price)}. ${t(lang, "Dicek manual oleh tim VespaKita.", "Manually checked by the VespaKita team.")}`;
+
+  const itemCondition = !isUnit && /baru/i.test(row.condition || "")
+    ? "https://schema.org/NewCondition"
+    : "https://schema.org/UsedCondition";
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: title,
+    description: ogDescription,
+    image: photos,
+    sku: id,
+    url: canonicalUrl,
+    itemCondition,
+    ...(isUnit ? { brand: { "@type": "Brand", name: "Vespa" } } : {}),
+    offers: {
+      "@type": "Offer",
+      url: canonicalUrl,
+      priceCurrency: "IDR",
+      price: price,
+      availability: "https://schema.org/InStock",
+      itemCondition,
+      areaServed: "ID",
+    },
+  };
 
   // Sent to the (Indonesian-speaking) seller regardless of which language
   // page the buyer is on — same policy as every other seller-facing
@@ -156,6 +182,9 @@ export async function renderListingPage(context, lang) {
 <meta name="description" content="${escapeHtml(ogDescription)}">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="${canonicalUrl}" />
+<link rel="alternate" hreflang="id" href="${idUrl}" />
+<link rel="alternate" hreflang="en" href="${enUrl}" />
+<link rel="alternate" hreflang="x-default" href="${idUrl}" />
 
 <meta property="og:type" content="product">
 <meta property="og:url" content="${canonicalUrl}">
@@ -170,6 +199,8 @@ export async function renderListingPage(context, lang) {
 <meta name="twitter:title" content="${escapeHtml(title)} - ${escapeHtml(fmtRupiah(price))}">
 <meta name="twitter:description" content="${escapeHtml(ogDescription)}">
 <meta name="twitter:image" content="${escapeHtml(ogImage)}">
+
+<script type="application/ld+json">${JSON.stringify(productSchema).replace(/</g, "\\u003c")}</script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
