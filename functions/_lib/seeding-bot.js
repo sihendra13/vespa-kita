@@ -77,3 +77,86 @@ export async function checkAndRunBot(env) {
     return false;
   }
 }
+
+// Fitur AI Auto-Reply menggunakan Gemini
+export async function checkAndReplyBot(env) {
+  try {
+    if (!env.GEMINI_API_KEY) return false; // Pastikan API Key ada
+    
+    // Cari 1 komentar user (minimal 2 menit lalu) yang belum dibalas bot
+    const query = `
+      SELECT 
+        user_reply.id as reply_id, 
+        user_reply.content as user_content, 
+        user_reply.author_name as user_name,
+        user_reply.parent_id as thread_id,
+        bot_thread.author_name as bot_name,
+        bot_thread.content as bot_content
+      FROM tongkrongan_posts AS user_reply
+      JOIN tongkrongan_posts AS bot_thread ON user_reply.parent_id = bot_thread.id
+      WHERE bot_thread.google_sub = 'bot-seeder'
+        AND user_reply.google_sub != 'bot-seeder'
+        AND datetime(user_reply.created_at) <= datetime('now', '-2 minutes')
+        AND NOT EXISTS (
+          SELECT 1 FROM tongkrongan_posts AS bot_response
+          WHERE bot_response.parent_id = bot_thread.id
+            AND bot_response.google_sub = 'bot-seeder'
+            AND bot_response.content LIKE '%@' || user_reply.author_name || '%'
+        )
+      ORDER BY user_reply.created_at ASC
+      LIMIT 1
+    `;
+    
+    const candidate = await env.DB.prepare(query).first();
+    if (!candidate) return false; // Tidak ada yang perlu dibalas
+
+    // Meracik perintah ke Gemini
+    const prompt = `Kamu adalah cowok anak Vespa bernama ${candidate.bot_name}.
+Kamu membuat postingan ini di forum: "${candidate.bot_content}"
+Lalu ada user asli bernama ${candidate.user_name} yang berkomentar: "${candidate.user_content}"
+Balas komentar user tersebut.
+Syarat:
+- Bahasa santai, gaul, akrab seperti sesama anak motor/Vespa di tongkrongan Indonesia (mas, bro, ngab, suhu, dll).
+- Wajib diawali dengan memanggil namanya: "@${candidate.user_name} "
+- Maksimal 2 kalimat. Jangan kaku.
+Tuliskan langsung balasanmu tanpa tanda kutip.`;
+
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+    const aiResponse = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
+
+    if (!aiResponse.ok) {
+      console.error("Gemini Error:", await aiResponse.text());
+      return false;
+    }
+    
+    const aiData = await aiResponse.json();
+    if (!aiData.candidates || aiData.candidates.length === 0) return false;
+    
+    let replyContent = aiData.candidates[0].content.parts[0].text.trim();
+    // Bersihkan kutipan kalau AI nambahin
+    if (replyContent.startsWith('"') && replyContent.endsWith('"')) {
+        replyContent = replyContent.slice(1, -1);
+    }
+    
+    // Simpan balasan bot ke database
+    const replyId = crypto.randomUUID();
+    const nowISO = new Date().toISOString();
+    
+    await env.DB.prepare(`
+      INSERT INTO tongkrongan_posts 
+      (id, parent_id, author_name, google_sub, user_email, user_avatar_url, content, status, created_at, likes_count)
+      VALUES (?, ?, ?, 'bot-seeder', 'bot@vespakita.com', '', ?, 'visible', ?, 0)
+    `).bind(replyId, candidate.thread_id, candidate.bot_name, replyContent, nowISO).run();
+    
+    return true; // Berhasil membalas
+  } catch (err) {
+    console.error("AI Reply Bot Error:", err);
+    return false;
+  }
+}

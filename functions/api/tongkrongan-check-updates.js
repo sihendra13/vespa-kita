@@ -1,4 +1,4 @@
-import { checkAndRunBot } from "../_lib/seeding-bot.js";
+import { checkAndRunBot, checkAndReplyBot } from "../_lib/seeding-bot.js";
 
 export async function onRequestGet(context) {
   const { request, env } = context;
@@ -16,11 +16,12 @@ export async function onRequestGet(context) {
   let hasUpdates = (countRow?.count || 0) > 0;
   
   // --- BOT SEEDING HOOK ---
-  // Lazy cron check: runs every time the client polls (every 15s)
   const botPosted = await checkAndRunBot(env);
-  if (botPosted) {
-    hasUpdates = true;
-  }
+  if (botPosted) hasUpdates = true;
+  
+  // --- BOT AI REPLY HOOK ---
+  const botReplied = await checkAndReplyBot(env);
+  if (botReplied) hasUpdates = true;
   
   return new Response(JSON.stringify({ hasUpdates }), { headers: { "content-type": "application/json" } });
 }
