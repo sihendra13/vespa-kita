@@ -388,7 +388,7 @@
       document.getElementById('remove-photo').click();
       await loadFeed();
     } catch(e) {
-      alert("Karena di localhost python, API tidak diproses. Tampilan direfresh.");
+      alert(e.message || "Gagal mengirim data. Cek koneksi Anda.");
       document.getElementById('post-content').value = '';
       document.getElementById('remove-photo').click();
     } finally {
@@ -401,7 +401,7 @@
   async function loadFeed() {
     try {
       const res = await fetch('/api/tongkrongan');
-      if (!res.ok) throw new Error('API Offline in localhost python?');
+      if (!res.ok) const err = await res.json().catch(()=>({})); throw new Error(err.error || 'Terjadi kesalahan pada server');
       const data = await res.json();
       renderFeed(data.posts || []);
     } catch(e) {

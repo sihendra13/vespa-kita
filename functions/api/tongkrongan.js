@@ -89,7 +89,7 @@ export async function onRequestPost(context) {
   const parentId = fd.get("parent_id") || null;
   const photo = fd.get("photo");
 
-  if (!isNonEmptyString(content) || content.length > 500) return badRequest("Konten tidak valid atau terlalu panjang (maks 500 karakter).");
+  if (!isNonEmptyString(content) || content.length > 5000) return badRequest("Konten tidak valid atau terlalu panjang (maks 5000 karakter).");
 
   let payload;
   try {
