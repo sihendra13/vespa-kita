@@ -403,7 +403,9 @@
     const snippet = rawContent.length > 50 ? rawContent.substring(0, 50) + '...' : rawContent;
     const text = 'Cek obrolan dari ' + author + ' di Tongkrongan VespaKita:\n\n"' + snippet + '"\n\nYuk ikutan nimbrung di sini:\n';
     const url = window.location.origin + window.location.pathname + '?post=' + id;
+    const fullText = text + url;
 
+    let shared = false;
     if (navigator.share) {
         try {
             await navigator.share({
@@ -411,12 +413,19 @@
                 text: text,
                 url: url
             });
+            shared = true;
         } catch (e) {
-            console.log('Share canceled', e);
+            console.log('Native share failed or canceled', e);
         }
-    } else {
-        navigator.clipboard.writeText(text + url);
-        alert("Link berhasil disalin ke clipboard!");
+    }
+    
+    if (!shared) {
+        try {
+            await navigator.clipboard.writeText(fullText);
+            alert('Teks & Link berhasil disalin! Silakan Paste di WA/Sosmed Anda.');
+        } catch (err) {
+            prompt('Silakan Copy text di bawah ini manual (Ctrl+C):', fullText);
+        }
     }
   }
 

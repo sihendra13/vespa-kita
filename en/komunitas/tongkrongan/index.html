@@ -403,7 +403,9 @@
     const snippet = rawContent.length > 50 ? rawContent.substring(0, 50) + '...' : rawContent;
     const text = 'Check out this chat from ' + author + ' on VespaKita:\n\n"' + snippet + '"\n\nJoin the discussion here:\n';
     const url = window.location.origin + window.location.pathname + '?post=' + id;
+    const fullText = text + url;
 
+    let shared = false;
     if (navigator.share) {
         try {
             await navigator.share({
@@ -411,12 +413,19 @@
                 text: text,
                 url: url
             });
+            shared = true;
         } catch (e) {
-            console.log('Share canceled', e);
+            console.log('Native share failed or canceled', e);
         }
-    } else {
-        navigator.clipboard.writeText(text + url);
-        alert("Link copied to clipboard!");
+    }
+    
+    if (!shared) {
+        try {
+            await navigator.clipboard.writeText(fullText);
+            alert('Link copied to clipboard! Paste it anywhere.');
+        } catch (err) {
+            prompt('Copy the text below manually:', fullText);
+        }
     }
   }
 
