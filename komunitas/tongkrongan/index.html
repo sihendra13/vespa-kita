@@ -401,7 +401,7 @@
   async function loadFeed() {
     try {
       const res = await fetch('/api/tongkrongan');
-      if (!res.ok) const err = await res.json().catch(()=>({})); throw new Error(err.error || 'Terjadi kesalahan pada server');
+      if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error || 'Terjadi kesalahan pada server'); }
       const data = await res.json();
       renderFeed(data.posts || []);
     } catch(e) {
