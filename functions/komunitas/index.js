@@ -227,7 +227,7 @@ export async function onRequestGet(context) {
 
 <nav>
   <div class="wrap">
-    <a href="/" class="logo"><img src="../logo.png" alt="VespaKita Logo"></a>
+    <a href="/" class="logo"><img src="../logo.png" alt="VespaKita Logo" width="400" height="230"></a>
     <div class="navlinks">
       <a href="/">Beranda</a>
       <a href="/marketplace/">Marketplace</a>
@@ -274,10 +274,10 @@ export async function onRequestGet(context) {
       <p style="font-size: 16px; line-height: 1.6; color: var(--chrome);">Perjalanan Vespa 60's Yogyakarta menuju ajang bergengsi Jamnas Vespa 60's Indonesia 2026 menjadi portofolio kebanggaan kami dalam menjembatani semangat komunitas dengan dukungan penuh dari berbagai brand terkemuka.</p>
     </div>
     <div class="proof-logos reveal" style="margin-top: 16px;">
-      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-hs.jpg" alt="Sponsor HS" class="s-logo-hs" loading="lazy"></div>
-      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-kenanga.jpg" alt="Sponsor Kenanga Garage" class="s-logo-kenanga" loading="lazy"></div>
-      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-unlock.png" alt="Sponsor Unlock Indonesia" class="s-logo-unlock" loading="lazy"></div>
-      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-northy.png" alt="Sponsor Northy" class="s-logo-northy" style="filter: brightness(0);" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-hs.jpg" alt="Sponsor HS" class="s-logo-hs" width="1024" height="1024" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-kenanga.jpg" alt="Sponsor Kenanga Garage" class="s-logo-kenanga" width="1024" height="963" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-unlock.png" alt="Sponsor Unlock Indonesia" class="s-logo-unlock" width="225" height="225" loading="lazy"></div>
+      <div class="sponsor-card"><img src="../60s-yogyakarta/sponsor-northy.png" alt="Sponsor Northy" class="s-logo-northy" style="filter: brightness(0);" width="1024" height="351" loading="lazy"></div>
     </div>
   </div>
 </section>
@@ -296,7 +296,7 @@ export async function onRequestGet(context) {
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <div class="logo" style="font-size:18px;"><img src="../logo.png" alt="VespaKita Logo" style="height:48px;"></div>
+      <div class="logo" style="font-size:18px;"><img src="../logo.png" alt="VespaKita Logo" style="height:48px;" width="400" height="230" loading="lazy"></div>
       <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
     </div>
     <div class="foot-links">

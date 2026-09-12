@@ -1,6 +1,5 @@
 User-agent: *
 Allow: /
-Disallow: /marketplace/admin/
 Disallow: /komunitas/admin/
 Disallow: /komunitas/tongkrongan/admin/
 Disallow: /rate-card/
