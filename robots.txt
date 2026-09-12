@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /marketplace/admin/
+Disallow: /komunitas/admin/
+Disallow: /komunitas/tongkrongan/admin/
+Disallow: /rate-card/
 
 Sitemap: https://www.vespakita.com/sitemap.xml

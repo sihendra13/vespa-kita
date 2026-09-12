@@ -204,10 +204,10 @@ buildPage({
     ['src="../60s-yogyakarta/sponsor-northy.png"', 'src="../../60s-yogyakarta/sponsor-northy.png"'],
   ],
   metaSwaps: [
-    ['Direktori Komunitas Vespa | VespaKita', 'Vespa Community Directory | VespaKita'],
+    ['Cari Sponsor untuk Event Komunitas Vespa | VespaKita', 'Get a Sponsor for Your Vespa Community Event | VespaKita'],
     [
-      'Direktori komunitas Vespa di seluruh Indonesia — cari komunitas sesuai kotamu, lihat event & kegiatan mereka, atau daftarkan komunitasmu sendiri gratis.',
-      'A directory of Vespa communities across Indonesia — find one in your city, see their events and activities, or register your own community for free.',
+      'VespaKita bantu komunitas Vespa dapatkan sponsor untuk event kalian — touring, gathering, atau jambore. Sudah terbukti membantu komunitas dapat dukungan brand. Ajukan event kamu, gratis.',
+      'VespaKita helps Vespa communities get sponsors for their events — touring, gatherings, or jamborees. Already proven to help communities land brand support. Submit your event, free.',
     ],
   ],
 });

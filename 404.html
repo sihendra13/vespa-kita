@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halaman Tidak Ditemukan | VespaKita</title>
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --aspal:#15171A; --aspal-2:#1E2124; --krem:#F1E8D6; --krem-2:#E7DBC2;
+    --merah:#C2272D; --mint:#6FA89A; --chrome:#A9A49B;
+    --display:'Anton', sans-serif; --body:'Work Sans', sans-serif; --mono:'Space Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    font-family:var(--body); background:var(--aspal); color:var(--krem); line-height:1.5;
+    min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:24px;
+  }
+  img{max-width:100%; display:block; margin:0 auto 32px;}
+  .logo{height:56px; width:auto;}
+  h1{font-family:var(--display); font-weight:400; text-transform:uppercase; letter-spacing:0.01em; font-size:clamp(32px,7vw,56px); color:var(--krem); line-height:1;}
+  .code{font-family:var(--mono); color:var(--mint); font-size:13px; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:16px;}
+  p{color:var(--chrome); font-size:15px; max-width:420px; margin:20px auto 32px;}
+  .btn{display:inline-block; padding:15px 26px; font-family:var(--mono); font-size:13px; letter-spacing:0.05em; text-transform:uppercase; border-radius:2px; background:var(--merah); color:var(--krem); transition:transform .15s ease, background .15s ease;}
+  .btn:hover{background:#D6363C; transform:translateY(-2px);}
+</style>
+</head>
+<body>
+  <div>
+    <img class="logo" src="/logo.png" alt="VespaKita Logo">
+    <div class="code">Error 404</div>
+    <h1>Halaman Tidak Ditemukan</h1>
+    <p>Halaman yang kamu cari mungkin sudah dipindah, dihapus, atau alamatnya salah ketik.</p>
+    <a href="/" class="btn">Kembali ke Beranda</a>
+  </div>
+</body>
+</html>
