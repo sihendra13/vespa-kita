@@ -261,7 +261,7 @@ export async function onRequestGet(context) {
 
 <nav>
   <div class="wrap">
-    <a href="/" class="logo"><img src="../../logo.png" alt="VespaKita Logo"></a>
+    <a href="/" class="logo"><img src="../../logo.png" alt="VespaKita Logo" width="400" height="230"></a>
     <a href="/marketplace/#jual" class="navcta">Jual Vespa Kamu</a>
   </div>
 </nav>

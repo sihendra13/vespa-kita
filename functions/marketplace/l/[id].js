@@ -87,6 +87,17 @@ export async function renderListingPage(context, lang) {
   const title = row.title;
   const price = row.price;
   const isUnit = row.category !== "sparepart";
+  // <title>/og:title/twitter:title get a keyword-matched variant (model +
+  // "Bekas" + city) per the SEO audit — every ranking competitor for "jual
+  // vespa {city}" queries encodes this same shape. The on-page <h1> below
+  // stays the seller's original free-text title untouched. Every real unit
+  // title already embeds its own year in free text (e.g. "VBB 150 1965"),
+  // so row.year isn't appended again here to avoid a duplicate like
+  // "...1965 1965 Bekas". "Bekas" only applies to units — for sparepart,
+  // condition (Baru/Bekas/NOS) is data the seller sets, not implied by the
+  // marketplace being secondhand-only.
+  const seoTitle =
+    isUnit && !/bekas|used/i.test(title) ? `${title} ${t(lang, "Bekas", "Used")} — ${row.location}` : `${title} — ${row.location}`;
   const langPrefix = lang === "en" ? "/en" : "";
   const canonicalUrl = `${SITE_URL}${langPrefix}/marketplace/l/${id}`;
   const idUrl = `${SITE_URL}/marketplace/l/${id}`;
@@ -174,7 +185,7 @@ export async function renderListingPage(context, lang) {
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${escapeHtml(title)} - ${escapeHtml(fmtRupiah(price))} | VespaKita Marketplace</title>
+<title>${escapeHtml(seoTitle)} | VespaKita Marketplace</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#15171A">
 <link rel="icon" type="image/png" href="/favicon.png">
@@ -342,7 +353,7 @@ export async function renderListingPage(context, lang) {
 
 <nav>
   <div class="wrap">
-    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
+    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo" width="400" height="230"></a>
     <a href="${lang === "en" ? "/en/marketplace/#jual" : "/marketplace/#jual"}" class="navcta">${t(lang, "Jual Vespa Kamu", "Sell Your Vespa")}</a>
   </div>
 </nav>

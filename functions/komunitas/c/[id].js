@@ -70,6 +70,18 @@ export async function renderCommunityPage(context, lang) {
   const waHref = `https://wa.me/${community.wa}`;
   const igHref = `https://instagram.com/${community.ig}`;
 
+  const communitySchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: community.name,
+    description: ogDescription,
+    url: canonicalUrl,
+    ...(community.logo_url ? { logo: community.logo_url } : {}),
+    image: ogImage,
+    ...(community.ig ? { sameAs: [igHref] } : {}),
+    address: { "@type": "PostalAddress", addressLocality: community.city, addressCountry: "ID" },
+  };
+
   const eventsHtml = (eventRows || [])
     .map((e) => {
       const sponsorLogos = JSON.parse(e.sponsor_logos || "[]").map((s) => s.url);
@@ -168,6 +180,8 @@ export async function renderCommunityPage(context, lang) {
 <meta name="twitter:description" content="${escapeHtml(ogDescription)}">
 <meta name="twitter:image" content="${escapeHtml(ogImage)}">
 
+<script type="application/ld+json">${JSON.stringify(communitySchema).replace(/</g, "\\u003c")}</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -212,7 +226,7 @@ export async function renderCommunityPage(context, lang) {
   .profile-head{display:flex; align-items:flex-end; gap:28px; margin-top:-76px; position:relative; z-index:2; flex-wrap:wrap;}
   .profile-logo{width:144px; height:144px; border-radius:50%; border:6px solid var(--aspal); background:#ffffff center/70% no-repeat; box-shadow: 0 4px 24px rgba(0,0,0,0.4); flex-shrink:0;}
   .profile-info{flex:1; padding-bottom:8px; min-width:240px;}
-  .profile-name{font-size:clamp(28px,5vw,42px); font-weight: 500; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+  .profile-name{font-size:clamp(28px,5vw,42px); font-weight: 500; font-family:var(--body); text-transform:none; letter-spacing:normal; line-height:1.2; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
   .profile-badge{width:24px; height:24px; color:var(--emas); flex-shrink:0;}
   .profile-meta{font-family:var(--mono); font-size:13px; color:var(--chrome); text-transform:uppercase; letter-spacing:0.04em; margin-top:8px; display:flex; gap:16px; flex-wrap:wrap;}
   .profile-actions{display:flex; gap:12px; padding-bottom:8px; flex-wrap:wrap;}
@@ -271,7 +285,7 @@ export async function renderCommunityPage(context, lang) {
 
 <nav class="top">
   <div class="wrap">
-    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo"></a>
+    <a href="${lang === "en" ? "/en/" : "/"}" class="logo"><img src="/logo.png" alt="VespaKita Logo" width="400" height="230"></a>
     <div class="navlinks">
       <a href="${lang === "en" ? "/en/" : "/"}">${t(lang, "Beranda", "Home")}</a>
       <a href="${langPrefix}/marketplace/">Marketplace</a>
@@ -287,10 +301,10 @@ export async function renderCommunityPage(context, lang) {
     <div class="profile-head">
       <div class="profile-logo" style="background-image:url('${escapeHtml(community.logo_url || "")}')"></div>
       <div class="profile-info">
-        <div class="profile-name">
+        <h1 class="profile-name">
           ${escapeHtml(community.name)}
           <svg class="profile-badge" viewBox="0 0 24 24" fill="currentColor" title="${t(lang, "Terverifikasi", "Verified")}"><path d="M23 12l-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.46 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>
-        </div>
+        </h1>
         <div class="profile-meta">
           <span>&#128205; ${escapeHtml(community.city)}</span>
           ${community.member_estimate ? `<span>${escapeHtml(community.member_estimate)} ${t(lang, "Anggota", "Members")}</span>` : ""}
@@ -342,7 +356,7 @@ ${eventsSection}
 <footer>
   <div class="wrap footer-grid">
     <div>
-      <div class="logo" style="font-size:18px;"><img src="/logo.png" alt="VespaKita Logo" style="height:48px;"></div>
+      <div class="logo" style="font-size:18px;"><img src="/logo.png" alt="VespaKita Logo" style="height:48px;" width="400" height="230" loading="lazy"></div>
       <p style="margin-top:8px;">Yogyakarta - Indonesia</p>
     </div>
     <div class="foot-links">
