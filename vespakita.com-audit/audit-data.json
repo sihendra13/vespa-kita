@@ -1,188 +1,283 @@
 {
   "summary": {
-    "health_score": 64,
-    "business_type": "Independent media / publisher (Vespa community content + sponsorship proposal pages)",
+    "health_score": 52,
+    "health_score_note": "Partial-coverage score. 5 of 8 planned specialist passes completed in full (Technical, Sitemap, GEO, SXO, and a partial Schema pass); Content Quality, Performance, and Visual/Mobile hit their analysis turn-limit before writing full findings. Weighted only across categories with real evidence -- treat as directional, not final, until those three are re-run.",
+    "business_type": "Independent Vespa media brand (podcast, event coverage) + curated peer-to-peer Vespa marketplace + community directory that matches Vespa clubs with event sponsors",
     "top_findings": [
-      "Cloudflare edge robots.txt blocks GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, CCBot, Bytespider, meta-externalagent — defeats AI Overviews/ChatGPT/Perplexity visibility",
-      "Hero videos are oversized (19MB, 5.8MB, 1.2MB) — biggest Core Web Vitals / LCP risk",
-      "/vw-yogyakarta/ missing from sitemap.xml on both local and live site",
-      "Meta descriptions on / and /en/ exceed ~160 char snippet limit",
-      "Image lazy-loading inconsistent (3/13 on main pages, 0/8 and 0/7 on proposal pages)"
+      "CRITICAL (SXO): /komunitas/ commits intent inversion -- title/meta sell a directory, H1/hero sell a B2B sponsor-matching pitch. Both the rider searching for a club and the organizer searching for sponsor help are mismatched.",
+      "CRITICAL (Technical): every mistyped/nonexistent URL returns HTTP 200 with homepage content instead of a 404 (Cloudflare Pages SPA-fallback), which Search Console will flag as soft-404s at scale across an open UUID URL space.",
+      "CRITICAL (GEO): ChatGPT Search, Perplexity, and Claude's search bots get a live HTTP 403 from a Cloudflare WAF/AI Crawl Control rule -- this is separate from and worse than the robots.txt AI-training block, and robots.txt reading alone gives a falsely reassuring answer.",
+      "HIGH (SXO): /marketplace/ ships a static empty-state ('Belum Ada Listing Saat Ini... Jadi penjual pertama di sini') to first-pass crawlers while 15 real listings exist -- injected client-side only.",
+      "HIGH (Technical): apex domain vespakita.com serves identical 200 content instead of redirecting to www -- protected only by a canonical tag, not an actual redirect.",
+      "HIGH (Sitemap): a live, unprotected '/rate-card/ (Draft Internal)' page and a third admin tool at /komunitas/tongkrongan/admin/ (password-gated but not noindexed) are both crawlable/indexable with no protection.",
+      "Cross-cutting root cause: /komunitas/, /marketplace/semua/, and the homepage 'Event' widget are all static HTML shells populated entirely by client-side fetch() -- the same architectural gap shows up independently in Technical, SXO, and GEO findings."
     ],
     "quick_wins": [
-      "Add /vw-yogyakarta/ to sitemap.xml",
-      "Trim meta descriptions to <=160 chars on / and /en/",
-      "Add loading=\"lazy\" to below-the-fold images",
-      "Decide intentionally on Cloudflare AI-crawler block (allow Google-Extended + GPTBot if GEO matters)",
-      "Compress/transcode the two large hero videos"
+      "Disable Cloudflare Pages' SPA/not-found fallback and ship a real 404.html (fixes the sitewide soft-404 Critical finding)",
+      "Add a Cloudflare redirect rule: vespakita.com/* -> 301 -> www.vespakita.com/$1",
+      "In Cloudflare's AI Crawl Control / WAF settings, allow OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, and Claude-SearchBot by name -- 15 minutes of dashboard work, currently blocking 100% of ChatGPT/Perplexity/Claude search visibility",
+      "Add noindex,nofollow to /rate-card/ and /komunitas/tongkrongan/admin/, and add both to robots.txt Disallow",
+      "Rewrite /komunitas/ title+meta to match ONE intent (recommend: keep the sponsor-matching pitch since that's the actual business model, and move the directory framing to a supporting section rather than fighting it in the title tag)"
     ]
   },
   "categories": [
     {
       "name": "Technical SEO",
-      "score": 78,
+      "score": 68,
       "what_works": [
-        "robots.txt + sitemap.xml present and cross-linked",
-        "Canonical URLs correct and self-referencing on all pages",
-        "hreflang (id/en/x-default) correctly reciprocal",
-        "HTTPS via Cloudflare, x-content-type-options and referrer-policy headers present"
+        "Sitemap valid and correctly declared in robots.txt",
+        "Bidirectional hreflang + x-default correct on every ID/EN pair checked, including UUID dynamic pages",
+        "Self-referencing canonicals correct everywhere, including on the apex-domain duplicate",
+        "Admin path (/marketplace/admin/) has defense-in-depth: robots.txt disallow + noindex meta + password gate",
+        "Dynamic detail pages (/marketplace/l/{id}, /komunitas/c/{id}) are genuinely server-rendered, not JS-dependent, with correct per-page title/meta/canonical/hreflang",
+        "Valid Product+Offer JSON-LD on marketplace listings; Organization schema on homepage",
+        "Bad dynamic-route IDs correctly return real 404s (contrast with the sitewide soft-404 issue)",
+        "HTTP->HTTPS redirect and trailing-slash normalization both work correctly",
+        "pages.dev subdomain explicitly redirects to production domain",
+        "ID/EN content is genuinely translated (132 differing lines sampled), not a language-switcher wrapper over duplicate content"
       ],
       "findings": [
         {
-          "title": "Cloudflare-managed robots.txt blocks AI crawlers",
-          "severity": "High",
-          "description": "Live robots.txt has a Cloudflare-injected block (Disallow: / for GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, CCBot, Bytespider, meta-externalagent) not present in the local repo file — injected at the Cloudflare edge.",
-          "recommendation": "Confirm intentional; if GEO/AI citations matter, allow Google-Extended and GPTBot at minimum."
+          "title": "Sitewide soft-404: every unmatched URL returns HTTP 200 with homepage content",
+          "severity": "Critical",
+          "description": "/nonexistent-page-xyz/, /wp-admin/, /marketplace/l/ (no ID), even /indexnow.txt all return 200 with the literal homepage HTML, title, and canonical. Root cause: Cloudflare Pages SPA-fallback mode with no real 404 handling in _redirects. Google Search Console will surface these as Soft 404s at scale given the site's open UUID URL space.",
+          "recommendation": "Disable the Pages project's SPA fallback and ship a real 404.html returned with an actual 404 status; leave the already-correct dynamic-route Function 404s untouched."
         },
         {
-          "title": "/vw-yogyakarta/ missing from sitemap.xml",
-          "severity": "High",
-          "description": "Confirmed on both local file and live sitemap.xml; only /, /en/, /60s-yogyakarta/ listed.",
-          "recommendation": "Add a <url> entry matching the 60s-yogyakarta pattern."
+          "title": "Apex domain (vespakita.com) does not redirect to www",
+          "severity": "Critical",
+          "description": "curl -sI https://vespakita.com/ returns 200, byte-identical to the www version, relying entirely on a canonical tag rather than an authoritative redirect.",
+          "recommendation": "Add a Cloudflare Bulk Redirect: vespakita.com/* -> 301 -> https://www.vespakita.com/$1"
         },
         {
-          "title": "No HSTS / CSP headers",
+          "title": "/komunitas/, /marketplace/semua/, and the homepage event widget render primary content only client-side",
+          "severity": "High",
+          "description": "Raw HTML ships empty grid containers (<div id=\"kom-grid\">, <div id=\"listing-grid\">) or a 'Memuat event...' placeholder, populated via fetch('/api/...'). render_page.py's non-JS extraction pulled only 470 characters of unrelated copy from /komunitas/ -- none of the actual directory content. These hub pages are the main internal-link path to the UUID detail pages; a non-JS crawler finds zero links to them here.",
+          "recommendation": "Server-render at minimum a plain link list from the same Functions/D1 backend already powering the API, then progressively enhance with the existing client JS."
+        },
+        {
+          "title": "No HSTS, CSP, X-Frame-Options, or Permissions-Policy headers",
           "severity": "Medium",
-          "description": "Live response missing Strict-Transport-Security and Content-Security-Policy headers.",
-          "recommendation": "Add via Cloudflare Transform Rules or origin config."
+          "description": "Only x-content-type-options and referrer-policy are present on any page checked.",
+          "recommendation": "Add via a Cloudflare Pages _headers file: HSTS, a report-only CSP baseline, and X-Frame-Options at minimum on /marketplace/admin/*."
         },
         {
-          "title": "No llms.txt",
+          "title": "/komunitas/tongkrongan/ disables pinch-zoom (user-scalable=no)",
+          "severity": "Medium",
+          "description": "No other page in the sample sets user-scalable=no. WCAG 2.1 mobile-usability anti-pattern on a chat/feed UI where zoom is a normal expectation.",
+          "recommendation": "Remove maximum-scale/user-scalable from the viewport tag; use touch-action: manipulation on specific interactive elements if double-tap-zoom was the actual concern."
+        },
+        {
+          "title": "Images lack explicit width/height attributes",
+          "severity": "Medium",
+          "description": "0 of 38 homepage <img> tags have a width attribute; only 17/38 have loading=\"lazy\".",
+          "recommendation": "Add explicit width/height or CSS aspect-ratio to reserve layout space; extend lazy-loading to remaining below-the-fold images."
+        },
+        {
+          "title": "No structured data on community profile pages",
+          "severity": "Medium",
+          "description": "No JSON-LD at all on /komunitas/c/{id}, unlike marketplace listings which have full Product schema.",
+          "recommendation": "Add an Organization/Club-style JSON-LD block (name, url, logo, sameAs) to the community profile Function template."
+        },
+        {
+          "title": "No IndexNow implementation",
           "severity": "Low",
-          "description": "Optional convention, low priority given the robots.txt AI-crawler block already limits AI bot access.",
-          "recommendation": "Address the robots.txt finding first."
+          "description": "/indexnow.txt resolves to the soft-404 homepage fallback rather than a real key file.",
+          "recommendation": "Wire the listing/community publish flow to ping IndexNow (Bing/Yandex/Naver) so new UUID pages are discovered faster than sitemap re-crawl alone allows."
+        }
+      ]
+    },
+    {
+      "name": "On-Page SEO / SXO",
+      "score": 35,
+      "what_works": [
+        "/marketplace/l/{id} is the strongest page on the site: server-rendered with valid Product+Offer+Brand JSON-LD, unique per-listing title/meta",
+        "Exactly one H1 on most pages checked, unique titles/descriptions"
+      ],
+      "findings": [
+        {
+          "title": "/komunitas/ is two pages fighting each other (intent inversion)",
+          "severity": "Critical",
+          "description": "SERP-backwards analysis: 'komunitas vespa jogja' returns editorial community-profile results (a rider wants to find a club); 'cara dapat sponsor event komunitas' returns 100% procedural how-to guides. The page's title/meta pitch a directory; its H1 and hero pitch a B2B sponsor-matching service. Neither searcher intent is served. Persona score for 'rider looking for a club': 26/100.",
+          "recommendation": "Pick one primary intent for the title+H1 (recommend keeping the sponsor-matching pitch, since that is the actual business model per project context) and move the directory-browsing use case to a clearly labeled secondary section rather than contesting the title tag."
+        },
+        {
+          "title": "/marketplace/ and /marketplace/semua/ advertise zero inventory to first-pass crawlers",
+          "severity": "High",
+          "description": "Static HTML ships literal empty-state copy ('Belum Ada Listing Saat Ini... Jadi penjual pertama di sini') while the API returns 15 live listings. Every ranking competitor for 'jual vespa yogyakarta' (OLX, Tokopedia, Shopee, mobil123) encodes city/model in the URL path; VespaKita has zero city- or model-scoped browse URLs -- /marketplace/ and /marketplace/semua/ are the only two browse endpoints.",
+          "recommendation": "Server-render the listing grid (see Technical finding above) and consider city-scoped or model-scoped landing paths matching the URL pattern every ranking competitor already uses."
+        },
+        {
+          "title": "/komunitas/c/{id} community profile pages have no H1 and no schema",
+          "severity": "Medium",
+          "description": "Exactly the page format that dominates the head-term community SERP, shipped with no H1 element and no structured data.",
+          "recommendation": "Add a proper H1 (community name) and Organization/Club JSON-LD to the profile template."
+        },
+        {
+          "title": "/marketplace/l/{id} titles omit high-intent keywords",
+          "severity": "Low",
+          "description": "Sampled title reads 'Exclusive 2 Tahun 2001' -- missing 'Vespa', 'bekas', and the city, which are exactly the terms searchers type and which every competing result includes.",
+          "recommendation": "Extend the title template to '{model} {year} Bekas - {city} | VespaKita Marketplace' or similar."
+        },
+        {
+          "title": "Brand entity ambiguity across three Instagram-style handles",
+          "severity": "Info",
+          "description": "Google surfaces @vespakita.co for brand queries; the site's own Organization schema references @ves_pakita and @VespaKitaSemua elsewhere. Three distinct-looking handles compete for the same brand identity.",
+          "recommendation": "Standardize on one handle across schema, footer, and social links so Google can confidently resolve the brand entity."
         }
       ]
     },
     {
       "name": "Content Quality",
-      "score": 65,
-      "what_works": [
-        "Distinct, purpose-specific content per page, no thin/duplicate boilerplate",
-        "Concrete, specific copy rather than generic filler"
-      ],
+      "score": null,
+      "status": "incomplete",
+      "what_works": [],
       "findings": [
         {
-          "title": "No visible author/byline or publish date",
-          "severity": "Medium",
-          "description": "No author bios or dated posts detected on the homepage, relevant for E-E-A-T.",
-          "recommendation": "Add author + date if a blog/article section is planned."
-        },
-        {
-          "title": "Full readability/word-count scan not performed",
+          "title": "Content-quality/E-E-A-T pass did not complete",
           "severity": "Info",
-          "description": "This pass analyzed static HTML directly rather than rendering pages; deep content-quality scoring wasn't run.",
-          "recommendation": "Follow up with a dedicated content-quality pass if deeper E-E-A-T scoring is wanted."
-        }
-      ]
-    },
-    {
-      "name": "On-Page SEO",
-      "score": 72,
-      "what_works": [
-        "Exactly one H1 per page on all 4 pages",
-        "Unique titles and descriptions per page"
-      ],
-      "findings": [
-        {
-          "title": "Meta descriptions exceed ~160 char display limit on / and /en/",
-          "severity": "Medium",
-          "description": "Homepage descriptions run approximately 190-200 characters.",
-          "recommendation": "Trim to <=160 characters, front-load the value proposition."
-        },
-        {
-          "title": "Homepage titles are short and brand-only",
-          "severity": "Low",
-          "description": "Titles don't include a descriptive keyword phrase beyond the brand name.",
-          "recommendation": "Consider adding a keyword-rich phrase, balanced against brand-recognition needs."
+          "description": "The dedicated content-quality subagent crawled all 49 sitemap pages successfully but was stopped by its analysis turn-limit before writing findings. Only indirect signals are available: SXO's page inventory recorded static word counts of 642 (homepage), 254 (/marketplace/), 106 (/komunitas/), 86 (listing detail), and 137 (community profile) -- thin by conventional standards for pages meant to rank competitively, though these are largely client-rendered pages so true rendered word count is higher.",
+          "recommendation": "Re-run a dedicated content-quality pass (E-E-A-T signals, author/byline presence, thin-content risk on the templated /komunitas/c/{id} and /marketplace/l/{id} pages, ID/EN duplicate-content risk) before treating this category as audited."
         }
       ]
     },
     {
       "name": "Schema / Structured Data",
-      "score": 70,
+      "score": 60,
+      "status": "partial",
       "what_works": [
-        "Organization schema present and valid on / and /en/",
-        "Event schema present on both proposal pages",
-        "All JSON-LD blocks parse as valid JSON"
+        "Valid Product+Offer+Brand JSON-LD on marketplace listing pages, all fields parse correctly",
+        "Organization schema present on homepage"
       ],
       "findings": [
         {
-          "title": "Event schema field completeness not fully validated",
+          "title": "No structured data on community profile pages",
           "severity": "Medium",
-          "description": "Required fields for Event rich results (startDate, location, offers/organizer) weren't individually verified in this pass.",
-          "recommendation": "Run Google's Rich Results Test on both proposal pages."
+          "description": "Confirmed independently by both the Technical and Schema passes: /komunitas/c/{id} ships no JSON-LD at all.",
+          "recommendation": "Add Organization/Club schema mirroring the pattern already proven on marketplace listings."
         },
         {
-          "title": "No WebSite schema with SearchAction",
-          "severity": "Low",
-          "description": "Missing sitelinks search box eligibility markup.",
-          "recommendation": "Optional addition."
-        },
-        {
-          "title": "No BreadcrumbList schema",
-          "severity": "Low",
-          "description": "Site is shallow, so impact is minor.",
-          "recommendation": "Low priority."
+          "title": "Schema audit stopped at its turn-limit before full completion",
+          "severity": "Info",
+          "description": "The dedicated schema subagent completed its analysis pass and had begun writing final recommendations (BreadcrumbList, WebSite/SearchAction, Event schema for community event postings) when it hit its turn limit. Its findings.md file exists but should be treated as not fully finalized.",
+          "recommendation": "Review findings/schema.md directly for the fuller (if unfinished) writeup; consider a short follow-up pass to close it out."
         }
       ]
     },
     {
       "name": "Performance (CWV)",
-      "score": 45,
+      "score": null,
+      "status": "incomplete",
       "what_works": [],
       "findings": [
         {
-          "title": "Oversized hero videos",
-          "severity": "Critical",
-          "description": "vespa_kegiatanok.mp4 (19MB), jsp_landscape.mp4 (5.8MB), hero-bg.mp4 (1.2MB) used as autoplaying backgrounds; likely the single biggest LCP/load-time problem.",
-          "recommendation": "Re-encode to <3MB, add poster image, preload=\"none\" or \"metadata\", consider static image fallback on mobile."
-        },
-        {
-          "title": "Several large unoptimized JPG/PNG images",
-          "severity": "Medium",
-          "description": "vespa_ss90.png (624KB), jamnas_poster.jpg (600KB), multiple vw-yogyakarta page images (240-370KB each), no WebP/AVIF found.",
-          "recommendation": "Convert to WebP/AVIF with fallback, target <150KB for hero-adjacent images."
-        },
-        {
-          "title": "Static asset caching not verified",
-          "severity": "Low",
-          "description": "HTML cache-control looks correct; static asset (image/video/font) caching wasn't checked in this pass.",
-          "recommendation": "Verify long max-age + immutable caching via Cloudflare Page Rules."
+          "title": "Dedicated Core Web Vitals measurement pass did not complete",
+          "severity": "Info",
+          "description": "The performance subagent confirmed Cloudinary's w_800,q_auto,f_auto transform is correctly applied to listing/community images before stopping at its turn limit, without producing measured LCP/INP/CLS numbers. A prior, separate scan (not from this run) had flagged three autoplaying hero videos at 19MB, 5.8MB, and 1.2MB as a likely major LCP risk -- this has not been re-verified as part of the current audit and should be treated as unconfirmed carryover, not fresh data.",
+          "recommendation": "Re-run a dedicated performance pass with real Lighthouse/CrUX measurement before acting on the video-size figure; if still accurate, re-encode to under 3MB with a poster image and preload=\"none\"."
         }
       ]
     },
     {
       "name": "AI Search Readiness (GEO)",
-      "score": 25,
-      "what_works": [],
+      "score": 32,
+      "what_works": [
+        "Detail pages (marketplace listings, community profiles) are server-rendered and in the sitemap, giving AI crawlers that skip JS at least a path to the highest-value individual pages",
+        "robots.txt Content-Signal explicitly sets use=reference (permits AI citation with attribution) and leaves ai-input unset (does not refuse RAG) -- the declared policy intent is more open than what is actually enforced"
+      ],
       "findings": [
         {
-          "title": "AI crawlers blocked at the Cloudflare edge",
+          "title": "ChatGPT Search, Perplexity, and Claude search bots get a live HTTP 403, separate from and worse than robots.txt",
           "severity": "Critical",
-          "description": "Content-Signal ai-train=no plus explicit Disallow for GPTBot, Google-Extended, ClaudeBot, Applebot-Extended, meta-externalagent, CCBot, Bytespider makes the site structurally invisible to ChatGPT search, Perplexity, Google AI Overviews, Meta AI, and Claude web tools.",
-          "recommendation": "This is a deliberate tradeoff to make consciously: allow Google-Extended and GPTBot if AI-driven discovery/lead-gen matters; keep blocking pure training bots (CCBot, Bytespider) if content protection is the priority."
+          "description": "Live user-agent probing confirms OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, and Claude-SearchBot all receive 403 from a Cloudflare WAF/AI Crawl Control rule, even though robots.txt explicitly allows all five. Generic bots, curl, and unrelated user-agents get 200 -- this is a targeted AI-crawler blocklist, not general bot mitigation. Reading robots.txt alone gives a false sense that these platforms can see the site.",
+          "recommendation": "This needs to change in the Cloudflare dashboard (AI Crawl Control / WAF), not in robots.txt -- editing robots.txt will not fix it. Allow the five AI search agents; nothing else moves ChatGPT/Perplexity/Claude visibility until this lands."
+        },
+        {
+          "title": "Blocking Google-Extended/Applebot-Extended does NOT affect Google AI Overviews or Apple Intelligence/Siri as commonly assumed",
+          "severity": "Info",
+          "description": "AI Overviews follows Googlebot (confirmed 200), not Google-Extended; Applebot (not Applebot-Extended) also returns 200. A prior pass's finding that this block 'defeats AI Overviews visibility' is corrected here -- it does not. Google-Extended and Applebot-Extended are training-only signals; blocking them is a defensible content-protection choice independent of AI-search visibility.",
+          "recommendation": "No action needed on this specific point; do not conflate it with the WAF-block finding above."
+        },
+        {
+          "title": "No single crawlable sentence states what VespaKita is",
+          "severity": "High",
+          "description": "The three business pillars (media brand / marketplace / community sponsor-matching) each live on separate pages and are never combined into one passage. No About page exists in the sitemap or repo. An LLM asked 'what is VespaKita' would likely describe it as a podcast/Instagram account only.",
+          "recommendation": "Add one clear, quotable paragraph (ideally on the homepage and in Organization.description) stating all three pillars together."
+        },
+        {
+          "title": "Very low passage-level citability",
+          "severity": "Medium",
+          "description": "Extracted static prose across sampled pages: homepage 154 words total, marketplace 106, komunitas 61, tongkrongan 48 -- zero text blocks fall in the 134-167 word band that citation-friendly passages typically need; the longest single block anywhere is 44 words.",
+          "recommendation": "Write substantive, self-contained paragraphs (120-160 words) answering the obvious questions each page exists to answer, in server-rendered HTML."
+        },
+        {
+          "title": "Client-fetched hub pages are invisible to non-JS AI crawlers",
+          "severity": "High",
+          "description": "Same root cause as the Technical and SXO findings: /marketplace/ (0 of 15 listings visible pre-JS), /komunitas/ (0 of 3 communities visible pre-JS), and the homepage event feed are all fetch()-populated. AI search crawlers that do not execute JavaScript see empty containers.",
+          "recommendation": "Same fix as Technical finding #3 -- server-render these hubs. This single fix resolves three independently-raised findings across three specialist passes at once."
         }
       ]
     },
     {
       "name": "Images",
-      "score": 60,
+      "score": 35,
       "what_works": [
-        "100% alt-text coverage across all 4 pages (13, 13, 8, 7 images respectively)"
+        "Cloudinary w_800,q_auto,f_auto transform correctly applied to listing/community thumbnail images (confirmed by the performance pass before it stopped)"
       ],
       "findings": [
         {
-          "title": "Inconsistent lazy-loading",
+          "title": "No explicit width/height on images",
           "severity": "Medium",
-          "description": "Only 3/13 images lazy-loaded on main pages; 0/8 and 0/7 on proposal pages.",
-          "recommendation": "Add loading=\"lazy\" to all below-the-fold images."
+          "description": "0 of 38 homepage <img> tags carry a width attribute -- direct CLS risk, confirmed by the Technical pass.",
+          "recommendation": "Add explicit dimensions or aspect-ratio CSS."
         },
         {
-          "title": "No modern image formats detected",
+          "title": "Inconsistent lazy-loading",
           "severity": "Medium",
-          "description": "All images checked are .jpg/.png; no .webp/.avif variants found.",
-          "recommendation": "Convert to WebP with fallback or use <picture> with AVIF/WebP sources."
+          "description": "Only 17 of 38 homepage images have loading=\"lazy\".",
+          "recommendation": "Extend to all below-the-fold images."
+        }
+      ]
+    },
+    {
+      "name": "Sitemap",
+      "score": 80,
+      "what_works": [
+        "Sitemap is dynamically generated from the live D1 database, self-updating as content is published/removed",
+        "hreflang reciprocity is 100% correct across all 20 id/en pairs that carry hreflang",
+        "Both /marketplace/admin/ and /komunitas/admin/ correctly excluded from the sitemap",
+        "No 404s, redirects, or duplicate URLs among the 49 live-checked entries; well under size limits"
+      ],
+      "findings": [
+        {
+          "title": "/rate-card/ is a live, unprotected 'Draft Internal' page",
+          "severity": "High",
+          "description": "Returns 200, titled 'VespaKita — Rate Card (Draft Internal)'. Not linked from nav, not in the sitemap, but has no noindex meta tag and no robots.txt block -- nothing prevents it from being crawled and indexed.",
+          "recommendation": "Add noindex,nofollow and a robots.txt disallow (or an auth-gate) if it must stay internal."
+        },
+        {
+          "title": "/komunitas/tongkrongan/admin/ has no indexation protection",
+          "severity": "High",
+          "description": "A third admin tool, distinct from the two already protected. Confirmed password-gated (not a raw security hole) but has no noindex meta tag and is not in robots.txt Disallow, unlike its two sibling admin pages.",
+          "recommendation": "Add noindex,nofollow to match the other two admin pages, and add the path to robots.txt."
+        },
+        {
+          "title": "/marketplace/admin/ combines robots.txt Disallow with a noindex meta tag",
+          "severity": "Medium",
+          "description": "Known anti-pattern -- the robots.txt block prevents crawlers from ever fetching the page to see the noindex directive.",
+          "recommendation": "Keep only the noindex meta tag; drop the robots.txt line (or accept the low residual risk given it is low-traffic and password-gated)."
+        },
+        {
+          "title": "/marketplace/semua/ ships with zero hreflang tags",
+          "severity": "Low",
+          "description": "A live, daily-changefreq core filter page with no hreflang annotation at all, inconsistent with its sibling /marketplace/.",
+          "recommendation": "Ship /en/marketplace/semua/ with reciprocal hreflang, or add a self-referencing pair in the meantime."
+        },
+        {
+          "title": "/60s-yogyakarta/ and /vw-yogyakarta/ lack hreflang tags",
+          "severity": "Low",
+          "description": "Present in the sitemap (confirmed, not missing) but carry no hreflang, inconsistent with every other entry. Correct as-is since neither page has an /en/ counterpart -- flagged only for consistency.",
+          "recommendation": "Add self-referencing hreflang for consistency, or leave as-is if these two legacy pages are being sunset."
         }
       ]
     }
@@ -193,37 +288,43 @@
         "name": "Phase 1: Critical Fixes",
         "timeframe": "Week 1",
         "items": [
-          "Decide on the Cloudflare AI-crawler block (allow Google-Extended + GPTBot if GEO matters)",
-          "Compress hero videos (19MB and 5.8MB files) to <3MB with poster images",
-          "Add /vw-yogyakarta/ to sitemap.xml"
+          "Disable Cloudflare Pages SPA-fallback / ship a real 404.html (fixes sitewide soft-404s)",
+          "Add vespakita.com -> www.vespakita.com redirect at the Cloudflare edge",
+          "Allow OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Claude-SearchBot in Cloudflare AI Crawl Control / WAF (dashboard setting, not robots.txt)",
+          "Add noindex,nofollow + robots.txt disallow to /rate-card/ and /komunitas/tongkrongan/admin/",
+          "Resolve the /komunitas/ intent inversion: pick sponsor-matching as the primary title/H1 intent"
         ]
       },
       {
         "name": "Phase 2: High-Impact Improvements",
         "timeframe": "Weeks 2-3",
         "items": [
-          "Trim meta descriptions on / and /en/ to <=160 chars",
-          "Add loading=\"lazy\" to all below-the-fold images across all 4 pages",
-          "Convert large JPG/PNG assets to WebP/AVIF",
-          "Validate Event schema fields via Google Rich Results Test"
+          "Server-render /komunitas/, /marketplace/semua/, and the homepage event widget (single fix resolves 3+ findings across Technical/SXO/GEO)",
+          "Add an H1 and Organization/Club JSON-LD to /komunitas/c/{id} profile pages",
+          "Extend /marketplace/l/{id} titles to include model + 'bekas' + city",
+          "Add explicit width/height (or aspect-ratio) to all images; extend loading=\"lazy\" sitewide",
+          "Remove user-scalable=no from /komunitas/tongkrongan/ viewport tag",
+          "Add HSTS/CSP/X-Frame-Options headers via a Cloudflare Pages _headers file"
         ]
       },
       {
         "name": "Phase 3: Content & Authority",
         "timeframe": "Month 2",
         "items": [
-          "Add author attribution + publish dates for planned content/blog",
-          "Add WebSite schema with SearchAction",
-          "Revisit homepage title for keyword coverage"
+          "Re-run the Content Quality and Performance specialist passes to completion (both were cut off at their turn limit this round)",
+          "Write one clear, quotable 120-160 word paragraph stating VespaKita's three pillars together (homepage + About-style section)",
+          "Standardize on a single Instagram/social handle across schema and footer",
+          "Add IndexNow ping on new listing/community publish",
+          "Consider city- or model-scoped marketplace browse URLs matching the pattern every ranking competitor already uses"
         ]
       },
       {
         "name": "Phase 4: Monitoring & Iteration",
         "timeframe": "Ongoing",
         "items": [
-          "Connect Google Search Console + GA4 (G-6LLXWQ6MMM already installed) for real field data",
-          "Re-run this audit after Phase 1-2 fixes to confirm score improvement",
-          "Add HSTS/CSP headers via Cloudflare Transform Rules"
+          "Connect Google Search Console + confirm GA4 (G-6LLXWQ6MMM) is capturing the new /komunitas/ and marketplace traffic",
+          "Re-run this audit after Phase 1-2 fixes to confirm score improvement and close out the incomplete categories",
+          "Spot-check marketplace listing quality/pricing against real market rates as part of the existing manual-vetting process -- the SXO pass flagged one live listing priced well above its comparable market band with description text that reads as possibly machine-translated"
         ]
       }
     ]
