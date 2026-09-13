@@ -77,6 +77,30 @@ function buildHomepage() {
     ['<meta property="og:locale:alternate" content="en_US">', '<meta property="og:locale:alternate" content="id_ID">'],
     ['<meta property="og:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta property="og:title" content="VespaKita - Vespa For Us All">'],
     ['<meta name="twitter:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta name="twitter:title" content="VespaKita - Vespa For Us All">'],
+    [
+      `"description": "VespaKita adalah rumah digital untuk semua yang berkaitan dengan Vespa di Indonesia, dijalankan sebagai tiga hal sekaligus. Pertama, kami media independen yang meliput dunia Vespa lewat podcast, liputan event, dan kolaborasi brand dengan komunitas. Kedua, kami menjalankan Marketplace Vespa terkurasi tempat unit dan sparepart bekas dicek manual oleh tim kami sebelum tayang, supaya pembeli tidak was-was soal kondisi maupun keaslian dokumen. Ketiga, kami membantu komunitas Vespa di seluruh Indonesia mendapatkan dukungan sponsor untuk event mereka, mulai dari touring dan gathering sampai jambore nasional, lewat jaringan brand yang sudah kami bangun, dengan bukti nyata seperti Road to Jakarta bersama Vespa 60s Yogyakarta yang berhasil menggandeng 4 brand nasional. Ketiganya saling menguatkan: cerita dari media kami menghidupkan komunitas, komunitas mempercayakan transaksi lewat marketplace kami, dan sponsor yang kami hubungkan membuat event komunitas makin besar.",`,
+      `"description": "VespaKita is Indonesia's digital home for everything Vespa, run as three things at once. First, we're an independent media brand covering the Vespa world through podcasts, event coverage, and brand collaborations with communities. Second, we run a curated Vespa Marketplace where every used unit and spare part is manually checked by our team before it goes live, so buyers never have to worry about condition or paperwork. Third, we help Vespa communities across Indonesia land sponsors for their events, from touring and gatherings to national jamborees, through the brand network we've built, proven by Road to Jakarta with Vespa 60's Yogyakarta, which secured 4 national brand sponsors. All three reinforce each other: our media stories bring communities to life, communities trust our marketplace for transactions, and the sponsors we connect make community events bigger.",`,
+    ],
+    [
+      `<!-- ABOUT / BRAND IDENTITY -->
+<section class="dark" id="tentang" style="padding: 56px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin-bottom: 0;">
+      <div class="eyebrow">Tentang VespaKita</div>
+      <p style="max-width: 760px; color: var(--krem); opacity: 0.85; font-size: 15.5px; line-height: 1.8;">VespaKita adalah rumah digital untuk semua yang berkaitan dengan Vespa di Indonesia, dijalankan sebagai tiga hal sekaligus. Pertama, kami media independen yang meliput dunia Vespa lewat podcast, liputan event, dan kolaborasi brand dengan komunitas. Kedua, kami menjalankan <a href="/marketplace/" style="color: var(--mint); text-decoration: underline;">Marketplace Vespa terkurasi</a> tempat unit dan sparepart bekas dicek manual oleh tim kami sebelum tayang, supaya pembeli tidak was-was soal kondisi maupun keaslian dokumen. Ketiga, kami membantu <a href="/komunitas/" style="color: var(--mint); text-decoration: underline;">komunitas Vespa di seluruh Indonesia mendapatkan dukungan sponsor</a> untuk event mereka, mulai dari touring dan gathering sampai jambore nasional, lewat jaringan brand yang sudah kami bangun, dengan bukti nyata seperti Road to Jakarta bersama Vespa 60's Yogyakarta yang berhasil menggandeng 4 brand nasional. Ketiganya saling menguatkan: cerita dari media kami menghidupkan komunitas, komunitas mempercayakan transaksi lewat marketplace kami, dan sponsor yang kami hubungkan membuat event komunitas makin besar.</p>
+    </div>
+  </div>
+</section>`,
+      `<!-- ABOUT / BRAND IDENTITY -->
+<section class="dark" id="about" style="padding: 56px 0; border-top: 1px solid rgba(255,255,255,0.05);">
+  <div class="wrap">
+    <div class="section-head reveal" style="margin-bottom: 0;">
+      <div class="eyebrow">About VespaKita</div>
+      <p style="max-width: 760px; color: var(--krem); opacity: 0.85; font-size: 15.5px; line-height: 1.8;">VespaKita is Indonesia's digital home for everything Vespa, run as three things at once. First, we're an independent media brand covering the Vespa world through podcasts, event coverage, and brand collaborations with communities. Second, we run a <a href="/en/marketplace/" style="color: var(--mint); text-decoration: underline;">curated Vespa Marketplace</a> where every used unit and spare part is manually checked by our team before it goes live, so buyers never have to worry about condition or paperwork. Third, we help <a href="/en/komunitas/" style="color: var(--mint); text-decoration: underline;">Vespa communities across Indonesia land sponsors</a> for their events, from touring and gatherings to national jamborees, through the brand network we've built, proven by Road to Jakarta with Vespa 60's Yogyakarta, which secured 4 national brand sponsors. All three reinforce each other: our media stories bring communities to life, communities trust our marketplace for transactions, and the sponsors we connect make community events bigger.</p>
+    </div>
+  </div>
+</section>`,
+    ],
   ];
   for (const [from, to] of metaSwaps) {
     if (!html.includes(from)) { console.warn(`WARN: meta swap source not found, skipping: ${from.slice(0, 60)}...`); continue; }
