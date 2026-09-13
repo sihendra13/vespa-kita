@@ -78,6 +78,144 @@ function buildHomepage() {
     ['<meta property="og:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta property="og:title" content="VespaKita - Vespa For Us All">'],
     ['<meta name="twitter:title" content="VespaKita - Vespa Untuk Kita Semua">', '<meta name="twitter:title" content="VespaKita - Vespa For Us All">'],
     [
+      `<a href="#blog">Tips &amp; Trik</a>`,
+      `<a href="#blog">Tips &amp; Tricks</a>`,
+    ],
+    [
+      `<a href="/#blog">Tips &amp; Trik</a>`,
+      `<a href="/#blog">Tips &amp; Tricks</a>`,
+    ],
+    [
+      `<!-- TIPS & TRIK (BLOG PREVIEW CAROUSEL) -->
+<style>
+  .blog-section{padding:60px 0 80px; border-top:1px solid rgba(255,255,255,0.08);}
+  .blog-carousel-wrapper{display:flex; align-items:center; gap:12px; max-width:1120px; margin:0 auto; padding:0 24px;}
+  .blog-grid{display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; padding:4px 4px 12px; scrollbar-width:none;}
+  .blog-grid::-webkit-scrollbar{display:none;}
+  .blog-carousel-arrow{flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.15); color:var(--krem); cursor:pointer; transition:all .2s ease;}
+  .blog-carousel-arrow:hover{background:var(--merah); border-color:var(--merah); color:#fff;}
+  .blog-card{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; color:inherit; flex:0 0 calc((100% - 44px) / 3); scroll-snap-align:start; transition:transform .2s ease, border-color .2s ease;}
+  .blog-card:hover{transform:translateY(-4px); border-color:rgba(111,168,154,0.4);}
+  .blog-card-content{padding:22px; display:flex; flex-direction:column; flex-grow:1;}
+  .blog-category{font-family:var(--mono); font-size:10.5px; font-weight:700; color:var(--mint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;}
+  .blog-card h3{font-family:var(--body); font-size:16.5px; font-weight:700; color:var(--krem); margin-bottom:10px; line-height:1.4;}
+  .blog-card p{font-size:13.5px; color:var(--chrome); line-height:1.6; margin-bottom:20px; flex-grow:1;}
+  .blog-readmore{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--merah); display:flex; align-items:center; gap:6px; transition:gap .2s ease;}
+  .blog-card:hover .blog-readmore{gap:10px;}
+  .blog-more-container{text-align:center; margin-top:36px;}
+  @media (max-width:1024px){ .blog-card{flex:0 0 calc((100% - 22px) / 2);} }
+  @media (max-width:767px){
+    .blog-carousel-arrow{display:none;}
+    .blog-card{flex:0 0 85%;}
+  }
+</style>
+<section class="dark blog-section" id="blog">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align:center; margin-bottom:36px;">
+      <div class="eyebrow" style="justify-content:center;">Tips &amp; Trik</div>
+      <h2>Panduan Vespa Klasik</h2>
+      <p style="max-width:600px; margin:12px auto 0; color:var(--chrome); font-size:15px;">Tips praktis seputar Vespa klasik — dari cara memilih bengkel sampai perawatan.</p>
+    </div>
+  </div>
+  <div class="blog-carousel-wrapper">
+    <button type="button" class="blog-carousel-arrow" aria-label="Artikel sebelumnya" onclick="scrollBlogCarousel(-1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="blog-grid" id="blogCarousel">
+      <a href="/blog/cara-memilih-bengkel-vespa-klasik-terpercaya/" class="blog-card">
+        <div class="blog-card-content">
+          <div class="blog-category">Bengkel</div>
+          <h3>Cara Memilih Bengkel Vespa Klasik yang Terpercaya</h3>
+          <p>Ciri-ciri bengkel yang bisa dipercaya, pertanyaan wajib sebelum servis, dan red flag yang harus dihindari.</p>
+          <div class="blog-readmore">Baca Artikel &rarr;</div>
+        </div>
+      </a>
+    </div>
+    <button type="button" class="blog-carousel-arrow" aria-label="Artikel berikutnya" onclick="scrollBlogCarousel(1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="blog-more-container">
+    <a href="/blog/" class="btn btn-outline">Lihat Semua Tips &amp; Trik</a>
+  </div>
+</section>
+<script>
+  function scrollBlogCarousel(direction){
+    var track = document.getElementById('blogCarousel');
+    if(!track) return;
+    var card = track.querySelector('.blog-card');
+    if(!card) return;
+    var cardWidth = card.getBoundingClientRect().width;
+    var gap = parseFloat(getComputedStyle(track).gap) || 22;
+    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+  }
+</script>`,
+      `<!-- TIPS & TRICKS (BLOG PREVIEW CAROUSEL) -->
+<style>
+  .blog-section{padding:60px 0 80px; border-top:1px solid rgba(255,255,255,0.08);}
+  .blog-carousel-wrapper{display:flex; align-items:center; gap:12px; max-width:1120px; margin:0 auto; padding:0 24px;}
+  .blog-grid{display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; padding:4px 4px 12px; scrollbar-width:none;}
+  .blog-grid::-webkit-scrollbar{display:none;}
+  .blog-carousel-arrow{flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.15); color:var(--krem); cursor:pointer; transition:all .2s ease;}
+  .blog-carousel-arrow:hover{background:var(--merah); border-color:var(--merah); color:#fff;}
+  .blog-card{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; color:inherit; flex:0 0 calc((100% - 44px) / 3); scroll-snap-align:start; transition:transform .2s ease, border-color .2s ease;}
+  .blog-card:hover{transform:translateY(-4px); border-color:rgba(111,168,154,0.4);}
+  .blog-card-content{padding:22px; display:flex; flex-direction:column; flex-grow:1;}
+  .blog-category{font-family:var(--mono); font-size:10.5px; font-weight:700; color:var(--mint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;}
+  .blog-card h3{font-family:var(--body); font-size:16.5px; font-weight:700; color:var(--krem); margin-bottom:10px; line-height:1.4;}
+  .blog-card p{font-size:13.5px; color:var(--chrome); line-height:1.6; margin-bottom:20px; flex-grow:1;}
+  .blog-readmore{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--merah); display:flex; align-items:center; gap:6px; transition:gap .2s ease;}
+  .blog-card:hover .blog-readmore{gap:10px;}
+  .blog-more-container{text-align:center; margin-top:36px;}
+  @media (max-width:1024px){ .blog-card{flex:0 0 calc((100% - 22px) / 2);} }
+  @media (max-width:767px){
+    .blog-carousel-arrow{display:none;}
+    .blog-card{flex:0 0 85%;}
+  }
+</style>
+<section class="dark blog-section" id="blog">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align:center; margin-bottom:36px;">
+      <div class="eyebrow" style="justify-content:center;">Tips &amp; Tricks</div>
+      <h2>Classic Vespa Guides</h2>
+      <p style="max-width:600px; margin:12px auto 0; color:var(--chrome); font-size:15px;">Practical tips for classic Vespa owners — from choosing a workshop to maintenance.</p>
+    </div>
+  </div>
+  <div class="blog-carousel-wrapper">
+    <button type="button" class="blog-carousel-arrow" aria-label="Previous article" onclick="scrollBlogCarousel(-1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="blog-grid" id="blogCarousel">
+      <a href="/blog/cara-memilih-bengkel-vespa-klasik-terpercaya/" class="blog-card">
+        <div class="blog-card-content">
+          <div class="blog-category">Workshop</div>
+          <h3>Cara Memilih Bengkel Vespa Klasik yang Terpercaya</h3>
+          <p>How to spot a trustworthy classic Vespa workshop, what to ask before a service, and red flags to avoid. (Indonesian)</p>
+          <div class="blog-readmore">Read Article &rarr;</div>
+        </div>
+      </a>
+    </div>
+    <button type="button" class="blog-carousel-arrow" aria-label="Next article" onclick="scrollBlogCarousel(1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="blog-more-container">
+    <a href="/blog/" class="btn btn-outline">See All Tips &amp; Tricks</a>
+  </div>
+</section>
+<script>
+  function scrollBlogCarousel(direction){
+    var track = document.getElementById('blogCarousel');
+    if(!track) return;
+    var card = track.querySelector('.blog-card');
+    if(!card) return;
+    var cardWidth = card.getBoundingClientRect().width;
+    var gap = parseFloat(getComputedStyle(track).gap) || 22;
+    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+  }
+</script>`,
+    ],
+    [
       `"description": "VespaKita adalah rumah digital untuk semua yang berkaitan dengan Vespa di Indonesia, dijalankan sebagai tiga hal sekaligus. Pertama, kami media independen yang meliput dunia Vespa lewat podcast, liputan event, dan kolaborasi brand dengan komunitas. Kedua, kami menjalankan Marketplace Vespa terkurasi tempat unit dan sparepart bekas dicek manual oleh tim kami sebelum tayang, supaya pembeli tidak was-was soal kondisi maupun keaslian dokumen. Ketiga, kami membantu komunitas Vespa di seluruh Indonesia mendapatkan dukungan sponsor untuk event mereka, mulai dari touring dan gathering sampai jambore nasional, lewat jaringan brand yang sudah kami bangun, dengan bukti nyata seperti Road to Jakarta bersama Vespa 60s Yogyakarta yang berhasil menggandeng 4 brand nasional. Ketiganya saling menguatkan: cerita dari media kami menghidupkan komunitas, komunitas mempercayakan transaksi lewat marketplace kami, dan sponsor yang kami hubungkan membuat event komunitas makin besar.",`,
       `"description": "VespaKita is Indonesia's digital home for everything Vespa, run as three things at once. First, we're an independent media brand covering the Vespa world through podcasts, event coverage, and brand collaborations with communities. Second, we run a curated Vespa Marketplace where every used unit and spare part is manually checked by our team before it goes live, so buyers never have to worry about condition or paperwork. Third, we help Vespa communities across Indonesia land sponsors for their events, from touring and gatherings to national jamborees, through the brand network we've built, proven by Road to Jakarta with Vespa 60's Yogyakarta, which secured 4 national brand sponsors. All three reinforce each other: our media stories bring communities to life, communities trust our marketplace for transactions, and the sponsors we connect make community events bigger.",`,
     ],
