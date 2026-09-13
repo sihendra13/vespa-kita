@@ -7,6 +7,7 @@
 
 import { cloudinaryDestroy, parseCloudinaryUrl } from "../_lib/cloudinary.js";
 import { sendPush } from "../_lib/push.js";
+import { pingIndexNow } from "../_lib/indexnow.js";
 
 function checkAuth(request, env) {
   const auth = request.headers.get("Authorization") || "";
@@ -99,6 +100,8 @@ export async function onRequestPost(context) {
     await env.DB.prepare(`UPDATE listings SET status = 'published', reviewed_at = ?, published_at = ? WHERE id = ?`)
       .bind(now, now, id)
       .run();
+
+    waitUntil(pingIndexNow(`https://www.vespakita.com/marketplace/l/${id}`));
 
     const subscriptionRow = await env.DB.prepare(`SELECT * FROM push_subscriptions WHERE listing_id = ?`).bind(id).first();
     if (subscriptionRow) {

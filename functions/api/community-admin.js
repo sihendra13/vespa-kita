@@ -9,6 +9,7 @@
 // orphaned media.
 
 import { cloudinaryDestroy, parseCloudinaryUrl } from "../_lib/cloudinary.js";
+import { pingIndexNow } from "../_lib/indexnow.js";
 
 function checkAuth(request, env) {
   const auth = request.headers.get("Authorization") || "";
@@ -86,7 +87,7 @@ export async function onRequestGet(context) {
 const VALID_ACTIONS = ["approve", "reject", "unpublish", "delete"];
 
 export async function onRequestPost(context) {
-  const { request, env } = context;
+  const { request, env, waitUntil } = context;
   if (!checkAuth(request, env)) return unauthorized();
   if (!env.DB) return new Response(JSON.stringify({ error: "DB not bound" }), { status: 500 });
 
@@ -124,6 +125,8 @@ export async function onRequestPost(context) {
     await env.DB.prepare(`UPDATE community_events SET status = 'published', reviewed_at = ?, published_at = ? WHERE community_id = ? AND status = 'pending'`)
       .bind(now, now, id)
       .run();
+
+    waitUntil(pingIndexNow(`https://www.vespakita.com/komunitas/c/${id}`));
   } else if (action === "reject") {
     await env.DB.prepare(`UPDATE communities SET status = 'rejected', reviewed_at = ? WHERE id = ?`).bind(now, id).run();
     await env.DB.prepare(`UPDATE community_events SET status = 'rejected', reviewed_at = ? WHERE community_id = ? AND status = 'pending'`).bind(now, id).run();
