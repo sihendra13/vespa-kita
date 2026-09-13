@@ -861,6 +861,7 @@
     <a href="#" class="logo"><img src="logo.png" alt="VespaKita Logo" width="400" height="230"></a>
     <div class="navlinks">
       <a href="#next-events">Event</a>
+      <a href="#blog">Tips &amp; Trik</a>
       <a href="#podcast">Podcast</a>
       <a href="#audiens">Audiens</a>
       <a href="#mediakit">Media Kit</a>
@@ -1086,6 +1087,71 @@
 </script>
 
 
+
+<!-- TIPS & TRIK (BLOG PREVIEW CAROUSEL) -->
+<style>
+  .blog-section{padding:60px 0 80px; border-top:1px solid rgba(255,255,255,0.08);}
+  .blog-carousel-wrapper{display:flex; align-items:center; gap:12px; max-width:1120px; margin:0 auto; padding:0 24px;}
+  .blog-grid{display:flex; gap:22px; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; padding:4px 4px 12px; scrollbar-width:none;}
+  .blog-grid::-webkit-scrollbar{display:none;}
+  .blog-carousel-arrow{flex:0 0 auto; display:flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:50%; background:var(--aspal-2); border:1px solid rgba(241,232,214,0.15); color:var(--krem); cursor:pointer; transition:all .2s ease;}
+  .blog-carousel-arrow:hover{background:var(--merah); border-color:var(--merah); color:#fff;}
+  .blog-card{background:var(--aspal-2); border:1px solid rgba(241,232,214,0.1); border-radius:6px; overflow:hidden; text-decoration:none; display:flex; flex-direction:column; color:inherit; flex:0 0 calc((100% - 44px) / 3); scroll-snap-align:start; transition:transform .2s ease, border-color .2s ease;}
+  .blog-card:hover{transform:translateY(-4px); border-color:rgba(111,168,154,0.4);}
+  .blog-card-content{padding:22px; display:flex; flex-direction:column; flex-grow:1;}
+  .blog-category{font-family:var(--mono); font-size:10.5px; font-weight:700; color:var(--mint); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:12px;}
+  .blog-card h3{font-family:var(--body); font-size:16.5px; font-weight:700; color:var(--krem); margin-bottom:10px; line-height:1.4;}
+  .blog-card p{font-size:13.5px; color:var(--chrome); line-height:1.6; margin-bottom:20px; flex-grow:1;}
+  .blog-readmore{font-family:var(--mono); font-size:12px; text-transform:uppercase; letter-spacing:0.05em; font-weight:700; color:var(--merah); display:flex; align-items:center; gap:6px; transition:gap .2s ease;}
+  .blog-card:hover .blog-readmore{gap:10px;}
+  .blog-more-container{text-align:center; margin-top:36px;}
+  @media (max-width:1024px){ .blog-card{flex:0 0 calc((100% - 22px) / 2);} }
+  @media (max-width:767px){
+    .blog-carousel-arrow{display:none;}
+    .blog-card{flex:0 0 85%;}
+  }
+</style>
+<section class="dark blog-section" id="blog">
+  <div class="wrap">
+    <div class="section-head reveal" style="text-align:center; margin-bottom:36px;">
+      <div class="eyebrow" style="justify-content:center;">Tips &amp; Trik</div>
+      <h2>Panduan Vespa Klasik</h2>
+      <p style="max-width:600px; margin:12px auto 0; color:var(--chrome); font-size:15px;">Tips praktis seputar Vespa klasik — dari cara memilih bengkel sampai perawatan.</p>
+    </div>
+  </div>
+  <div class="blog-carousel-wrapper">
+    <button type="button" class="blog-carousel-arrow" aria-label="Artikel sebelumnya" onclick="scrollBlogCarousel(-1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="blog-grid" id="blogCarousel">
+      <a href="/blog/cara-memilih-bengkel-vespa-klasik-terpercaya/" class="blog-card">
+        <div class="blog-card-content">
+          <div class="blog-category">Bengkel</div>
+          <h3>Cara Memilih Bengkel Vespa Klasik yang Terpercaya</h3>
+          <p>Ciri-ciri bengkel yang bisa dipercaya, pertanyaan wajib sebelum servis, dan red flag yang harus dihindari.</p>
+          <div class="blog-readmore">Baca Artikel &rarr;</div>
+        </div>
+      </a>
+    </div>
+    <button type="button" class="blog-carousel-arrow" aria-label="Artikel berikutnya" onclick="scrollBlogCarousel(1)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+  <div class="blog-more-container">
+    <a href="/blog/" class="btn btn-outline">Lihat Semua Tips &amp; Trik</a>
+  </div>
+</section>
+<script>
+  function scrollBlogCarousel(direction){
+    var track = document.getElementById('blogCarousel');
+    if(!track) return;
+    var card = track.querySelector('.blog-card');
+    if(!card) return;
+    var cardWidth = card.getBoundingClientRect().width;
+    var gap = parseFloat(getComputedStyle(track).gap) || 22;
+    track.scrollBy({ left: direction * (cardWidth + gap), behavior: 'smooth' });
+  }
+</script>
 
 <div class="tearline to-light"></div>
 
@@ -1765,6 +1831,7 @@
       <a href="https://youtu.be/xRL-k6GscYA" target="_blank" rel="noopener">YouTube</a>
       <a href="https://www.instagram.com/ves_pakita/" target="_blank" rel="noopener">Instagram</a>
       <a href="/marketplace/">Marketplace</a>
+      <a href="/#blog">Tips &amp; Trik</a>
       <a href="#kolaborasi">Kolaborasi</a>
     </div>
   </div>
