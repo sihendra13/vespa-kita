@@ -1,59 +1,37 @@
-// Cloudflare Pages Function — GET /api/reel-metrics
-// Reads POSTFORME_API_KEY from Pages project environment variables (Settings -> Environment variables).
-// Never expose that key to the browser; this function is the only place it's used.
+// Cloudflare Pages Function — GET /api/reel-metrics?postId=<IG media id>
+// Per-reel counters + media URLs from the Instagram Graph API.
+// The token never reaches the browser; see functions/_lib/instagram.js.
 
-const SOCIAL_ACCOUNT_ID = "spc_adDd2jBSSm5jGwhBO4jYM"; // ves_pakita (Instagram)
-const PLATFORM_POST_ID = "17878485828504906"; // reel: SEMUA ANAKNYA DINAMAI NAMA VESPA
+import { igGet, cachedJson, metricValue } from "../_lib/instagram.js";
 
-export async function onRequestGet(context) {
-  const { env, request } = context;
-  const { searchParams } = new URL(request.url);
-  const postId = searchParams.get("postId") || PLATFORM_POST_ID;
+const DEFAULT_POST_ID = "17878485828504906"; // reel: SEMUA ANAKNYA DINAMAI NAMA VESPA
 
-  if (!env.POSTFORME_API_KEY) {
-    return new Response(JSON.stringify({ error: "POSTFORME_API_KEY not configured" }), {
-      status: 500,
+export async function onRequestGet({ env, request }) {
+  const postId = new URL(request.url).searchParams.get("postId") || DEFAULT_POST_ID;
+  if (!/^\d+$/.test(postId)) {
+    return new Response(JSON.stringify({ error: "invalid postId" }), {
+      status: 400,
       headers: { "content-type": "application/json" },
     });
   }
 
-  const url = `https://api.postforme.dev/v1/social-account-feeds/${SOCIAL_ACCOUNT_ID}?expand=metrics&platform_post_id=${postId}`;
+  // Media URLs are Instagram CDN links that expire after a few hours, so this
+  // must not be cached long.
+  return cachedJson(env, `reel:${postId}`, 300, async () => {
+    const [media, insights] = await Promise.all([
+      igGet(env, postId, { fields: "like_count,comments_count,permalink,media_url,thumbnail_url" }),
+      // Insights can be unavailable for some media; counters above still work then.
+      igGet(env, `${postId}/insights`, { metric: "views,shares" }).catch(() => ({ data: [] })),
+    ]);
 
-  const upstream = await fetch(url, {
-    headers: { Authorization: `Bearer ${env.POSTFORME_API_KEY}` },
-  });
-
-  if (!upstream.ok) {
-    return new Response(JSON.stringify({ error: "upstream request failed" }), {
-      status: 502,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const body = await upstream.json();
-  const post = body?.data?.[0] || {};
-  const metrics = post.metrics || {};
-  const media = post.media?.[0] || {};
-
-  return new Response(
-    JSON.stringify({
-      likes: metrics.likes ?? null,
-      comments: metrics.comments ?? null,
-      shares: metrics.shares ?? null,
-      views: metrics.views ?? null,
+    return {
+      likes: media.like_count ?? null,
+      comments: media.comments_count ?? null,
+      shares: metricValue(insights.data, "shares"),
+      views: metricValue(insights.data, "views"),
       thumbnailUrl: media.thumbnail_url ?? null,
-      videoUrl: media.url ?? null,
-      permalink: post.platform_url ?? null,
-    }),
-    {
-      status: 200,
-      headers: {
-        "content-type": "application/json",
-        // Media URLs are Instagram CDN links that expire after a few hours,
-        // so this must not be cached long — keep it short, unlike the
-        // metrics-only response this replaced.
-        "cache-control": "public, max-age=300",
-      },
-    }
-  );
+      videoUrl: media.media_url ?? null,
+      permalink: media.permalink ?? null,
+    };
+  });
 }
