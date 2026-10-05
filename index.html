@@ -907,7 +907,7 @@
           <div class="lbl">Akun dijangkau</div>
         </div>
         <div class="stat-mini">
-          <div class="num"><span class="js-count" data-target="558">0</span><span class="badge-up">+547%</span></div>
+          <div class="num"><span id="hero-followers">–</span><span class="badge-up" id="hero-followers-growth" hidden></span></div>
           <div class="lbl">Followers (30 hari)</div>
         </div>
       </div>
@@ -1586,12 +1586,12 @@
     <div class="section-head reveal">
       <div class="eyebrow">Data Audiens</div>
       <h2 style="color:var(--krem);">Siapa yang menonton VespaKita</h2>
-      <p style="color:var(--chrome);">Diambil langsung dari Instagram Insights. Update terakhir: 24 Agustus 2026.</p>
+      <p style="color:var(--chrome);">Diambil langsung dari Instagram Insights. <span id="aud-updated">Update terakhir: 24 Agustus 2026.</span></p>
     </div>
 
     <div class="audience-card reveal">
       <div class="audience-grid">
-        <div>
+        <div id="aud-demo">
           <div class="bar-row">
             <div class="bar-label"><span>Laki-laki</span><span>94,1%</span></div>
             <div class="bar-track"><div class="bar-fill" data-w="94.1"></div></div>
@@ -1622,6 +1622,7 @@
           </div>
         </div>
         <div>
+          <div id="aud-countries">
           <div class="bar-row">
             <div class="bar-label"><span>Indonesia</span><span>96,1%</span></div>
             <div class="bar-track"><div class="bar-fill" data-w="96.1"></div></div>
@@ -1642,10 +1643,11 @@
             <div class="bar-label"><span>Venezuela</span><span>0,2%</span></div>
             <div class="bar-track"><div class="bar-fill red" data-w="0.2"></div></div>
           </div>
+          </div>
 
           <div class="audience-foot" style="border-top:none; margin-top:30px; padding-top:0;">
             <div>
-              <div class="num">73,7%</div>
+              <div class="num" id="aud-productive">73,7%</div>
               <div class="lbl">Audiens usia produktif 25–44 tahun</div>
             </div>
             <div>
@@ -1996,6 +1998,18 @@
       if(typeof s.views_30d === 'number') viewsEl.textContent = s.views_30d.toLocaleString('id-ID');
       if(typeof s.reach_30d === 'number') reachEl.textContent = s.reach_30d.toLocaleString('id-ID');
 
+      const followersEl = document.getElementById('hero-followers');
+      const growthEl = document.getElementById('hero-followers-growth');
+      if(followersEl && typeof s.followers === 'number'){
+        followersEl.textContent = s.followers.toLocaleString('id-ID');
+        // Growth vs. the follower count 30 days ago (current minus new follows).
+        const before = s.followers - (s.followers_gained_30d || 0);
+        if(growthEl && s.followers_gained_30d > 0 && before > 0){
+          growthEl.textContent = '+' + Math.round((s.followers_gained_30d / before) * 100).toLocaleString('id-ID') + '%';
+          growthEl.hidden = false;
+        }
+      }
+
       if(engagementEl && typeof s.engagement_rate_30d === 'number'){
         engagementEl.textContent = s.engagement_rate_30d.toLocaleString('id-ID', {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
 
@@ -2011,6 +2025,61 @@
     }
   }
   loadHeroStats();
+
+  // ---------- AUDIENCE DEMOGRAPHICS (follower_demographics, via backend function) ----------
+  // The static markup is the fallback; it's only replaced once real data arrives.
+  async function loadAudience(){
+    const demoEl = document.getElementById('aud-demo');
+    const countriesEl = document.getElementById('aud-countries');
+    if(!demoEl || !countriesEl) return;
+    try{
+      const res = await fetch('/api/audience');
+      if(!res.ok) return;
+      const a = await res.json();
+      const isEN = document.documentElement.lang === 'en';
+      const locale = isEN ? 'en-US' : 'id-ID';
+      const pct = (n) => n.toLocaleString(locale, {minimumFractionDigits:1, maximumFractionDigits:1}) + '%';
+
+      const row = (label, value, red, extraStyle) => {
+        const r = document.createElement('div');
+        r.className = 'bar-row';
+        if(extraStyle) r.style.cssText = extraStyle;
+        r.innerHTML = '<div class="bar-label"><span></span><span></span></div><div class="bar-track"><div class="bar-fill' + (red ? ' red' : '') + '"></div></div>';
+        const spans = r.querySelectorAll('.bar-label span');
+        spans[0].textContent = label;
+        spans[1].textContent = pct(value);
+        const fill = r.querySelector('.bar-fill');
+        fill.dataset.w = value;
+        barIO.observe(fill);
+        return r;
+      };
+
+      if(a.gender?.length && a.age?.length){
+        const genderLabel = {M: isEN ? 'Male' : 'Laki-laki', F: isEN ? 'Female' : 'Perempuan'};
+        const rows = a.gender.map(g => row(genderLabel[g.key], g.pct, g.key === 'F'));
+        a.age.forEach((g, i) => rows.push(row((isEN ? 'Age ' : 'Usia ') + g.key.replace('-', '–'), g.pct, false, i === 0 ? 'margin-top:26px;' : '')));
+        demoEl.replaceChildren(...rows);
+
+        const productive = a.age.filter(g => g.key === '25-34' || g.key === '35-44').reduce((s, g) => s + g.pct, 0);
+        const prodEl = document.getElementById('aud-productive');
+        if(prodEl && productive > 0) prodEl.textContent = pct(productive);
+      }
+
+      if(a.country?.length){
+        const names = new Intl.DisplayNames([isEN ? 'en' : 'id'], {type:'region'});
+        countriesEl.replaceChildren(...a.country.map((c, i) => row(names.of(c.key) || c.key, c.pct, i > 0)));
+      }
+
+      const updatedEl = document.getElementById('aud-updated');
+      if(updatedEl && a.updated_at){
+        const d = new Date(a.updated_at).toLocaleDateString(isEN ? 'en-GB' : 'id-ID', {day:'numeric', month:'long', year:'numeric'});
+        updatedEl.textContent = (isEN ? 'Last updated: ' : 'Update terakhir: ') + d + '.';
+      }
+    }catch(err){
+      console.error('Audience error:', err);
+    }
+  }
+  loadAudience();
 
   // ---------- YOUTUBE REALTIME STATS ----------
   // GANTI dengan API key kamu dari Google Cloud Console (YouTube Data API v3)

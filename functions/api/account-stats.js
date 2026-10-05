@@ -1,92 +1,49 @@
 // Cloudflare Pages Function — GET /api/account-stats
-// Aggregates the last 30 days of the connected Instagram account's feed
-// (via Post For Me) to power the hero "Panel Reach" numbers.
+// Last-30-day account insights for the hero "Panel Reach" panel, straight from the
+// Instagram Graph API (see functions/_lib/instagram.js for token + cache handling).
 //
-// views_30d: exact sum of per-post views (views are inherently additive, no double-count risk).
-// reach_30d: sum of per-post reach — an approximation of "accounts reached," since a person
-// who saw multiple posts is counted once per post here, not once at the account level.
-// Instagram's own account-level unique reach isn't available through Post For Me's API.
-// engagement_rate_30d: sum(total_interactions) / sum(views) * 100 across the same window —
-// a view-weighted average, more stable than averaging each post's individual rate.
+// views_30d / reach_30d: Instagram's own account-level totals (reach is unique
+// accounts, not a per-post sum like the old Post For Me approximation).
+// engagement_rate_30d: total_interactions / views * 100 over the same window.
+// followers / followers_gained_30d: current count and new follows over the window
+// (follower_count is a daily time series; Instagram omits it under 100 followers).
 
-const SOCIAL_ACCOUNT_ID = "spc_adDd2jBSSm5jGwhBO4jYM"; // ves_pakita (Instagram)
-const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
-const PAGE_LIMIT = 50;
-const MAX_PAGES = 10; // safety cap
+import { igGet, cachedJson, metricValue } from "../_lib/instagram.js";
 
-export async function onRequestGet(context) {
-  const { env } = context;
+const DAY_S = 24 * 60 * 60;
 
-  if (!env.POSTFORME_API_KEY) {
-    return new Response(JSON.stringify({ error: "POSTFORME_API_KEY not configured" }), {
-      status: 500,
-      headers: { "content-type": "application/json" },
-    });
-  }
+export async function onRequestGet({ env }) {
+  return cachedJson(env, "account-stats", 1800, async () => {
+    const until = Math.floor(Date.now() / 1000);
+    const since = until - 30 * DAY_S;
 
-  const cutoff = Date.now() - THIRTY_DAYS_MS;
-  let viewsTotal = 0;
-  let reachTotal = 0;
-  let interactionsTotal = 0;
-  let postCount = 0;
-  let cursor = "";
-  let reachedCutoff = false;
+    const [profile, totals, follows] = await Promise.all([
+      igGet(env, "me", { fields: "followers_count,media_count,username" }),
+      igGet(env, "me/insights", {
+        metric: "views,reach,total_interactions",
+        period: "day",
+        metric_type: "total_value",
+        since,
+        until,
+      }),
+      // Max window for follower_count is 30 days and it excludes the current day.
+      igGet(env, "me/insights", { metric: "follower_count", period: "day", since: since + DAY_S, until })
+        .catch(() => ({ data: [] })),
+    ]);
 
-  try {
-    for (let page = 0; page < MAX_PAGES && !reachedCutoff; page++) {
-      const url = new URL(`https://api.postforme.dev/v1/social-account-feeds/${SOCIAL_ACCOUNT_ID}`);
-      url.searchParams.set("expand", "metrics");
-      url.searchParams.set("limit", String(PAGE_LIMIT));
-      if (cursor) url.searchParams.set("cursor", cursor);
+    const views = metricValue(totals.data, "views");
+    const reach = metricValue(totals.data, "reach");
+    const interactions = metricValue(totals.data, "total_interactions");
+    const gained = metricValue(follows.data, "follower_count");
 
-      const res = await fetch(url.toString(), {
-        headers: { Authorization: `Bearer ${env.POSTFORME_API_KEY}` },
-      });
-      if (!res.ok) break;
-
-      const body = await res.json();
-      const items = body?.data || [];
-
-      for (const item of items) {
-        const postedAt = new Date(item.posted_at).getTime();
-        if (isNaN(postedAt) || postedAt < cutoff) {
-          reachedCutoff = true;
-          break;
-        }
-        const m = item.metrics || {};
-        viewsTotal += typeof m.views === "number" ? m.views : 0;
-        reachTotal += typeof m.reach === "number" ? m.reach : 0;
-        interactionsTotal += typeof m.total_interactions === "number" ? m.total_interactions : 0;
-        postCount++;
-      }
-
-      if (!body?.meta?.has_more || !body?.meta?.next) break;
-      cursor = body.meta.next;
-    }
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "failed to aggregate stats" }), {
-      status: 502,
-      headers: { "content-type": "application/json" },
-    });
-  }
-
-  const engagementRate30d = viewsTotal > 0
-    ? Math.round((interactionsTotal / viewsTotal) * 1000) / 10
-    : null;
-
-  return new Response(
-    JSON.stringify({
-      views_30d: viewsTotal,
-      reach_30d: reachTotal,
-      engagement_rate_30d: engagementRate30d,
-      post_count_30d: postCount,
-    }),
-    {
-      status: 200,
-      headers: {
-        "content-type": "application/json",
-        "cache-control": "public, max-age=1800",
-      },
-    }
-  );
+    return {
+      views_30d: views,
+      reach_30d: reach,
+      engagement_rate_30d: views > 0 && interactions !== null
+        ? Math.round((interactions / views) * 1000) / 10
+        : null,
+      followers: profile.followers_count ?? null,
+      followers_gained_30d: gained,
+    };
+  });
 }
